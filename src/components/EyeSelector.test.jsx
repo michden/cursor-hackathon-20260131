@@ -39,15 +39,15 @@ describe('EyeSelector', () => {
     const onSelect = vi.fn()
     renderWithProviders(<EyeSelector onSelect={onSelect} />)
     
-    expect(screen.getByText('Left Eye')).toBeInTheDocument()
-    expect(screen.getByText('Right Eye')).toBeInTheDocument()
+    expect(screen.getByText('Left')).toBeInTheDocument()
+    expect(screen.getByText('Right')).toBeInTheDocument()
   })
 
   it('calls onSelect with "left" when left eye button is clicked', () => {
     const onSelect = vi.fn()
     renderWithProviders(<EyeSelector onSelect={onSelect} />)
     
-    fireEvent.click(screen.getByText('Left Eye'))
+    fireEvent.click(screen.getByText('Left'))
     
     expect(onSelect).toHaveBeenCalledWith('left')
   })
@@ -56,7 +56,7 @@ describe('EyeSelector', () => {
     const onSelect = vi.fn()
     renderWithProviders(<EyeSelector onSelect={onSelect} />)
     
-    fireEvent.click(screen.getByText('Right Eye'))
+    fireEvent.click(screen.getByText('Right'))
     
     expect(onSelect).toHaveBeenCalledWith('right')
   })
