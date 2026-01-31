@@ -54,30 +54,36 @@ export default function ContrastSensitivityTest() {
     setCurrentLetter(LETTERS[Math.floor(Math.random() * LETTERS.length)])
   }, [])
 
-  const finishTest = useCallback((finalLevel) => {
+  const finishTest = useCallback((finalLevel, updatedHistory) => {
     const result = finalLevel > 0 ? CONTRAST_LEVELS[finalLevel - 1] : null
     updateContrastSensitivity({
       level: finalLevel,
       logCS: result?.logCS || 0,
       maxLevel: CONTRAST_LEVELS.length,
-      history: testHistory,
+      history: updatedHistory,
       testedAt: new Date().toISOString()
     })
     setPhase('complete')
-  }, [updateContrastSensitivity, testHistory])
+  }, [updateContrastSensitivity])
 
   const handleSubmit = useCallback(() => {
     if (!inputValue) return
     
     const isCorrect = inputValue.toUpperCase() === currentLetter
     
-    // Record this trial
-    setTestHistory(prev => [...prev, {
+    // Build the new trial entry
+    const newTrial = {
       level: currentLevel,
       expected: currentLetter,
       answered: inputValue.toUpperCase(),
       correct: isCorrect
-    }])
+    }
+    
+    // Compute the updated history to pass to finishTest (avoids stale closure)
+    const updatedHistory = [...testHistory, newTrial]
+    
+    // Record this trial in state
+    setTestHistory(updatedHistory)
     
     // Show feedback briefly
     const newFeedback = isCorrect ? 'correct' : 'incorrect'
@@ -85,20 +91,20 @@ export default function ContrastSensitivityTest() {
     setFeedback(newFeedback)
     
     const newCorrect = isCorrect ? correctInLevel + 1 : correctInLevel
-    const newTrial = trialInLevel + 1
+    const newTrialCount = trialInLevel + 1
     
     setTimeout(() => {
       feedbackRef.current = null
       setFeedback(null)
       
-      if (newTrial >= TRIALS_PER_LEVEL) {
+      if (newTrialCount >= TRIALS_PER_LEVEL) {
         if (newCorrect >= MIN_CORRECT) {
           // Passed this level
           const newBest = Math.max(bestLevel, currentLevel + 1)
           setBestLevel(newBest)
           
           if (currentLevel + 1 >= CONTRAST_LEVELS.length) {
-            finishTest(newBest)
+            finishTest(newBest, updatedHistory)
           } else {
             setCurrentLevel(currentLevel + 1)
             setTrialInLevel(0)
@@ -106,17 +112,17 @@ export default function ContrastSensitivityTest() {
             generateNewLetter()
           }
         } else {
-          finishTest(bestLevel)
+          finishTest(bestLevel, updatedHistory)
         }
       } else {
-        setTrialInLevel(newTrial)
+        setTrialInLevel(newTrialCount)
         setCorrectInLevel(newCorrect)
         generateNewLetter()
       }
       
       setInputValue('')
     }, 300)
-  }, [inputValue, currentLetter, currentLevel, trialInLevel, correctInLevel, bestLevel, generateNewLetter, finishTest])
+  }, [inputValue, currentLetter, currentLevel, trialInLevel, correctInLevel, bestLevel, testHistory, generateNewLetter, finishTest])
 
   // Keyboard support - Enter to submit
   useEffect(() => {
