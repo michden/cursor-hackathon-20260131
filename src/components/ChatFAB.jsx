@@ -7,6 +7,7 @@ const HIDDEN_ROUTES = [
   '/color-vision',
   '/contrast-sensitivity',
   '/amsler-grid',
+  '/astigmatism',
   '/eye-photo'
 ]
 
