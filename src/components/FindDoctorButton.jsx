@@ -34,6 +34,15 @@ export default function FindDoctorButton() {
     }
   }, [])
 
+  // Clear consent (used when browser permission is denied after app consent was given)
+  const clearConsent = useCallback(() => {
+    try {
+      localStorage.removeItem(CONSENT_STORAGE_KEY)
+    } catch (e) {
+      console.warn('Failed to clear consent preference:', e)
+    }
+  }, [])
+
   // Open Google search without location (fallback)
   const searchWithoutLocation = useCallback(() => {
     const query = encodeURIComponent('optometrist eye doctor near me')
@@ -77,7 +86,9 @@ export default function FindDoctorButton() {
       console.error('Location error:', err)
       
       if (err.code === 1) {
-        // Permission denied - fallback to search without location
+        // Permission denied by browser - clear app consent so user can try again
+        // This ensures the consent dialog will show again on next click
+        clearConsent()
         searchWithoutLocation()
       } else {
         setError('Could not get your location. Please try searching manually.')
@@ -85,7 +96,7 @@ export default function FindDoctorButton() {
     } finally {
       setLoading(false)
     }
-  }, [saveConsent, searchWithoutLocation])
+  }, [clearConsent, saveConsent, searchWithoutLocation])
 
   // Handle button click
   const handleClick = useCallback(() => {
@@ -100,9 +111,11 @@ export default function FindDoctorButton() {
 
   // Handle consent dialog actions
   const handleAllowLocation = useCallback(() => {
-    saveConsent(true)
+    // Don't save consent here - it will be saved in requestLocationAndSearch
+    // only after successful geolocation. This prevents the bug where consent
+    // is saved but the browser permission is then denied.
     requestLocationAndSearch()
-  }, [saveConsent, requestLocationAndSearch])
+  }, [requestLocationAndSearch])
 
   const handleDecline = useCallback(() => {
     saveConsent(false)

@@ -190,6 +190,57 @@ describe('FindDoctorButton', () => {
     })
   })
 
+  it('should NOT save consent when browser permission is denied', async () => {
+    const user = userEvent.setup()
+    const mockGetCurrentPosition = vi.fn((_, error) => {
+      error({ code: 1, message: 'User denied geolocation' })
+    })
+    vi.stubGlobal('navigator', {
+      geolocation: { getCurrentPosition: mockGetCurrentPosition }
+    })
+    
+    render(<FindDoctorButton />)
+    
+    await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
+    await user.click(screen.getByRole('button', { name: /allow location/i }))
+    
+    await waitFor(() => {
+      expect(mockOpen).toHaveBeenCalled()
+    })
+    
+    // Consent should NOT be saved as 'granted' when browser denies permission
+    expect(localStorage.getItem('visioncheck-location-consent')).not.toBe('granted')
+  })
+
+  it('should show consent dialog again after browser permission was denied', async () => {
+    const user = userEvent.setup()
+    const mockGetCurrentPosition = vi.fn((_, error) => {
+      error({ code: 1, message: 'User denied geolocation' })
+    })
+    vi.stubGlobal('navigator', {
+      geolocation: { getCurrentPosition: mockGetCurrentPosition }
+    })
+    
+    render(<FindDoctorButton />)
+    
+    // First attempt - user clicks allow but browser denies
+    await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
+    await user.click(screen.getByRole('button', { name: /allow location/i }))
+    
+    await waitFor(() => {
+      expect(mockOpen).toHaveBeenCalled()
+    })
+    
+    mockOpen.mockClear()
+    
+    // Second attempt - user should see consent dialog again (not skip it)
+    await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
+    
+    // Should show the consent dialog, not skip directly to location request
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(screen.getByText(/find eye doctors near you/i)).toBeInTheDocument()
+  })
+
   it('should show error message when geolocation fails with other error', async () => {
     const user = userEvent.setup()
     const mockGetCurrentPosition = vi.fn((_, error) => {
