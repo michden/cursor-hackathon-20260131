@@ -1,6 +1,7 @@
 import { useRef, useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import html2pdf from 'html2pdf.js'
+import ReactMarkdown from 'react-markdown'
 import { useTestResults } from '../context/TestResultsContext'
 import AchievementBadge, { ACHIEVEMENTS } from '../components/AchievementBadge'
 import Celebration from '../components/Celebration'
@@ -290,11 +291,9 @@ function EyePhotoResult({ data }) {
                 </div>
               )}
               
-              {/* Full analysis text with preserved formatting */}
-              <div className="prose prose-sm prose-slate max-w-none">
-                <div className="whitespace-pre-wrap text-slate-700 text-sm leading-relaxed">
-                  {data.analysis}
-                </div>
+              {/* Full analysis text with markdown rendering */}
+              <div className="text-slate-700 text-sm leading-relaxed space-y-3 [&>h2]:text-base [&>h2]:font-semibold [&>h2]:mt-4 [&>h2]:mb-2 [&>h3]:text-sm [&>h3]:font-semibold [&>h3]:mt-3 [&>h3]:mb-1 [&>p]:mb-2 [&>ul]:list-disc [&>ul]:pl-4 [&>ul]:space-y-1 [&>ol]:list-decimal [&>ol]:pl-4 [&>ol]:space-y-1 [&>hr]:my-3 [&>hr]:border-slate-200">
+                <ReactMarkdown>{data.analysis}</ReactMarkdown>
               </div>
             </div>
             

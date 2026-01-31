@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
 import { useTestResults } from '../context/TestResultsContext'
 import { analyzeEyePhoto } from '../api/openai'
 import AudioInstructions from '../components/AudioInstructions'
@@ -422,10 +423,8 @@ export default function EyePhotoAnalysis() {
 
           {/* Analysis results */}
           <div className="bg-slate-50 rounded-xl p-6 mb-6">
-            <div className="prose prose-slate prose-sm max-w-none">
-              <div className="whitespace-pre-wrap text-slate-700">
-                {analysis}
-              </div>
+            <div className="text-slate-700 text-sm leading-relaxed space-y-3 [&>h2]:text-base [&>h2]:font-semibold [&>h2]:mt-4 [&>h2]:mb-2 [&>h3]:text-sm [&>h3]:font-semibold [&>h3]:mt-3 [&>h3]:mb-1 [&>p]:mb-2 [&>ul]:list-disc [&>ul]:pl-4 [&>ul]:space-y-1 [&>ol]:list-decimal [&>ol]:pl-4 [&>ol]:space-y-1 [&>hr]:my-3 [&>hr]:border-slate-200">
+              <ReactMarkdown>{analysis}</ReactMarkdown>
             </div>
           </div>
 

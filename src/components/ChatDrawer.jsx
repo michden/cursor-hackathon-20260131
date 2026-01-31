@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { useChat } from '../context/ChatContext'
 
 function ApiKeyInput() {
@@ -62,7 +63,13 @@ function ChatMessage({ message }) {
           }
         `}
       >
-        <p className="whitespace-pre-wrap">{message.content}</p>
+        {isUser ? (
+          <p className="whitespace-pre-wrap">{message.content}</p>
+        ) : (
+          <div className="text-slate-800 [&>p]:mb-1.5 [&>p:last-child]:mb-0 [&>ul]:list-disc [&>ul]:pl-4 [&>ul]:my-1 [&>ol]:list-decimal [&>ol]:pl-4 [&>ol]:my-1 [&>h3]:font-semibold [&>h3]:mt-2 [&>h3]:mb-1">
+            <ReactMarkdown>{message.content}</ReactMarkdown>
+          </div>
+        )}
       </div>
     </div>
   )
