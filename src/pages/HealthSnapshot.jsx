@@ -152,10 +152,44 @@ function stripMarkdown(text) {
     .replace(/\*\*([^*]+)\*\*/g, '$1') // Remove **bold**
     .replace(/\*([^*]+)\*/g, '$1')     // Remove *italic*
     .replace(/^#+\s*/gm, '')           // Remove # headers
-    .replace(/^[-*]\s+/gm, '• ')       // Convert list markers to bullets
+    .replace(/^[-*]\s+/gm, '')         // Remove list markers
     .replace(/\n{2,}/g, ' ')           // Collapse multiple newlines
     .replace(/\n/g, ' ')               // Replace single newlines with space
     .trim()
+}
+
+// Extract summary or recommendations from AI analysis, skipping disclaimers
+function extractSummary(analysis) {
+  if (!analysis) return null
+  
+  // Try to find Summary or Recommendations section
+  const summaryMatch = analysis.match(/(?:Summary|Recommendations?)[:\s]*\n?([\s\S]{30,200}?)(?=\n\n|\n\d\.|\n[-*]|$)/i)
+  if (summaryMatch) {
+    return stripMarkdown(summaryMatch[1]).substring(0, 150)
+  }
+  
+  // Try to find "Looks healthy" or similar recommendation phrases
+  const healthMatch = analysis.match(/(Looks healthy[^.]*\.|Continue regular[^.]*\.|No visible[^.]*\.|Consider scheduling[^.]*\.|Recommend seeing[^.]*\.)/i)
+  if (healthMatch) {
+    return stripMarkdown(healthMatch[1])
+  }
+  
+  // Fallback: skip disclaimers and get first meaningful sentence
+  const lines = analysis.split('\n').filter(line => {
+    const lower = line.toLowerCase()
+    return line.trim() && 
+           !lower.includes('disclaimer') && 
+           !lower.includes('not a medical diagnosis') &&
+           !lower.includes('educational') &&
+           !lower.includes('screening purposes') &&
+           !lower.includes('consult an eye care')
+  })
+  
+  if (lines.length > 0) {
+    return stripMarkdown(lines[0]).substring(0, 150)
+  }
+  
+  return null
 }
 
 function EyePhotoResult({ data }) {
@@ -167,9 +201,7 @@ function EyePhotoResult({ data }) {
     )
   }
 
-  // Strip markdown and get preview text
-  const cleanText = stripMarkdown(data.analysis)
-  const displayText = cleanText.substring(0, 200)
+  const summary = extractSummary(data.analysis)
 
   return (
     <div className="space-y-3">
@@ -182,10 +214,24 @@ function EyePhotoResult({ data }) {
           />
         </div>
       )}
-      <div className="text-sm text-slate-600 line-clamp-4">
-        {displayText}...
+      
+      {/* Status indicator */}
+      <div className="flex items-center gap-2">
+        <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+        <span className="text-sm font-medium text-emerald-600">Analysis Complete</span>
       </div>
-      <p className="text-xs text-violet-600">AI analysis complete</p>
+      
+      {/* Summary text */}
+      {summary && (
+        <p className="text-sm text-slate-600">
+          {summary}{summary.length >= 150 ? '...' : ''}
+        </p>
+      )}
+      
+      {/* View details hint */}
+      <p className="text-xs text-violet-600">
+        Tap to view full observations and recommendations
+      </p>
     </div>
   )
 }
