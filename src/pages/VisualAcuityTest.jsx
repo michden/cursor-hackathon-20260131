@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTestResults } from '../context/TestResultsContext'
 
@@ -104,6 +104,11 @@ export default function VisualAcuityTest() {
     setCurrentDirection(newDir)
   }, [])
 
+  // Use a ref to track feedback synchronously for keyboard handler
+  // This prevents race conditions where rapid keypresses bypass the feedback check
+  // before React re-renders and re-runs the effect with the new feedback value
+  const feedbackRef = useRef(feedback)
+
   const handleAnswer = useCallback((answer) => {
     const isCorrect = answer === currentDirection
     
@@ -115,9 +120,14 @@ export default function VisualAcuityTest() {
       correct: isCorrect
     }])
 
-    // Show feedback briefly
-    setFeedback(isCorrect ? 'correct' : 'incorrect')
-    setTimeout(() => setFeedback(null), 300)
+    // Show feedback briefly - update ref synchronously to block rapid keypresses
+    const newFeedback = isCorrect ? 'correct' : 'incorrect'
+    feedbackRef.current = newFeedback
+    setFeedback(newFeedback)
+    setTimeout(() => {
+      feedbackRef.current = null
+      setFeedback(null)
+    }, 300)
 
     const newCorrectInLevel = isCorrect ? correctInLevel + 1 : correctInLevel
     const newTrialInLevel = trialInLevel + 1
@@ -151,10 +161,18 @@ export default function VisualAcuityTest() {
     }
   }, [currentDirection, currentLevel, trialInLevel, correctInLevel, bestLevel, generateNewDirection])
 
+  // Keep handleAnswer in a ref to avoid re-attaching event listener on every state change
+  const handleAnswerRef = useRef(handleAnswer)
+  useEffect(() => {
+    handleAnswerRef.current = handleAnswer
+  })
+
   // Keyboard arrow key support
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (phase !== 'testing' || feedback !== null) return
+      // Use ref to get current feedback value synchronously
+      // This avoids the closure capturing a stale feedback value
+      if (phase !== 'testing' || feedbackRef.current !== null) return
 
       const keyToDirection = {
         'ArrowUp': 'up',
@@ -166,13 +184,13 @@ export default function VisualAcuityTest() {
       const direction = keyToDirection[event.key]
       if (direction) {
         event.preventDefault()
-        handleAnswer(direction)
+        handleAnswerRef.current(direction)
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [phase, feedback, handleAnswer])
+  }, [phase])
 
   const finishTest = (finalLevel) => {
     const acuityData = finalLevel > 0 
