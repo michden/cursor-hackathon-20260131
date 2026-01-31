@@ -15,7 +15,7 @@ test.describe('Language Switching', () => {
     await page.goto('/')
     
     // Should see the language selector button with flag
-    const langButton = page.locator('button').filter({ hasText: /🇬🇧|🇩🇪/ }).first()
+    const langButton = page.locator('button').filter({ hasText: /🇺🇸|🇩🇪/ }).first()
     await expect(langButton).toBeVisible()
   })
 
@@ -23,7 +23,7 @@ test.describe('Language Switching', () => {
     await page.goto('/')
     
     // Click the language selector
-    const langButton = page.locator('button').filter({ hasText: /🇬🇧|🇩🇪/ }).first()
+    const langButton = page.locator('button').filter({ hasText: /🇺🇸|🇩🇪/ }).first()
     await langButton.click()
     
     // Should show English and Deutsch options
@@ -35,7 +35,7 @@ test.describe('Language Switching', () => {
     await page.goto('/')
     
     // Click the language selector
-    const langButton = page.locator('button').filter({ hasText: /🇬🇧|🇩🇪/ }).first()
+    const langButton = page.locator('button').filter({ hasText: /🇺🇸|🇩🇪/ }).first()
     await langButton.click()
     
     // Click Deutsch
@@ -49,7 +49,7 @@ test.describe('Language Switching', () => {
     await page.goto('/')
     
     // Switch to German
-    const langButton = page.locator('button').filter({ hasText: /🇬🇧|🇩🇪/ }).first()
+    const langButton = page.locator('button').filter({ hasText: /🇺🇸|🇩🇪/ }).first()
     await langButton.click()
     await page.getByText('Deutsch').click()
     
@@ -64,7 +64,7 @@ test.describe('Language Switching', () => {
     await page.goto('/')
     
     // Switch to German
-    const langButton = page.locator('button').filter({ hasText: /🇬🇧|🇩🇪/ }).first()
+    const langButton = page.locator('button').filter({ hasText: /🇺🇸|🇩🇪/ }).first()
     await langButton.click()
     await page.getByText('Deutsch').click()
     
@@ -82,7 +82,7 @@ test.describe('Language Switching', () => {
     await page.goto('/')
     
     // Switch to German first
-    let langButton = page.locator('button').filter({ hasText: /🇬🇧|🇩🇪/ }).first()
+    let langButton = page.locator('button').filter({ hasText: /🇺🇸|🇩🇪/ }).first()
     await langButton.click()
     await page.getByText('Deutsch').click()
     
@@ -90,7 +90,7 @@ test.describe('Language Switching', () => {
     await expect(page.getByText('Mobile Augengesundheits-Vorsorge')).toBeVisible()
     
     // Switch back to English
-    langButton = page.locator('button').filter({ hasText: /🇬🇧|🇩🇪/ }).first()
+    langButton = page.locator('button').filter({ hasText: /🇺🇸|🇩🇪/ }).first()
     await langButton.click()
     await page.getByText('English').click()
     
@@ -102,7 +102,7 @@ test.describe('Language Switching', () => {
     await page.goto('/')
     
     // Switch to German
-    const langButton = page.locator('button').filter({ hasText: /🇬🇧|🇩🇪/ }).first()
+    const langButton = page.locator('button').filter({ hasText: /🇺🇸|🇩🇪/ }).first()
     await langButton.click()
     await page.getByText('Deutsch').click()
     
@@ -114,7 +114,7 @@ test.describe('Language Switching', () => {
     await page.goto('/')
     
     // Switch to German
-    const langButton = page.locator('button').filter({ hasText: /🇬🇧|🇩🇪/ }).first()
+    const langButton = page.locator('button').filter({ hasText: /🇺🇸|🇩🇪/ }).first()
     await langButton.click()
     await page.getByText('Deutsch').click()
     

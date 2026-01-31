@@ -31,7 +31,7 @@ describe('LanguageSelector', () => {
 
     // Should show the English flag by default
     const button = screen.getByRole('button')
-    expect(button).toHaveTextContent('🇬🇧')
+    expect(button).toHaveTextContent('🇺🇸')
   })
 
   it('should open dropdown when clicked', async () => {

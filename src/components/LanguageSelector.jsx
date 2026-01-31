@@ -3,7 +3,7 @@ import { useLanguage } from '../context/LanguageContext'
 import { useTranslation } from 'react-i18next'
 
 const LANGUAGES = [
-  { code: 'en', label: 'English', flag: '🇬🇧' },
+  { code: 'en', label: 'English', flag: '🇺🇸' },
   { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
 ]
 
