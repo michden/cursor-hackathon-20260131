@@ -5,7 +5,7 @@ test.describe('Visual Acuity Test', () => {
     await page.goto('/')
     
     // Check header
-    await expect(page.locator('h1')).toContainText('EyeCheck')
+    await expect(page.locator('h1')).toContainText('VisionCheck AI')
     
     // Check all test options are visible
     await expect(page.getByText('Visual Acuity Test')).toBeVisible()

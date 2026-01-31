@@ -1,7 +1,7 @@
 {
-  "name": "EyeCheck - Eye Health Assessment",
-  "short_name": "EyeCheck",
-  "description": "Free eye health screening app. Test visual acuity, color vision, and get AI-powered eye photo analysis.",
+  "name": "VisionCheck AI - Mobile Eye Health Pre-Screening",
+  "short_name": "VisionCheck AI",
+  "description": "An application that performs preliminary vision and eye health assessments using the camera and AI.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8fafc",

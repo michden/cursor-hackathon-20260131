@@ -50,8 +50,8 @@ test.describe('Health Snapshot - With Results', () => {
   })
 
   test('shows overall status', async ({ page }) => {
-    await expect(page.getByText('EyeCheck')).toBeVisible()
-    await expect(page.getByText('Eye Health Snapshot')).toBeVisible()
+    await expect(page.getByText('VisionCheck AI')).toBeVisible()
+    await expect(page.getByText('Mobile Eye Health Pre-Screening')).toBeVisible()
     await expect(page.getByText('Status')).toBeVisible()
   })
 

@@ -1,6 +1,6 @@
-# EyeCheck - Eye Health Assessment PWA
+# VisionCheck AI - Mobile Eye Health Pre-Screening
 
-A smartphone-friendly web app that performs preliminary vision and eye health assessments using the phone camera and AI.
+An application that performs preliminary vision and eye health assessments using the camera and AI.
 
 ## Features
 

@@ -56,12 +56,12 @@ async function generateOgImage() {
             font-size="72" 
             font-weight="bold" 
             fill="white" 
-            text-anchor="middle">EyeCheck</text>
+            text-anchor="middle">VisionCheck AI</text>
       <text x="${width/2}" y="${height - 60}" 
             font-family="system-ui, -apple-system, sans-serif" 
             font-size="32" 
             fill="rgba(255,255,255,0.9)" 
-            text-anchor="middle">Eye Health Assessment</text>
+            text-anchor="middle">Mobile Eye Health Pre-Screening</text>
     </svg>
   `);
   
