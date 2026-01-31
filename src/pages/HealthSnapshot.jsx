@@ -15,6 +15,7 @@ function ResultCard({ title, icon, status, children, color = 'sky', t }) {
     violet: 'bg-violet-50 border-violet-200',
     amber: 'bg-amber-50 border-amber-200',
     purple: 'bg-purple-50 border-purple-200',
+    teal: 'bg-teal-50 border-teal-200',
   }
 
   const statusColors = {
@@ -423,6 +424,95 @@ function AmslerGridResult({ data, t }) {
   )
 }
 
+function AstigmatismResult({ data, t }) {
+  const hasLeft = data?.left
+  const hasRight = data?.right
+  const hasAny = hasLeft || hasRight
+
+  if (!hasAny) {
+    return (
+      <p className="text-sm text-slate-500">
+        {t('results:noResults.description')}
+      </p>
+    )
+  }
+
+  const getEyeStatus = (eyeData) => {
+    if (!eyeData) return null
+    return eyeData.allLinesEqual 
+      ? t('results:astigmatism.noAstigmatism') 
+      : t('results:astigmatism.possibleAstigmatism')
+  }
+
+  const getEyeColor = (eyeData) => {
+    if (!eyeData) return 'slate'
+    return eyeData.allLinesEqual ? 'teal' : 'amber'
+  }
+
+  const anyAstigmatism = (hasLeft && !data.left.allLinesEqual) || (hasRight && !data.right.allLinesEqual)
+
+  // Check for asymmetry between eyes
+  const hasAsymmetry = hasLeft && hasRight && 
+    data.left.allLinesEqual !== data.right.allLinesEqual
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-4">
+        {/* Left Eye */}
+        <div className="text-center p-3 bg-white rounded-lg border">
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.leftEye')}</div>
+          <div className={`text-lg font-bold text-${getEyeColor(data.left)}-600`}>
+            {hasLeft ? (data.left.allLinesEqual ? '✓' : '⚠️') : '—'}
+          </div>
+          {hasLeft && (
+            <div className="text-xs text-slate-600 mt-1">
+              {data.left.allLinesEqual 
+                ? t('results:astigmatism.allLinesEqual')
+                : t(`results:astigmatism.severity.${data.left.severity}`)}
+            </div>
+          )}
+          {hasLeft && !data.left.allLinesEqual && data.left.estimatedAxis !== null && (
+            <div className="text-xs text-slate-500 mt-0.5">
+              {t('results:astigmatism.axis', { degrees: data.left.estimatedAxis })}
+            </div>
+          )}
+        </div>
+        
+        {/* Right Eye */}
+        <div className="text-center p-3 bg-white rounded-lg border">
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.rightEye')}</div>
+          <div className={`text-lg font-bold text-${getEyeColor(data.right)}-600`}>
+            {hasRight ? (data.right.allLinesEqual ? '✓' : '⚠️') : '—'}
+          </div>
+          {hasRight && (
+            <div className="text-xs text-slate-600 mt-1">
+              {data.right.allLinesEqual 
+                ? t('results:astigmatism.allLinesEqual')
+                : t(`results:astigmatism.severity.${data.right.severity}`)}
+            </div>
+          )}
+          {hasRight && !data.right.allLinesEqual && data.right.estimatedAxis !== null && (
+            <div className="text-xs text-slate-500 mt-0.5">
+              {t('results:astigmatism.axis', { degrees: data.right.estimatedAxis })}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Asymmetry warning */}
+      {hasAsymmetry && (
+        <p className="text-sm text-orange-600">⚠️ {t('results:recommendations.followUp')}</p>
+      )}
+
+      {anyAstigmatism ? (
+        <p className="text-sm text-amber-600">⚠️ {t('results:recommendations.seeDoctor')}</p>
+      ) : (
+        <p className="text-sm text-emerald-600">✓ {t('tests:astigmatism.results.noAstigmatism')}</p>
+      )}
+    </div>
+  )
+}
+
 function HistoryChart({ history, t, i18n }) {
   if (history.length < 2) return null
 
@@ -553,12 +643,13 @@ export default function HealthSnapshot() {
     const hasVisualAcuity = results.visualAcuity?.left || results.visualAcuity?.right
     const hasContrastSensitivity = results.contrastSensitivity?.left || results.contrastSensitivity?.right
     const hasAmslerGrid = results.amslerGrid?.left || results.amslerGrid?.right
+    const hasAstigmatism = results.astigmatism?.left || results.astigmatism?.right
     
-    const tests = [hasVisualAcuity, results.colorVision, hasContrastSensitivity, hasAmslerGrid, results.eyePhoto]
+    const tests = [hasVisualAcuity, results.colorVision, hasContrastSensitivity, hasAmslerGrid, hasAstigmatism, results.eyePhoto]
     const completed = tests.filter(Boolean).length
     
     if (completed === 0) return { status: 'none', message: t('results:header.noTests') }
-    if (completed === 5) return { status: 'complete', message: t('results:header.allTests') }
+    if (completed === 6) return { status: 'complete', message: t('results:header.allTests') }
     return { status: 'partial', message: t('results:header.someTests', { count: completed }) }
   }, [results, t])
 
@@ -611,6 +702,20 @@ export default function HealthSnapshot() {
       }
       // Check asymmetry
       if (csLeft && csRight && Math.abs(csLeft.logCS - csRight.logCS) >= 0.3) {
+        recommendations.push(t('results:recommendations.followUp'))
+      }
+    }
+
+    // Astigmatism - check both eyes
+    const astigLeft = results.astigmatism?.left
+    const astigRight = results.astigmatism?.right
+    if (astigLeft || astigRight) {
+      const anyAstigmatism = (astigLeft && !astigLeft.allLinesEqual) || (astigRight && !astigRight.allLinesEqual)
+      if (anyAstigmatism) {
+        recommendations.push(t('results:recommendations.followUp'))
+      }
+      // Check asymmetry
+      if (astigLeft && astigRight && astigLeft.allLinesEqual !== astigRight.allLinesEqual) {
         recommendations.push(t('results:recommendations.followUp'))
       }
     }
@@ -957,6 +1062,23 @@ export default function HealthSnapshot() {
           </ResultCard>
 
           <ResultCard
+            title={t('results:cards.astigmatism')}
+            icon="⊕"
+            color="teal"
+            t={t}
+            status={(() => {
+              const hasAny = results.astigmatism?.left || results.astigmatism?.right
+              if (!hasAny) return 'pending'
+              const anyAstigmatism = 
+                (results.astigmatism?.left && !results.astigmatism.left.allLinesEqual) || 
+                (results.astigmatism?.right && !results.astigmatism.right.allLinesEqual)
+              return anyAstigmatism ? 'warning' : 'complete'
+            })()}
+          >
+            <AstigmatismResult data={results.astigmatism} t={t} />
+          </ResultCard>
+
+          <ResultCard
             title={t('results:cards.eyePhoto')}
             icon="📸"
             color="violet"
@@ -1013,7 +1135,11 @@ export default function HealthSnapshot() {
           const amslerRight = results.amslerGrid?.right
           const hasAmslerConcern = amslerLeft?.hasIssues || amslerRight?.hasIssues
           
-          const showFindDoctor = hasVAConcern || hasColorConcern || hasCSConcern || hasAmslerConcern
+          const astigLeft = results.astigmatism?.left
+          const astigRight = results.astigmatism?.right
+          const hasAstigConcern = (astigLeft && !astigLeft.allLinesEqual) || (astigRight && !astigRight.allLinesEqual)
+          
+          const showFindDoctor = hasVAConcern || hasColorConcern || hasCSConcern || hasAmslerConcern || hasAstigConcern
           
           return showFindDoctor ? (
             <div className="mb-6">
