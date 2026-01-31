@@ -16,7 +16,7 @@ function CameraGuideOverlay() {
     <div className="absolute inset-0 pointer-events-none">
       {/* Eye positioning guide */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-48 h-32 border-4 border-white/70 rounded-[50%] shadow-lg" />
+        <div className="w-40 h-40 border-4 border-white/70 rounded-full shadow-lg" />
       </div>
       
       {/* Corner guides */}
@@ -28,7 +28,7 @@ function CameraGuideOverlay() {
       {/* Instructions */}
       <div className="absolute bottom-20 left-0 right-0 text-center">
         <p className="text-white text-sm font-medium drop-shadow-lg">
-          Position your eye within the oval
+          Position your eye within the circle
         </p>
       </div>
     </div>
@@ -223,7 +223,7 @@ export default function EyePhotoAnalysis() {
               </li>
               <li className="flex gap-3">
                 <span className="shrink-0 w-6 h-6 bg-violet-100 text-violet-600 rounded-full flex items-center justify-center text-sm font-medium">4</span>
-                <span>Center your eye in the guide oval</span>
+                <span>Center your eye in the guide circle</span>
               </li>
             </ol>
           </div>
@@ -289,7 +289,14 @@ export default function EyePhotoAnalysis() {
           {!capturedImage ? (
             <>
               <video
-                ref={videoRef}
+                ref={(el) => {
+                  videoRef.current = el;
+                  // Assign stream when video element mounts if stream exists but srcObject is not set
+                  if (el && streamRef.current && !el.srcObject) {
+                    el.srcObject = streamRef.current;
+                    el.play().catch(console.error);
+                  }
+                }}
                 autoPlay
                 playsInline
                 muted
