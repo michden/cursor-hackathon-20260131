@@ -273,7 +273,11 @@ export default function ContrastSensitivityTest() {
                     <div 
                       className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white border-2 border-slate-700 rounded-full shadow"
                       style={{ 
-                        left: `${(result.logCS / 1.35) * 100}%`,
+                        // Piecewise linear interpolation to match label positions:
+                        // - 0.0 at 0%, 0.75 at 50%, 1.35 at 100%
+                        left: `${result.logCS <= 0.75 
+                          ? (result.logCS / 0.75) * 50 
+                          : 50 + ((result.logCS - 0.75) / 0.60) * 50}%`,
                         transform: 'translate(-50%, -50%)'
                       }}
                     />
