@@ -117,7 +117,7 @@ export function TestResultsProvider({ children }) {
 
   // Save current session to history
   const saveToHistory = () => {
-    if (!results.visualAcuity && !results.colorVision) return
+    if (!results.visualAcuity && !results.colorVision && !results.contrastSensitivity) return
 
     const session = {
       id: Date.now(),
@@ -130,6 +130,11 @@ export function TestResultsProvider({ children }) {
         correctCount: results.colorVision.correctCount,
         totalPlates: results.colorVision.totalPlates,
         status: results.colorVision.status
+      } : null,
+      contrastSensitivity: results.contrastSensitivity ? {
+        logCS: results.contrastSensitivity.logCS,
+        level: results.contrastSensitivity.level,
+        maxLevel: results.contrastSensitivity.maxLevel
       } : null
     }
 

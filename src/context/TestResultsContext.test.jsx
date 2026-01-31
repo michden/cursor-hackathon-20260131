@@ -1,6 +1,11 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, act } from '@testing-library/react'
 import { TestResultsProvider, useTestResults } from './TestResultsContext'
+
+// Clear localStorage before each test to prevent state bleeding
+beforeEach(() => {
+  localStorage.clear()
+})
 
 // Test component that exposes context values
 function TestConsumer({ onMount }) {
@@ -11,7 +16,9 @@ function TestConsumer({ onMount }) {
       <span data-testid="has-results">{context.hasAnyResults() ? 'yes' : 'no'}</span>
       <span data-testid="visual-acuity">{context.results.visualAcuity?.snellen || 'none'}</span>
       <span data-testid="color-vision">{context.results.colorVision?.score || 'none'}</span>
+      <span data-testid="contrast-sensitivity">{context.results.contrastSensitivity?.logCS?.toString() || 'none'}</span>
       <span data-testid="eye-photo">{context.results.eyePhoto?.status || 'none'}</span>
+      <span data-testid="history-count">{context.history.length}</span>
     </div>
   )
 }
@@ -115,5 +122,91 @@ describe('TestResultsContext', () => {
     }).toThrow('useTestResults must be used within a TestResultsProvider')
 
     consoleSpy.mockRestore()
+  })
+
+  it('updates contrast sensitivity results', () => {
+    let contextRef
+    
+    render(
+      <TestResultsProvider>
+        <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
+      </TestResultsProvider>
+    )
+
+    act(() => {
+      contextRef.updateContrastSensitivity({ logCS: 1.5, level: 8, maxLevel: 10 })
+    })
+
+    expect(screen.getByTestId('has-results')).toHaveTextContent('yes')
+    expect(screen.getByTestId('contrast-sensitivity')).toHaveTextContent('1.5')
+  })
+
+  it('saves contrast sensitivity only session to history', () => {
+    let contextRef
+    
+    render(
+      <TestResultsProvider>
+        <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
+      </TestResultsProvider>
+    )
+
+    // Only set contrast sensitivity (no visual acuity or color vision)
+    act(() => {
+      contextRef.updateContrastSensitivity({ logCS: 1.2, level: 7, maxLevel: 10 })
+    })
+
+    act(() => {
+      contextRef.saveToHistory()
+    })
+
+    expect(screen.getByTestId('history-count')).toHaveTextContent('1')
+    expect(contextRef.history[0].contrastSensitivity).toEqual({
+      logCS: 1.2,
+      level: 7,
+      maxLevel: 10
+    })
+  })
+
+  it('includes contrast sensitivity data in history session', () => {
+    let contextRef
+    
+    render(
+      <TestResultsProvider>
+        <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
+      </TestResultsProvider>
+    )
+
+    act(() => {
+      contextRef.updateVisualAcuity({ snellen: '20/20', level: 8 })
+      contextRef.updateContrastSensitivity({ logCS: 1.5, level: 9, maxLevel: 10 })
+    })
+
+    act(() => {
+      contextRef.saveToHistory()
+    })
+
+    expect(screen.getByTestId('history-count')).toHaveTextContent('1')
+    expect(contextRef.history[0].visualAcuity).toBeDefined()
+    expect(contextRef.history[0].contrastSensitivity).toEqual({
+      logCS: 1.5,
+      level: 9,
+      maxLevel: 10
+    })
+  })
+
+  it('does not save to history when no results exist', () => {
+    let contextRef
+    
+    render(
+      <TestResultsProvider>
+        <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
+      </TestResultsProvider>
+    )
+
+    act(() => {
+      contextRef.saveToHistory()
+    })
+
+    expect(screen.getByTestId('history-count')).toHaveTextContent('0')
   })
 })
