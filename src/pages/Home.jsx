@@ -1,15 +1,20 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import SkipLink from '../components/SkipLink'
 import AudioInstructions from '../components/AudioInstructions'
 import ThemeToggle from '../components/ThemeToggle'
+import LanguageSelector from '../components/LanguageSelector'
 import { useTestResults } from '../context/TestResultsContext'
+import { useLanguage } from '../context/LanguageContext'
 
 export default function Home() {
+  const { t } = useTranslation(['common', 'home'])
+  const { language } = useLanguage()
   const { results } = useTestResults()
 
   const formatLastTested = (isoDate) => {
     const date = new Date(isoDate)
-    return date.toLocaleDateString(undefined, {
+    return date.toLocaleDateString(language === 'de' ? 'de-DE' : 'en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -22,19 +27,20 @@ export default function Home() {
     <div className="min-h-screen bg-linear-to-b from-sky-50 to-white dark:from-slate-900 dark:to-slate-800">
       <SkipLink targetId="test-options" />
       
-      {/* Theme Toggle - Top Right */}
-      <div className="absolute top-4 right-4">
+      {/* Settings - Top Right */}
+      <div className="absolute top-4 right-4 flex items-center gap-1">
+        <LanguageSelector />
         <ThemeToggle />
       </div>
       
       {/* Header */}
       <header className="pt-12 pb-8 px-6 text-center">
         <div className="text-6xl mb-4">👁️</div>
-        <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-2">VisionCheck AI</h1>
-        <p className="text-slate-600 dark:text-slate-400">Mobile Eye Health Pre-Screening</p>
+        <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-2">{t('app.title')}</h1>
+        <p className="text-slate-600 dark:text-slate-400">{t('app.subtitle')}</p>
         {results.completedAt && (
           <p className="text-sm text-slate-500 dark:text-slate-500 mt-2">
-            Last tested: {formatLastTested(results.completedAt)}
+            {t('home:lastTested', { date: formatLastTested(results.completedAt) })}
           </p>
         )}
       </header>
@@ -42,8 +48,8 @@ export default function Home() {
       {/* Audio Instructions */}
       <div className="mx-6 mb-4">
         <AudioInstructions 
-          audioSrc="/audio/home-welcome.mp3" 
-          label="Welcome & Overview" 
+          audioKey="home-welcome" 
+          label={t('audio.welcomeOverview')} 
         />
       </div>
 
@@ -52,12 +58,9 @@ export default function Home() {
         <div className="flex gap-3">
           <span className="text-amber-600 dark:text-amber-400 text-xl">⚠️</span>
           <div>
-            <p className="text-sm text-amber-800 dark:text-amber-200 font-medium mb-1">Medical Disclaimer</p>
+            <p className="text-sm text-amber-800 dark:text-amber-200 font-medium mb-1">{t('disclaimer.title')}</p>
             <p className="text-sm text-amber-700 dark:text-amber-300">
-              This app is for <strong>educational screening purposes only</strong> and is 
-              <strong> NOT a medical diagnosis</strong>. Results are approximate and should not 
-              replace professional eye care. Always consult a qualified eye care professional 
-              for accurate assessment and treatment.
+              {t('disclaimer.text')}
             </p>
           </div>
         </div>
@@ -68,15 +71,15 @@ export default function Home() {
         <Link
           to="/visual-acuity"
           className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-          aria-label="Visual Acuity Test - Test how clearly you can see at distance"
+          aria-label={`${t('home:tests.visualAcuity.title')} - ${t('home:tests.visualAcuity.description')}`}
         >
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-sky-100 dark:bg-sky-900/50 rounded-xl flex items-center justify-center text-2xl">
               📖
             </div>
             <div className="flex-1">
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Visual Acuity Test</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">Test how clearly you can see at distance</p>
+              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.visualAcuity.title')}</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.visualAcuity.description')}</p>
             </div>
             <div className="text-slate-400 dark:text-slate-500">→</div>
           </div>
@@ -85,15 +88,15 @@ export default function Home() {
         <Link
           to="/color-vision"
           className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-          aria-label="Color Vision Test - Check for color vision deficiencies"
+          aria-label={`${t('home:tests.colorVision.title')} - ${t('home:tests.colorVision.description')}`}
         >
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-emerald-100 dark:bg-emerald-900/50 rounded-xl flex items-center justify-center text-2xl">
               🎨
             </div>
             <div className="flex-1">
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Color Vision Test</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">Check for color vision deficiencies</p>
+              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.colorVision.title')}</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.colorVision.description')}</p>
             </div>
             <div className="text-slate-400 dark:text-slate-500">→</div>
           </div>
@@ -102,15 +105,15 @@ export default function Home() {
         <Link
           to="/contrast-sensitivity"
           className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-          aria-label="Contrast Sensitivity Test - Pelli-Robson letter test"
+          aria-label={`${t('home:tests.contrastSensitivity.title')} - ${t('home:tests.contrastSensitivity.description')}`}
         >
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-amber-100 dark:bg-amber-900/50 rounded-xl flex items-center justify-center text-2xl">
               🔆
             </div>
             <div className="flex-1">
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Contrast Sensitivity</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">Pelli-Robson letter test</p>
+              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.contrastSensitivity.title')}</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.contrastSensitivity.description')}</p>
             </div>
             <div className="text-slate-400 dark:text-slate-500">→</div>
           </div>
@@ -119,15 +122,15 @@ export default function Home() {
         <Link
           to="/amsler-grid"
           className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-          aria-label="Amsler Grid Test - Macular degeneration screening"
+          aria-label={`${t('home:tests.amslerGrid.title')} - ${t('home:tests.amslerGrid.description')}`}
         >
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-purple-100 dark:bg-purple-900/50 rounded-xl flex items-center justify-center text-2xl">
               #
             </div>
             <div className="flex-1">
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Amsler Grid</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">Macular degeneration screening</p>
+              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.amslerGrid.title')}</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.amslerGrid.description')}</p>
             </div>
             <div className="text-slate-400 dark:text-slate-500">→</div>
           </div>
@@ -136,15 +139,15 @@ export default function Home() {
         <Link
           to="/eye-photo"
           className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-          aria-label="Eye Photo Analysis - AI analysis of your eye photo"
+          aria-label={`${t('home:tests.eyePhoto.title')} - ${t('home:tests.eyePhoto.description')}`}
         >
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-violet-100 dark:bg-violet-900/50 rounded-xl flex items-center justify-center text-2xl">
               📸
             </div>
             <div className="flex-1">
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Eye Photo Analysis</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">AI analysis of your eye photo</p>
+              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.eyePhoto.title')}</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.eyePhoto.description')}</p>
             </div>
             <div className="text-slate-400 dark:text-slate-500">→</div>
           </div>
@@ -153,15 +156,15 @@ export default function Home() {
         <Link
           to="/results"
           className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-          aria-label="View Results - See your eye health snapshot"
+          aria-label={`${t('home:tests.viewResults.title')} - ${t('home:tests.viewResults.description')}`}
         >
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-rose-100 dark:bg-rose-900/50 rounded-xl flex items-center justify-center text-2xl">
               📋
             </div>
             <div className="flex-1">
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">View Results</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">See your eye health snapshot</p>
+              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.viewResults.title')}</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.viewResults.description')}</p>
             </div>
             <div className="text-slate-400 dark:text-slate-500">→</div>
           </div>
@@ -172,10 +175,10 @@ export default function Home() {
       <footer className="mt-12 pb-8 px-6 text-center">
         <div className="max-w-md mx-auto">
           <p className="text-sm text-slate-400 dark:text-slate-500 mb-2">
-            Built for educational purposes only
+            {t('home:footer.builtFor')}
           </p>
           <p className="text-xs text-slate-300 dark:text-slate-600">
-            VisionCheck AI v1.0 | Not intended for medical diagnosis
+            {t('home:footer.version')}
           </p>
         </div>
       </footer>

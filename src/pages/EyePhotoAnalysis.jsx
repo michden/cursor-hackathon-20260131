@@ -209,7 +209,7 @@ export default function EyePhotoAnalysis() {
           </div>
 
           <AudioInstructions 
-            audioSrc="/audio/eye-photo-instructions.mp3" 
+            audioKey="eye-photo-instructions" 
             label="Instructions" 
           />
 

@@ -1,0 +1,78 @@
+{
+  "app": {
+    "title": "VisionCheck AI",
+    "subtitle": "Mobile Augengesundheits-Vorsorge"
+  },
+  "nav": {
+    "back": "Zurück",
+    "backToHome": "Zurück zur Startseite",
+    "backToEyeSelection": "Zurück zur Augenauswahl",
+    "home": "Startseite",
+    "results": "Ergebnisse",
+    "skip": "Überspringen"
+  },
+  "actions": {
+    "start": "Test starten",
+    "startTest": "Test starten",
+    "continue": "Weiter",
+    "next": "Weiter",
+    "finish": "Beenden",
+    "submit": "Absenden",
+    "retry": "Erneut versuchen",
+    "retake": "Wiederholen",
+    "getStarted": "Los geht's",
+    "viewResults": "Ergebnisse anzeigen",
+    "viewAllResults": "Alle Ergebnisse anzeigen",
+    "save": "Speichern",
+    "clear": "Löschen",
+    "close": "Schließen",
+    "cancel": "Abbrechen"
+  },
+  "eye": {
+    "left": "Linkes Auge",
+    "right": "Rechtes Auge",
+    "leftShort": "L",
+    "rightShort": "R",
+    "selectPrompt": "Welches Auge möchten Sie testen?",
+    "coverTip": "Bedecken Sie Ihr anderes Auge mit der Hand oder einer Augenklappe für genaue Ergebnisse.",
+    "testing": "Test Ihres {{eye}} Auges"
+  },
+  "status": {
+    "complete": "Abgeschlossen",
+    "notDone": "Nicht durchgeführt",
+    "review": "Überprüfung",
+    "loading": "Wird geladen...",
+    "analyzing": "Wird analysiert...",
+    "new": "NEU"
+  },
+  "disclaimer": {
+    "title": "Medizinischer Hinweis",
+    "text": "Diese App dient nur zu Bildungszwecken und ist KEINE medizinische Diagnose. Die Ergebnisse sind ungefähr und sollten eine professionelle Augenuntersuchung nicht ersetzen. Konsultieren Sie immer einen qualifizierten Augenarzt für eine genaue Beurteilung und Behandlung.",
+    "short": "Diese App dient nur zur Vorsorge – keine medizinische Diagnose. Konsultieren Sie immer einen Augenarzt."
+  },
+  "audio": {
+    "listen": "Anhören",
+    "playing": "Wird abgespielt",
+    "testInstructions": "Testanleitung",
+    "welcomeOverview": "Willkommen & Übersicht",
+    "autoPlay": "Audio automatisch abspielen",
+    "autoPlayDescription": "Wenn aktiviert, werden Audioanweisungen automatisch abgespielt, wenn Sie einen neuen Bildschirm betreten."
+  },
+  "theme": {
+    "light": "Hell",
+    "dark": "Dunkel",
+    "system": "System",
+    "toggle": "Design wechseln"
+  },
+  "language": {
+    "select": "Sprache auswählen",
+    "en": "English",
+    "de": "Deutsch"
+  },
+  "errors": {
+    "generic": "Etwas ist schief gelaufen",
+    "tryAgain": "Bitte versuchen Sie es erneut",
+    "cameraAccess": "Kamera konnte nicht zugegriffen werden",
+    "locationAccess": "Standort konnte nicht ermittelt werden"
+  }
+}

@@ -1,58 +1,53 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import AudioInstructions from './AudioInstructions'
 
 const ONBOARDING_STEPS = [
   {
     id: 'welcome',
-    title: 'Welcome to VisionCheck AI',
-    description: 'A quick way to screen your eye health from your phone.',
+    translationKey: 'welcome',
     icon: '👁️',
     color: 'sky',
-    audioSrc: '/audio/onboarding-step-1.mp3'
+    audioKey: 'onboarding-step-1'
   },
   {
     id: 'visual-acuity',
-    title: 'Visual Acuity Test',
-    description: 'Test how clearly you can see at different sizes using the Tumbling E chart.',
+    translationKey: 'visualAcuity',
     icon: '📖',
     color: 'sky',
     animation: 'tumbling-e',
-    audioSrc: '/audio/onboarding-step-2.mp3'
+    audioKey: 'onboarding-step-2'
   },
   {
     id: 'color-vision',
-    title: 'Color Vision Test',
-    description: 'Screen for color blindness using Ishihara-style plates.',
+    translationKey: 'colorVision',
     icon: '🎨',
     color: 'emerald',
     animation: 'color-dots',
-    audioSrc: '/audio/onboarding-step-3.mp3'
+    audioKey: 'onboarding-step-3'
   },
   {
     id: 'contrast-sensitivity',
-    title: 'Contrast Sensitivity',
-    description: 'Test your ability to distinguish faint letters from their background.',
+    translationKey: 'contrastSensitivity',
     icon: '🔆',
     color: 'amber',
     animation: 'contrast-letters',
-    audioSrc: '/audio/onboarding-step-4.mp3'
+    audioKey: 'onboarding-step-4'
   },
   {
     id: 'amsler-grid',
-    title: 'Amsler Grid Test',
-    description: 'Screen for macular degeneration by checking for visual distortions.',
+    translationKey: 'amslerGrid',
     icon: '#',
     color: 'purple',
     animation: 'amsler-grid',
-    audioSrc: '/audio/onboarding-step-5.mp3'
+    audioKey: 'onboarding-step-5'
   },
   {
     id: 'disclaimer',
-    title: 'Important Note',
-    description: 'This app is for screening only—not a medical diagnosis. Always consult an eye care professional.',
+    translationKey: 'disclaimer',
     icon: '⚠️',
     color: 'amber',
-    audioSrc: '/audio/onboarding-step-6.mp3'
+    audioKey: 'onboarding-step-6'
   }
 ]
 
@@ -125,11 +120,16 @@ function AmslerGridAnimation() {
 }
 
 export default function Onboarding({ onComplete }) {
+  const { t } = useTranslation(['common', 'tests'])
   const [currentStep, setCurrentStep] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
 
   const step = ONBOARDING_STEPS[currentStep]
   const isLast = currentStep === ONBOARDING_STEPS.length - 1
+  
+  // Get translated title and description
+  const stepTitle = t(`tests:onboarding.steps.${step.translationKey}.title`)
+  const stepDescription = t(`tests:onboarding.steps.${step.translationKey}.description`)
 
   const handleNext = () => {
     if (isLast) {
@@ -185,7 +185,7 @@ export default function Onboarding({ onComplete }) {
           onClick={handleSkip} 
           className="text-white/70 text-sm hover:text-white transition-colors"
         >
-          Skip
+          {t('nav.skip')}
         </button>
       </div>
 
@@ -199,15 +199,15 @@ export default function Onboarding({ onComplete }) {
         {/* Demo animation for specific steps */}
         {renderAnimation()}
 
-        <h1 className="text-3xl font-bold mb-4">{step.title}</h1>
-        <p className="text-lg text-white/90 max-w-xs mb-6">{step.description}</p>
+        <h1 className="text-3xl font-bold mb-4">{stepTitle}</h1>
+        <p className="text-lg text-white/90 max-w-xs mb-6">{stepDescription}</p>
         
         {/* Audio Instructions - key forces remount on step change */}
         <div className="w-full max-w-xs">
           <AudioInstructions 
             key={step.id}
-            audioSrc={step.audioSrc} 
-            label={step.title} 
+            audioKey={step.audioKey}
+            label={stepTitle} 
           />
         </div>
       </div>
@@ -231,7 +231,7 @@ export default function Onboarding({ onComplete }) {
           onClick={handleNext}
           className="w-full py-4 bg-white text-slate-800 font-semibold rounded-xl hover:bg-white/90 transition-colors"
         >
-          {isLast ? 'Get Started' : 'Next'}
+          {isLast ? t('actions.getStarted') : t('actions.next')}
         </button>
       </div>
     </div>

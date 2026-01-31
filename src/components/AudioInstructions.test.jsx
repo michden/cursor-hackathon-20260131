@@ -1,8 +1,11 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { I18nextProvider } from 'react-i18next'
 import AudioInstructions from './AudioInstructions'
 import { TTSSettingsProvider } from '../context/TTSSettingsContext'
+import { LanguageProvider } from '../context/LanguageContext'
+import i18n from '../i18n'
 
 // Mock HTMLMediaElement methods
 beforeEach(() => {
@@ -12,6 +15,7 @@ beforeEach(() => {
   window.HTMLMediaElement.prototype.load = vi.fn()
   
   localStorage.clear()
+  i18n.changeLanguage('en')
 })
 
 afterEach(() => {
@@ -20,9 +24,13 @@ afterEach(() => {
 
 function renderWithProvider(ui) {
   return render(
-    <TTSSettingsProvider>
-      {ui}
-    </TTSSettingsProvider>
+    <I18nextProvider i18n={i18n}>
+      <LanguageProvider>
+        <TTSSettingsProvider>
+          {ui}
+        </TTSSettingsProvider>
+      </LanguageProvider>
+    </I18nextProvider>
   )
 }
 
@@ -127,12 +135,13 @@ describe('AudioInstructions', () => {
     expect(toggle).toHaveAttribute('aria-checked', 'false')
   })
 
-  it('should render audio element with correct src', () => {
+  it('should render audio element with correct language-prefixed src', () => {
     renderWithProvider(
       <AudioInstructions audioSrc="/audio/custom-audio.mp3" label="Test" />
     )
 
     const audioElement = document.querySelector('audio')
-    expect(audioElement).toHaveAttribute('src', '/audio/custom-audio.mp3')
+    // Should have language prefix (en) in the path
+    expect(audioElement).toHaveAttribute('src', '/audio/en/custom-audio.mp3')
   })
 })

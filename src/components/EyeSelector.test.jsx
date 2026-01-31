@@ -1,7 +1,10 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { I18nextProvider } from 'react-i18next'
 import EyeSelector from './EyeSelector'
+import { LanguageProvider } from '../context/LanguageContext'
+import i18n from '../i18n'
 
 // Mock useNavigate
 const mockNavigate = vi.fn()
@@ -13,22 +16,28 @@ vi.mock('react-router-dom', async () => {
   }
 })
 
-function renderWithRouter(ui) {
+function renderWithProviders(ui) {
   return render(
-    <MemoryRouter>
-      {ui}
-    </MemoryRouter>
+    <I18nextProvider i18n={i18n}>
+      <LanguageProvider>
+        <MemoryRouter>
+          {ui}
+        </MemoryRouter>
+      </LanguageProvider>
+    </I18nextProvider>
   )
 }
 
 describe('EyeSelector', () => {
   beforeEach(() => {
     mockNavigate.mockClear()
+    localStorage.clear()
+    i18n.changeLanguage('en')
   })
 
   it('renders left and right eye buttons', () => {
     const onSelect = vi.fn()
-    renderWithRouter(<EyeSelector onSelect={onSelect} />)
+    renderWithProviders(<EyeSelector onSelect={onSelect} />)
     
     expect(screen.getByText('Left Eye')).toBeInTheDocument()
     expect(screen.getByText('Right Eye')).toBeInTheDocument()
@@ -36,7 +45,7 @@ describe('EyeSelector', () => {
 
   it('calls onSelect with "left" when left eye button is clicked', () => {
     const onSelect = vi.fn()
-    renderWithRouter(<EyeSelector onSelect={onSelect} />)
+    renderWithProviders(<EyeSelector onSelect={onSelect} />)
     
     fireEvent.click(screen.getByText('Left Eye'))
     
@@ -45,7 +54,7 @@ describe('EyeSelector', () => {
 
   it('calls onSelect with "right" when right eye button is clicked', () => {
     const onSelect = vi.fn()
-    renderWithRouter(<EyeSelector onSelect={onSelect} />)
+    renderWithProviders(<EyeSelector onSelect={onSelect} />)
     
     fireEvent.click(screen.getByText('Right Eye'))
     
@@ -59,9 +68,10 @@ describe('EyeSelector', () => {
       right: null
     }
     
-    renderWithRouter(<EyeSelector onSelect={onSelect} completedEyes={completedEyes} />)
+    renderWithProviders(<EyeSelector onSelect={onSelect} completedEyes={completedEyes} />)
     
-    expect(screen.getByText('✓ Complete')).toBeInTheDocument()
+    // Look for the checkmark and status
+    expect(screen.getByText(/Complete/)).toBeInTheDocument()
   })
 
   it('shows completion status for both eyes when both completed', () => {
@@ -71,9 +81,9 @@ describe('EyeSelector', () => {
       right: { snellen: '20/40', level: 5 }
     }
     
-    renderWithRouter(<EyeSelector onSelect={onSelect} completedEyes={completedEyes} />)
+    renderWithProviders(<EyeSelector onSelect={onSelect} completedEyes={completedEyes} />)
     
-    const completeMarkers = screen.getAllByText('✓ Complete')
+    const completeMarkers = screen.getAllByText(/Complete/)
     expect(completeMarkers).toHaveLength(2)
   })
 
@@ -84,9 +94,9 @@ describe('EyeSelector', () => {
       right: { snellen: '20/40', level: 5 }
     }
     
-    renderWithRouter(<EyeSelector onSelect={onSelect} completedEyes={completedEyes} />)
+    renderWithProviders(<EyeSelector onSelect={onSelect} completedEyes={completedEyes} />)
     
-    expect(screen.getByText('View Results →')).toBeInTheDocument()
+    expect(screen.getByText(/View Results/)).toBeInTheDocument()
   })
 
   it('does not show View Results button when only one eye is complete', () => {
@@ -96,9 +106,9 @@ describe('EyeSelector', () => {
       right: null
     }
     
-    renderWithRouter(<EyeSelector onSelect={onSelect} completedEyes={completedEyes} />)
+    renderWithProviders(<EyeSelector onSelect={onSelect} completedEyes={completedEyes} />)
     
-    expect(screen.queryByText('View Results →')).not.toBeInTheDocument()
+    expect(screen.queryByText(/View Results →/)).not.toBeInTheDocument()
   })
 
   it('navigates to results when View Results is clicked', () => {
@@ -108,23 +118,23 @@ describe('EyeSelector', () => {
       right: { snellen: '20/40', level: 5 }
     }
     
-    renderWithRouter(<EyeSelector onSelect={onSelect} completedEyes={completedEyes} />)
+    renderWithProviders(<EyeSelector onSelect={onSelect} completedEyes={completedEyes} />)
     
-    fireEvent.click(screen.getByText('View Results →'))
+    fireEvent.click(screen.getByText(/View Results/))
     
     expect(mockNavigate).toHaveBeenCalledWith('/results')
   })
 
   it('shows cover-your-eye instruction tip', () => {
     const onSelect = vi.fn()
-    renderWithRouter(<EyeSelector onSelect={onSelect} />)
+    renderWithProviders(<EyeSelector onSelect={onSelect} />)
     
     expect(screen.getByText(/Cover your other eye/)).toBeInTheDocument()
   })
 
   it('asks which eye to test', () => {
     const onSelect = vi.fn()
-    renderWithRouter(<EyeSelector onSelect={onSelect} />)
+    renderWithProviders(<EyeSelector onSelect={onSelect} />)
     
     expect(screen.getByText('Which eye would you like to test?')).toBeInTheDocument()
   })

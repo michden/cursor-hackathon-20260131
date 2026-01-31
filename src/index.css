@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Configure Tailwind v4 for class-based dark mode instead of media query */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Custom theme colors for medical/health app */
 :root {
   --color-primary: #0ea5e9;

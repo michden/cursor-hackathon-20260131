@@ -1,0 +1,169 @@
+{
+  "visualAcuity": {
+    "title": "Sehschärfetest",
+    "instructions": {
+      "title": "Anleitung:",
+      "step1": "Bedecken Sie Ihr {{otherEye}} Auge mit der Hand",
+      "step2": "Schauen Sie auf den Buchstaben \"E\" auf dem Bildschirm",
+      "step3": "Tippen Sie auf den Pfeil, der die Richtung des E anzeigt",
+      "step4": "Das E wird kleiner, während Sie fortschreiten",
+      "note": "Halten Sie Ihr Gerät auf Armlänge (~40cm) für genaue Ergebnisse"
+    },
+    "question": "In welche Richtung zeigt das E?",
+    "results": {
+      "title": "Test abgeschlossen!",
+      "yourScore": "Ihr Ergebnis",
+      "snellenScore": "Snellen-Wert",
+      "whatThisMeans": "Was bedeutet das?",
+      "referenceScale": "Referenzskala:",
+      "better": "Besser",
+      "normal": "Normal",
+      "lower": "Niedriger"
+    },
+    "explanations": {
+      "20/10": { "label": "Außergewöhnliche Sehkraft", "description": "Überdurchschnittlich - Sie sehen auf 6m, was die meisten auf 3m sehen" },
+      "20/13": { "label": "Ausgezeichnete Sehkraft", "description": "Deutlich überdurchschnittliche Sehschärfe" },
+      "20/16": { "label": "Sehr gute Sehkraft", "description": "Überdurchschnittliche Schärfe" },
+      "20/20": { "label": "Normale Sehkraft", "description": "Standard-Sehschärfe - keine Bedenken" },
+      "20/25": { "label": "Fast normal", "description": "Leicht unter dem Durchschnitt, aber meist akzeptabel" },
+      "20/32": { "label": "Leichte Verringerung", "description": "Eine Sehhilfe könnte von Vorteil sein" },
+      "20/40": { "label": "Moderate Verringerung", "description": "Sehhilfe empfohlen" },
+      "20/50": { "label": "Unterdurchschnittlich", "description": "Eine Augenuntersuchung wird empfohlen" },
+      "20/70": { "label": "Schwache Sehkraft", "description": "Augenuntersuchung empfohlen" },
+      "20/100": { "label": "Geringe Sehkraft", "description": "Bitte konsultieren Sie einen Augenarzt" },
+      "20/200": { "label": "Sehr geringe Sehkraft", "description": "Bitte konsultieren Sie zeitnah einen Augenarzt" }
+    }
+  },
+  "colorVision": {
+    "title": "Farbsehtest",
+    "subtitle": "Überprüfung auf Farbsehschwächen",
+    "instructions": {
+      "title": "Anleitung:",
+      "step1": "Schauen Sie auf das farbige Kreismuster",
+      "step2": "Geben Sie die Zahl ein, die Sie in den Punkten sehen",
+      "step3": "Wenn Sie keine Zahl sehen, geben Sie \"0\" ein oder lassen Sie das Feld leer",
+      "step4": "Vervollständigen Sie alle Tafeln für Ihr Ergebnis",
+      "note": "Stellen Sie sicher, dass Ihre Bildschirmhelligkeit auf Maximum ist"
+    },
+    "question": "Welche Zahl sehen Sie?",
+    "inputPlaceholder": "Zahl eingeben",
+    "plateOf": "Tafel {{current}} von {{total}}",
+    "results": {
+      "title": "Test abgeschlossen!",
+      "score": "{{correct}} von {{total}} richtig",
+      "status": {
+        "normal": "Normales Farbsehen",
+        "mild": "Leichte Farbsehschwäche",
+        "moderate": "Moderate Farbsehschwäche",
+        "significant": "Deutliche Farbsehschwäche"
+      }
+    }
+  },
+  "contrastSensitivity": {
+    "title": "Kontrastempfindlichkeitstest",
+    "subtitle": "Test Ihres {{eye}} Auges",
+    "instructions": {
+      "title": "Anleitung:",
+      "step1": "Bedecken Sie Ihr {{otherEye}} Auge mit der Hand",
+      "step2": "Schauen Sie auf den angezeigten Buchstaben",
+      "step3": "Geben Sie den Buchstaben ein, den Sie sehen",
+      "step4": "Die Buchstaben werden blasser, um die Empfindlichkeit zu testen",
+      "note": "Stellen Sie sicher, dass Ihre Bildschirmhelligkeit konstant ist"
+    },
+    "question": "Welchen Buchstaben sehen Sie?",
+    "inputPlaceholder": "Buchstabe eingeben",
+    "levelUp": "Level geschafft! Der Buchstabe ist jetzt blasser.",
+    "results": {
+      "title": "Test abgeschlossen!",
+      "logCS": "Log CS",
+      "interpretations": {
+        "excellent": { "label": "Ausgezeichnet", "description": "Überdurchschnittliche Kontrastempfindlichkeit" },
+        "normal": { "label": "Normal", "description": "Typische Kontrastempfindlichkeit" },
+        "mild": { "label": "Leicht reduziert", "description": "Etwas unter dem Normalwert" },
+        "moderate": { "label": "Moderat reduziert", "description": "Kann Alltagsaktivitäten beeinflussen" },
+        "significant": { "label": "Deutlich reduziert", "description": "Bitte konsultieren Sie einen Augenarzt" }
+      }
+    }
+  },
+  "amslerGrid": {
+    "title": "Amsler-Gitter-Test",
+    "subtitle": "Test Ihres {{eye}} Auges",
+    "instructions": {
+      "title": "Anleitung:",
+      "step1": "Bedecken Sie Ihr {{otherEye}} Auge mit der Hand",
+      "step2": "Fokussieren Sie auf den roten Punkt in der Mitte des Gitters",
+      "step3": "Behalten Sie den Fokus auf dem Punkt bei, während Sie die Fragen beantworten",
+      "step4": "Beantworten Sie ehrlich, was Sie sehen",
+      "note": "Halten Sie Ihr Gerät auf Leseabstand (~30cm)"
+    },
+    "focusPrompt": "Fokussieren Sie auf den roten Punkt in der Mitte",
+    "questions": {
+      "allLines": "Sind alle Linien gerade?",
+      "missingAreas": "Gibt es fehlende oder verschwommene Bereiche?",
+      "wavyLines": "Erscheinen Linien wellig oder verzerrt?",
+      "darkSpots": "Sehen Sie dunkle Flecken oder Löcher?"
+    },
+    "answers": {
+      "yes": "Ja",
+      "no": "Nein"
+    },
+    "results": {
+      "title": "Test abgeschlossen!",
+      "normal": "Keine visuellen Verzerrungen festgestellt",
+      "normalDescription": "Ihr zentrales Sehvermögen erscheint für dieses Auge gesund.",
+      "concerns": "Einige visuelle Auffälligkeiten bemerkt",
+      "concernsDescription": "Bitte erwägen Sie eine umfassende Untersuchung bei einem Augenarzt."
+    }
+  },
+  "eyePhoto": {
+    "title": "Augenfoto-Analyse",
+    "subtitle": "Analysieren Sie Ihr Augenfoto mit KI",
+    "instructions": {
+      "title": "Für beste Ergebnisse:",
+      "step1": "Gute Beleuchtung - zum Fenster oder Licht schauen",
+      "step2": "Auge weit geöffnet halten",
+      "step3": "Direkt in die Kamera schauen",
+      "step4": "Stillhalten und tippen zum Aufnehmen"
+    },
+    "actions": {
+      "takePhoto": "Foto aufnehmen",
+      "uploadPhoto": "Foto hochladen",
+      "retakePhoto": "Foto wiederholen",
+      "analyzeWithAI": "Mit KI analysieren"
+    },
+    "status": {
+      "analyzing": "Ihr Foto wird analysiert...",
+      "complete": "Analyse abgeschlossen"
+    },
+    "apiKeyPrompt": "Geben Sie Ihren OpenAI API-Schlüssel für die Analyse ein",
+    "disclaimer": "Die KI-Analyse dient nur zu Bildungszwecken und kann keine Diagnose stellen."
+  },
+  "onboarding": {
+    "steps": {
+      "welcome": {
+        "title": "Willkommen bei VisionCheck AI",
+        "description": "Eine schnelle Möglichkeit, Ihre Augengesundheit von Ihrem Handy aus zu überprüfen."
+      },
+      "visualAcuity": {
+        "title": "Sehschärfetest",
+        "description": "Testen Sie, wie klar Sie verschiedene Größen sehen können, mit dem Tumbling-E-Test."
+      },
+      "colorVision": {
+        "title": "Farbsehtest",
+        "description": "Überprüfung auf Farbenblindheit mit Ishihara-Tafeln."
+      },
+      "contrastSensitivity": {
+        "title": "Kontrastempfindlichkeit",
+        "description": "Testen Sie Ihre Fähigkeit, blasse Buchstaben vom Hintergrund zu unterscheiden."
+      },
+      "amslerGrid": {
+        "title": "Amsler-Gitter-Test",
+        "description": "Überprüfung auf Makuladegeneration durch Erkennung visueller Verzerrungen."
+      },
+      "disclaimer": {
+        "title": "Wichtiger Hinweis",
+        "description": "Diese App dient nur zur Vorsorge – keine medizinische Diagnose. Konsultieren Sie immer einen Augenarzt."
+      }
+    }
+  }
+}

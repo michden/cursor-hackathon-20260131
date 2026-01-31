@@ -1,0 +1,169 @@
+{
+  "visualAcuity": {
+    "title": "Visual Acuity Test",
+    "instructions": {
+      "title": "Instructions:",
+      "step1": "Cover your {{otherEye}} eye with your hand",
+      "step2": "Look at the letter \"E\" on the screen",
+      "step3": "Tap the arrow button showing which direction the E is pointing",
+      "step4": "The E will get smaller as you progress",
+      "note": "Keep your device at arm's length (~40cm) for accurate results"
+    },
+    "question": "Which direction is the E pointing?",
+    "results": {
+      "title": "Test Complete!",
+      "yourScore": "Your Score",
+      "snellenScore": "Snellen Score",
+      "whatThisMeans": "What does this mean?",
+      "referenceScale": "Reference Scale:",
+      "better": "Better",
+      "normal": "Normal",
+      "lower": "Lower"
+    },
+    "explanations": {
+      "20/10": { "label": "Exceptional vision", "description": "Better than average - you can see at 20 feet what most people see at 10 feet" },
+      "20/13": { "label": "Excellent vision", "description": "Significantly above average visual acuity" },
+      "20/16": { "label": "Very good vision", "description": "Above average sharpness" },
+      "20/20": { "label": "Normal vision", "description": "Standard visual acuity - no concerns" },
+      "20/25": { "label": "Near normal", "description": "Slightly below average but usually acceptable" },
+      "20/32": { "label": "Mild reduction", "description": "You may benefit from corrective lenses" },
+      "20/40": { "label": "Moderate reduction", "description": "Corrective lenses recommended" },
+      "20/50": { "label": "Below average", "description": "Consider an eye exam" },
+      "20/70": { "label": "Poor vision", "description": "Eye exam recommended" },
+      "20/100": { "label": "Low vision", "description": "Please consult an eye care professional" },
+      "20/200": { "label": "Very low vision", "description": "Please consult an eye care professional promptly" }
+    }
+  },
+  "colorVision": {
+    "title": "Color Vision Test",
+    "subtitle": "Screen for color vision deficiencies",
+    "instructions": {
+      "title": "Instructions:",
+      "step1": "Look at the colored circle pattern",
+      "step2": "Type the number you see hidden in the dots",
+      "step3": "If you can't see a number, type \"0\" or leave blank",
+      "step4": "Complete all plates for your result",
+      "note": "Ensure your screen brightness is at maximum"
+    },
+    "question": "What number do you see?",
+    "inputPlaceholder": "Enter number",
+    "plateOf": "Plate {{current}} of {{total}}",
+    "results": {
+      "title": "Test Complete!",
+      "score": "{{correct}} of {{total}} correct",
+      "status": {
+        "normal": "Normal color vision",
+        "mild": "Mild color vision difficulty",
+        "moderate": "Moderate color vision difficulty",
+        "significant": "Significant color vision difficulty"
+      }
+    }
+  },
+  "contrastSensitivity": {
+    "title": "Contrast Sensitivity Test",
+    "subtitle": "Testing your {{eye}} eye",
+    "instructions": {
+      "title": "Instructions:",
+      "step1": "Cover your {{otherEye}} eye with your hand",
+      "step2": "Look at the letter displayed on screen",
+      "step3": "Type the letter you see using the keyboard",
+      "step4": "Letters will fade as you progress to test sensitivity",
+      "note": "Ensure your screen brightness is consistent"
+    },
+    "question": "What letter do you see?",
+    "inputPlaceholder": "Enter letter",
+    "levelUp": "Level up! The letter is now fainter.",
+    "results": {
+      "title": "Test Complete!",
+      "logCS": "Log CS",
+      "interpretations": {
+        "excellent": { "label": "Excellent", "description": "Above average contrast sensitivity" },
+        "normal": { "label": "Normal", "description": "Typical contrast sensitivity" },
+        "mild": { "label": "Mildly reduced", "description": "Slightly below normal" },
+        "moderate": { "label": "Moderately reduced", "description": "May affect daily activities" },
+        "significant": { "label": "Significantly reduced", "description": "Please consult an eye care professional" }
+      }
+    }
+  },
+  "amslerGrid": {
+    "title": "Amsler Grid Test",
+    "subtitle": "Testing your {{eye}} eye",
+    "instructions": {
+      "title": "Instructions:",
+      "step1": "Cover your {{otherEye}} eye with your hand",
+      "step2": "Focus on the red dot in the center of the grid",
+      "step3": "Keep focusing on the dot while answering questions",
+      "step4": "Answer honestly about what you see",
+      "note": "Keep your device at reading distance (~30cm)"
+    },
+    "focusPrompt": "Focus on the red dot in the center",
+    "questions": {
+      "allLines": "Are all the lines straight?",
+      "missingAreas": "Are there any missing or blurry areas?",
+      "wavyLines": "Do any lines appear wavy or distorted?",
+      "darkSpots": "Do you see any dark spots or holes?"
+    },
+    "answers": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "results": {
+      "title": "Test Complete!",
+      "normal": "No visual distortions detected",
+      "normalDescription": "Your central vision appears healthy for this eye.",
+      "concerns": "Some visual concerns noted",
+      "concernsDescription": "Please consider consulting an eye care professional for a comprehensive exam."
+    }
+  },
+  "eyePhoto": {
+    "title": "Eye Photo Analysis",
+    "subtitle": "Analyze your eye photo with AI",
+    "instructions": {
+      "title": "For best results:",
+      "step1": "Use good lighting - face a window or light source",
+      "step2": "Hold your eye open wide",
+      "step3": "Look directly at the camera",
+      "step4": "Keep steady and tap to capture"
+    },
+    "actions": {
+      "takePhoto": "Take Photo",
+      "uploadPhoto": "Upload Photo",
+      "retakePhoto": "Retake Photo",
+      "analyzeWithAI": "Analyze with AI"
+    },
+    "status": {
+      "analyzing": "Analyzing your photo...",
+      "complete": "Analysis Complete"
+    },
+    "apiKeyPrompt": "Enter your OpenAI API key to analyze",
+    "disclaimer": "AI analysis is for educational purposes only and cannot diagnose conditions."
+  },
+  "onboarding": {
+    "steps": {
+      "welcome": {
+        "title": "Welcome to VisionCheck AI",
+        "description": "A quick way to screen your eye health from your phone."
+      },
+      "visualAcuity": {
+        "title": "Visual Acuity Test",
+        "description": "Test how clearly you can see at different sizes using the Tumbling E chart."
+      },
+      "colorVision": {
+        "title": "Color Vision Test",
+        "description": "Screen for color blindness using Ishihara-style plates."
+      },
+      "contrastSensitivity": {
+        "title": "Contrast Sensitivity",
+        "description": "Test your ability to distinguish faint letters from their background."
+      },
+      "amslerGrid": {
+        "title": "Amsler Grid Test",
+        "description": "Screen for macular degeneration by checking for visual distortions."
+      },
+      "disclaimer": {
+        "title": "Important Note",
+        "description": "This app is for screening only—not a medical diagnosis. Always consult an eye care professional."
+      }
+    }
+  }
+}

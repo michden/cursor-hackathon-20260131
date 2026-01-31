@@ -1,0 +1,82 @@
+{
+  "title": "Your Eye Health Snapshot",
+  "subtitle": "Summary of your screening results",
+  "noResults": {
+    "title": "No Results Yet",
+    "description": "Complete at least one test to see your results here.",
+    "startTesting": "Start Testing"
+  },
+  "cards": {
+    "visualAcuity": "Visual Acuity",
+    "colorVision": "Color Vision",
+    "contrastSensitivity": "Contrast Sensitivity",
+    "amslerGrid": "Amsler Grid",
+    "eyePhoto": "Eye Photo Analysis"
+  },
+  "eyeLabels": {
+    "leftEye": "Left Eye",
+    "rightEye": "Right Eye",
+    "bothEyes": "Both Eyes"
+  },
+  "status": {
+    "tested": "Tested",
+    "notTested": "Not tested",
+    "normal": "Normal",
+    "concerns": "Concerns noted"
+  },
+  "actions": {
+    "retestEye": "Retest an Eye",
+    "shareResults": "Share Results",
+    "downloadPDF": "Download PDF Report",
+    "saveToHistory": "Save to History",
+    "clearResults": "Clear All Results",
+    "findDoctor": "Find Eye Doctors Near Me"
+  },
+  "recommendations": {
+    "title": "Recommendations",
+    "allNormal": "All your test results appear normal. Continue regular eye health monitoring.",
+    "seeDoctor": "Based on your results, we recommend consulting an eye care professional.",
+    "followUp": "Some results may warrant professional evaluation."
+  },
+  "history": {
+    "title": "Test History",
+    "noHistory": "No previous test sessions saved.",
+    "session": "Session",
+    "clearHistory": "Clear History"
+  },
+  "achievements": {
+    "title": "Your Achievements",
+    "firstTest": {
+      "title": "First Test",
+      "description": "Completed your first eye test"
+    },
+    "perfectAcuity": {
+      "title": "Eagle Eye",
+      "description": "Achieved 20/20 vision or better"
+    },
+    "colorPerfect": {
+      "title": "Color Master",
+      "description": "Perfect score on color vision test"
+    },
+    "allTests": {
+      "title": "Thorough Checker",
+      "description": "Completed all available tests"
+    },
+    "streak3": {
+      "title": "Consistent",
+      "description": "Tested 3 days in a row"
+    }
+  },
+  "comparison": {
+    "improved": "Your {{test}} has improved since last time",
+    "stable": "Your {{test}} has remained stable",
+    "declined": "Your {{test}} may have changed - consider retesting"
+  },
+  "findDoctor": {
+    "title": "Find an Eye Doctor",
+    "searching": "Finding nearby doctors...",
+    "permissionNeeded": "Location permission needed",
+    "openMaps": "Open in Maps",
+    "searchQuery": "eye doctor optometrist near me"
+  }
+}

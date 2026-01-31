@@ -313,7 +313,7 @@ export default function VisualAcuityTest() {
           </div>
 
           <AudioInstructions 
-            audioSrc="/audio/visual-acuity-instructions.mp3" 
+            audioKey="visual-acuity-instructions" 
             label="Test Instructions" 
           />
 

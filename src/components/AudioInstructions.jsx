@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useTTSSettings } from '../context/TTSSettingsContext'
+import { useLanguage } from '../context/LanguageContext'
+import { useTranslation } from 'react-i18next'
 
 /**
  * AudioInstructions component for text-to-speech accessibility
@@ -9,27 +11,69 @@ import { useTTSSettings } from '../context/TTSSettingsContext'
  * - Play/pause button for manual control
  * - Toggle to enable/disable auto-play
  * - Visual feedback for playing state
+ * - Language-aware audio paths with fallback to English
  * 
- * @param {string} audioSrc - Path to the audio file
+ * @param {string} audioKey - Key/filename for the audio file (without path prefix or extension)
+ * @param {string} audioSrc - (Legacy) Direct path to audio file - deprecated, use audioKey instead
  * @param {string} label - Accessibility label describing the audio content
  */
-export default function AudioInstructions({ audioSrc, label = 'Instructions' }) {
+export default function AudioInstructions({ audioKey, audioSrc, label = 'Instructions' }) {
   const { autoPlayEnabled, setAutoPlayEnabled } = useTTSSettings()
+  const { language } = useLanguage()
+  const { t } = useTranslation()
+  
+  // Build language-aware audio path
+  // If audioKey is provided, build path from it; otherwise use legacy audioSrc
+  const getAudioPath = useCallback(() => {
+    if (audioKey) {
+      return `/audio/${language}/${audioKey}.mp3`
+    }
+    // Legacy support: if audioSrc is a direct path, try to make it language-aware
+    if (audioSrc) {
+      // Check if it already has a language prefix
+      if (audioSrc.match(/\/audio\/(en|de)\//)) {
+        // Replace the language part
+        return audioSrc.replace(/\/audio\/(en|de)\//, `/audio/${language}/`)
+      }
+      // If it's the old format like /audio/home-welcome.mp3, add language
+      if (audioSrc.startsWith('/audio/')) {
+        const filename = audioSrc.replace('/audio/', '')
+        return `/audio/${language}/${filename}`
+      }
+      return audioSrc
+    }
+    return null
+  }, [audioKey, audioSrc, language])
   const [isPlaying, setIsPlaying] = useState(false)
   const [hasAutoPlayed, setHasAutoPlayed] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [currentAudioSrc, setCurrentAudioSrc] = useState(null)
   const audioRef = useRef(null)
+  
+  // Update audio source when language changes
+  useEffect(() => {
+    const path = getAudioPath()
+    setCurrentAudioSrc(path)
+    setHasAutoPlayed(false) // Reset auto-play when language changes
+  }, [getAudioPath])
 
   // Handle audio end
   const handleEnded = useCallback(() => {
     setIsPlaying(false)
   }, [])
 
-  // Handle audio error
+  // Handle audio error - try fallback to English if current language file fails
   const handleError = useCallback((e) => {
     console.warn('Audio playback error:', e)
     setIsPlaying(false)
-  }, [])
+    
+    // Try fallback to English if not already using English
+    if (language !== 'en' && currentAudioSrc && !currentAudioSrc.includes('/audio/en/')) {
+      const englishPath = currentAudioSrc.replace(`/audio/${language}/`, '/audio/en/')
+      console.log('Falling back to English audio:', englishPath)
+      setCurrentAudioSrc(englishPath)
+    }
+  }, [language, currentAudioSrc])
 
   // Auto-play on mount if enabled
   useEffect(() => {
@@ -84,7 +128,7 @@ export default function AudioInstructions({ audioSrc, label = 'Instructions' }) 
       {/* Hidden audio element */}
       <audio
         ref={audioRef}
-        src={audioSrc}
+        src={currentAudioSrc}
         onEnded={handleEnded}
         onError={handleError}
         preload="auto"
@@ -117,7 +161,7 @@ export default function AudioInstructions({ audioSrc, label = 'Instructions' }) 
       {/* Label and status */}
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">
-          {isPlaying ? `Playing: ${label}` : `Listen: ${label}`}
+          {isPlaying ? `${t('audio.playing')}: ${label}` : `${t('audio.listen')}: ${label}`}
         </p>
         {isPlaying && (
           <div className="flex items-center gap-1 mt-1">
@@ -154,7 +198,7 @@ export default function AudioInstructions({ audioSrc, label = 'Instructions' }) 
             
             <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 p-3 z-20">
               <label className="flex items-center justify-between cursor-pointer">
-                <span className="text-sm text-slate-700 dark:text-slate-200">Auto-play audio</span>
+                <span className="text-sm text-slate-700 dark:text-slate-200">{t('audio.autoPlay')}</span>
                 <button
                   role="switch"
                   aria-checked={autoPlayEnabled}
@@ -173,7 +217,7 @@ export default function AudioInstructions({ audioSrc, label = 'Instructions' }) 
                 </button>
               </label>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-                When enabled, audio instructions will play automatically when you enter a new screen.
+                {t('audio.autoPlayDescription')}
               </p>
             </div>
           </>

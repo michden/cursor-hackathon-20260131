@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 export default function EyeSelector({ onSelect, completedEyes = {}, testName = 'Test' }) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   
   const bothComplete = completedEyes.left && completedEyes.right
@@ -12,7 +14,7 @@ export default function EyeSelector({ onSelect, completedEyes = {}, testName = '
   return (
     <div className="p-6 max-w-md mx-auto">
       <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 text-center mb-6">
-        Which eye would you like to test?
+        {t('eye.selectPrompt')}
       </h2>
       
       <div className="flex gap-4 mb-6">
@@ -28,10 +30,10 @@ export default function EyeSelector({ onSelect, completedEyes = {}, testName = '
           `}
         >
           <div className="text-4xl mb-2">👁️</div>
-          <div className="font-semibold text-slate-800 dark:text-slate-100">Left Eye</div>
+          <div className="font-semibold text-slate-800 dark:text-slate-100">{t('eye.left')}</div>
           {completedEyes.left && (
             <div className="text-sm text-emerald-600 dark:text-emerald-400 mt-1">
-              ✓ Complete
+              ✓ {t('status.complete')}
             </div>
           )}
         </button>
@@ -48,10 +50,10 @@ export default function EyeSelector({ onSelect, completedEyes = {}, testName = '
           `}
         >
           <div className="text-4xl mb-2">👁️</div>
-          <div className="font-semibold text-slate-800 dark:text-slate-100">Right Eye</div>
+          <div className="font-semibold text-slate-800 dark:text-slate-100">{t('eye.right')}</div>
           {completedEyes.right && (
             <div className="text-sm text-emerald-600 dark:text-emerald-400 mt-1">
-              ✓ Complete
+              ✓ {t('status.complete')}
             </div>
           )}
         </button>
@@ -60,7 +62,7 @@ export default function EyeSelector({ onSelect, completedEyes = {}, testName = '
       {/* Cover instruction */}
       <div className="bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-6">
         <p className="text-sm text-amber-800 dark:text-amber-200 text-center">
-          <strong>Tip:</strong> Cover your other eye with your hand or an eye patch for accurate results.
+          <strong>Tip:</strong> {t('eye.coverTip')}
         </p>
       </div>
 
@@ -70,7 +72,7 @@ export default function EyeSelector({ onSelect, completedEyes = {}, testName = '
           onClick={handleViewResults}
           className="w-full py-4 bg-sky-500 text-white font-semibold rounded-xl hover:bg-sky-600 transition-colors"
         >
-          View Results →
+          {t('actions.viewResults')} →
         </button>
       )}
     </div>

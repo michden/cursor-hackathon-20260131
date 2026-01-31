@@ -1,0 +1,33 @@
+{
+  "lastTested": "Last tested: {{date}}",
+  "tests": {
+    "visualAcuity": {
+      "title": "Visual Acuity Test",
+      "description": "Test how clearly you can see at distance"
+    },
+    "colorVision": {
+      "title": "Color Vision Test",
+      "description": "Check for color vision deficiencies"
+    },
+    "contrastSensitivity": {
+      "title": "Contrast Sensitivity",
+      "description": "Pelli-Robson letter test"
+    },
+    "amslerGrid": {
+      "title": "Amsler Grid",
+      "description": "Macular degeneration screening"
+    },
+    "eyePhoto": {
+      "title": "Eye Photo Analysis",
+      "description": "AI analysis of your eye photo"
+    },
+    "viewResults": {
+      "title": "View Results",
+      "description": "See your eye health snapshot"
+    }
+  },
+  "footer": {
+    "builtFor": "Built for educational purposes only",
+    "version": "VisionCheck AI v1.0 | Not intended for medical diagnosis"
+  }
+}

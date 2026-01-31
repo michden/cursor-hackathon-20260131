@@ -1,0 +1,33 @@
+{
+  "lastTested": "Zuletzt getestet: {{date}}",
+  "tests": {
+    "visualAcuity": {
+      "title": "Sehschärfetest",
+      "description": "Testen Sie, wie klar Sie in der Ferne sehen"
+    },
+    "colorVision": {
+      "title": "Farbsehtest",
+      "description": "Überprüfung auf Farbsehschwächen"
+    },
+    "contrastSensitivity": {
+      "title": "Kontrastempfindlichkeit",
+      "description": "Pelli-Robson Buchstabentest"
+    },
+    "amslerGrid": {
+      "title": "Amsler-Gitter",
+      "description": "Makuladegeneration-Screening"
+    },
+    "eyePhoto": {
+      "title": "Augenfoto-Analyse",
+      "description": "KI-Analyse Ihres Augenfotos"
+    },
+    "viewResults": {
+      "title": "Ergebnisse anzeigen",
+      "description": "Sehen Sie Ihre Augengesundheits-Übersicht"
+    }
+  },
+  "footer": {
+    "builtFor": "Nur für Bildungszwecke erstellt",
+    "version": "VisionCheck AI v1.0 | Nicht für medizinische Diagnose bestimmt"
+  }
+}

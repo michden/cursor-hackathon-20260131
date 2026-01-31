@@ -184,7 +184,7 @@ export default function ColorVisionTest() {
           </div>
 
           <AudioInstructions 
-            audioSrc="/audio/color-vision-instructions.mp3" 
+            audioKey="color-vision-instructions" 
             label="Test Instructions" 
           />
 

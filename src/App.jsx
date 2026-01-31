@@ -4,6 +4,7 @@ import { TestResultsProvider } from './context/TestResultsContext'
 import { TTSSettingsProvider } from './context/TTSSettingsContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { ChatProvider } from './context/ChatContext'
+import { LanguageProvider } from './context/LanguageContext'
 import ErrorBoundary from './components/ErrorBoundary'
 import Onboarding from './components/Onboarding'
 import ChatFAB from './components/ChatFAB'
@@ -29,9 +30,11 @@ function App() {
   if (showOnboarding) {
     return (
       <ThemeProvider>
-        <TTSSettingsProvider>
-          <Onboarding onComplete={() => setShowOnboarding(false)} />
-        </TTSSettingsProvider>
+        <LanguageProvider>
+          <TTSSettingsProvider>
+            <Onboarding onComplete={() => setShowOnboarding(false)} />
+          </TTSSettingsProvider>
+        </LanguageProvider>
       </ThemeProvider>
     )
   }
@@ -39,25 +42,27 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider>
-        <TTSSettingsProvider>
-          <TestResultsProvider>
-            <BrowserRouter>
-              <ChatProvider>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/visual-acuity" element={<VisualAcuityTest />} />
-                  <Route path="/color-vision" element={<ColorVisionTest />} />
-                  <Route path="/eye-photo" element={<EyePhotoAnalysis />} />
-                  <Route path="/contrast-sensitivity" element={<ContrastSensitivityTest />} />
-                  <Route path="/amsler-grid" element={<AmslerGridTest />} />
-                  <Route path="/results" element={<HealthSnapshot />} />
-                </Routes>
-                <ChatFAB />
-                <ChatDrawer />
-              </ChatProvider>
-            </BrowserRouter>
-          </TestResultsProvider>
-        </TTSSettingsProvider>
+        <LanguageProvider>
+          <TTSSettingsProvider>
+            <TestResultsProvider>
+              <BrowserRouter>
+                <ChatProvider>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/visual-acuity" element={<VisualAcuityTest />} />
+                    <Route path="/color-vision" element={<ColorVisionTest />} />
+                    <Route path="/eye-photo" element={<EyePhotoAnalysis />} />
+                    <Route path="/contrast-sensitivity" element={<ContrastSensitivityTest />} />
+                    <Route path="/amsler-grid" element={<AmslerGridTest />} />
+                    <Route path="/results" element={<HealthSnapshot />} />
+                  </Routes>
+                  <ChatFAB />
+                  <ChatDrawer />
+                </ChatProvider>
+              </BrowserRouter>
+            </TestResultsProvider>
+          </TTSSettingsProvider>
+        </LanguageProvider>
       </ThemeProvider>
     </ErrorBoundary>
   )

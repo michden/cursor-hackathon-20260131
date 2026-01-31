@@ -1,0 +1,78 @@
+{
+  "app": {
+    "title": "VisionCheck AI",
+    "subtitle": "Mobile Eye Health Pre-Screening"
+  },
+  "nav": {
+    "back": "Back",
+    "backToHome": "Back to Home",
+    "backToEyeSelection": "Back to Eye Selection",
+    "home": "Home",
+    "results": "Results",
+    "skip": "Skip"
+  },
+  "actions": {
+    "start": "Start Test",
+    "startTest": "Start Test",
+    "continue": "Continue",
+    "next": "Next",
+    "finish": "Finish",
+    "submit": "Submit",
+    "retry": "Try Again",
+    "retake": "Retake",
+    "getStarted": "Get Started",
+    "viewResults": "View Results",
+    "viewAllResults": "View All Results",
+    "save": "Save",
+    "clear": "Clear",
+    "close": "Close",
+    "cancel": "Cancel"
+  },
+  "eye": {
+    "left": "Left Eye",
+    "right": "Right Eye",
+    "leftShort": "L",
+    "rightShort": "R",
+    "selectPrompt": "Which eye would you like to test?",
+    "coverTip": "Cover your other eye with your hand or an eye patch for accurate results.",
+    "testing": "Testing your {{eye}} eye"
+  },
+  "status": {
+    "complete": "Complete",
+    "notDone": "Not Done",
+    "review": "Review",
+    "loading": "Loading...",
+    "analyzing": "Analyzing...",
+    "new": "NEW"
+  },
+  "disclaimer": {
+    "title": "Medical Disclaimer",
+    "text": "This app is for educational screening purposes only and is NOT a medical diagnosis. Results are approximate and should not replace professional eye care. Always consult a qualified eye care professional for accurate assessment and treatment.",
+    "short": "This app is for screening only—not a medical diagnosis. Always consult an eye care professional."
+  },
+  "audio": {
+    "listen": "Listen",
+    "playing": "Playing",
+    "testInstructions": "Test Instructions",
+    "welcomeOverview": "Welcome & Overview",
+    "autoPlay": "Auto-play audio",
+    "autoPlayDescription": "When enabled, audio instructions will play automatically when you enter a new screen."
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggle": "Toggle theme"
+  },
+  "language": {
+    "select": "Select language",
+    "en": "English",
+    "de": "Deutsch"
+  },
+  "errors": {
+    "generic": "Something went wrong",
+    "tryAgain": "Please try again",
+    "cameraAccess": "Could not access camera",
+    "locationAccess": "Could not get your location"
+  }
+}

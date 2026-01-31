@@ -1,7 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, act } from '@testing-library/react'
+import { I18nextProvider } from 'react-i18next'
 import Onboarding from './Onboarding'
 import { TTSSettingsProvider } from '../context/TTSSettingsContext'
+import { LanguageProvider } from '../context/LanguageContext'
+import i18n from '../i18n'
 
 // Mock HTMLMediaElement methods for audio
 window.HTMLMediaElement.prototype.play = vi.fn().mockResolvedValue(undefined)
@@ -17,12 +20,17 @@ const localStorageMock = {
 }
 Object.defineProperty(window, 'localStorage', { value: localStorageMock })
 
-// Wrapper to provide TTS context
+// Wrapper to provide TTS context and i18n
 const renderWithProvider = (ui) => {
+  i18n.changeLanguage('en')
   return render(
-    <TTSSettingsProvider>
-      {ui}
-    </TTSSettingsProvider>
+    <I18nextProvider i18n={i18n}>
+      <LanguageProvider>
+        <TTSSettingsProvider>
+          {ui}
+        </TTSSettingsProvider>
+      </LanguageProvider>
+    </I18nextProvider>
   )
 }
 

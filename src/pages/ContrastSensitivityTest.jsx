@@ -245,7 +245,7 @@ export default function ContrastSensitivityTest() {
           </div>
 
           <AudioInstructions 
-            audioSrc="/audio/contrast-sensitivity-instructions.mp3" 
+            audioKey="contrast-sensitivity-instructions" 
             label="Test Instructions" 
           />
 

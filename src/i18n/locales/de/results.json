@@ -1,0 +1,82 @@
+{
+  "title": "Ihre Augengesundheits-Übersicht",
+  "subtitle": "Zusammenfassung Ihrer Vorsorge-Ergebnisse",
+  "noResults": {
+    "title": "Noch keine Ergebnisse",
+    "description": "Führen Sie mindestens einen Test durch, um Ihre Ergebnisse hier zu sehen.",
+    "startTesting": "Tests starten"
+  },
+  "cards": {
+    "visualAcuity": "Sehschärfe",
+    "colorVision": "Farbsehen",
+    "contrastSensitivity": "Kontrastempfindlichkeit",
+    "amslerGrid": "Amsler-Gitter",
+    "eyePhoto": "Augenfoto-Analyse"
+  },
+  "eyeLabels": {
+    "leftEye": "Linkes Auge",
+    "rightEye": "Rechtes Auge",
+    "bothEyes": "Beide Augen"
+  },
+  "status": {
+    "tested": "Getestet",
+    "notTested": "Nicht getestet",
+    "normal": "Normal",
+    "concerns": "Auffälligkeiten bemerkt"
+  },
+  "actions": {
+    "retestEye": "Ein Auge erneut testen",
+    "shareResults": "Ergebnisse teilen",
+    "downloadPDF": "PDF-Bericht herunterladen",
+    "saveToHistory": "Im Verlauf speichern",
+    "clearResults": "Alle Ergebnisse löschen",
+    "findDoctor": "Augenärzte in der Nähe finden"
+  },
+  "recommendations": {
+    "title": "Empfehlungen",
+    "allNormal": "Alle Ihre Testergebnisse erscheinen normal. Setzen Sie die regelmäßige Augengesundheits-Überwachung fort.",
+    "seeDoctor": "Basierend auf Ihren Ergebnissen empfehlen wir, einen Augenarzt zu konsultieren.",
+    "followUp": "Einige Ergebnisse könnten eine professionelle Bewertung rechtfertigen."
+  },
+  "history": {
+    "title": "Testverlauf",
+    "noHistory": "Keine vorherigen Testsitzungen gespeichert.",
+    "session": "Sitzung",
+    "clearHistory": "Verlauf löschen"
+  },
+  "achievements": {
+    "title": "Ihre Erfolge",
+    "firstTest": {
+      "title": "Erster Test",
+      "description": "Ihren ersten Augentest abgeschlossen"
+    },
+    "perfectAcuity": {
+      "title": "Adlerauge",
+      "description": "20/20 Sehkraft oder besser erreicht"
+    },
+    "colorPerfect": {
+      "title": "Farbmeister",
+      "description": "Perfekte Punktzahl beim Farbsehtest"
+    },
+    "allTests": {
+      "title": "Gründlicher Prüfer",
+      "description": "Alle verfügbaren Tests abgeschlossen"
+    },
+    "streak3": {
+      "title": "Beständig",
+      "description": "3 Tage hintereinander getestet"
+    }
+  },
+  "comparison": {
+    "improved": "Ihre {{test}} hat sich seit dem letzten Mal verbessert",
+    "stable": "Ihre {{test}} ist stabil geblieben",
+    "declined": "Ihre {{test}} könnte sich verändert haben - erwägen Sie einen erneuten Test"
+  },
+  "findDoctor": {
+    "title": "Augenarzt finden",
+    "searching": "Suche nach Ärzten in der Nähe...",
+    "permissionNeeded": "Standortberechtigung erforderlich",
+    "openMaps": "In Karten öffnen",
+    "searchQuery": "Augenarzt Optiker in meiner Nähe"
+  }
+}

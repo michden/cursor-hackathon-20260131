@@ -170,7 +170,7 @@ export default function AmslerGridTest() {
           </div>
 
           <AudioInstructions 
-            audioSrc="/audio/amsler-grid-instructions.mp3" 
+            audioKey="amsler-grid-instructions" 
             label="Test Instructions" 
           />
 
