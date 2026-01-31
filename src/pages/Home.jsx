@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom'
+import SkipLink from '../components/SkipLink'
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-linear-to-b from-sky-50 to-white">
+      <SkipLink targetId="test-options" />
       {/* Header */}
       <header className="pt-12 pb-8 px-6 text-center">
         <div className="text-6xl mb-4">👁️</div>
@@ -27,10 +29,11 @@ export default function Home() {
       </div>
 
       {/* Test Options */}
-      <div className="px-6 space-y-4">
+      <main id="test-options" className="px-6 space-y-4" role="main" aria-label="Eye health tests">
         <Link
           to="/visual-acuity"
-          className="block p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+          className="block p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+          aria-label="Visual Acuity Test - Test how clearly you can see at distance"
         >
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-sky-100 rounded-xl flex items-center justify-center text-2xl">
@@ -46,7 +49,8 @@ export default function Home() {
 
         <Link
           to="/color-vision"
-          className="block p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+          className="block p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+          aria-label="Color Vision Test - Check for color vision deficiencies"
         >
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">
@@ -62,7 +66,8 @@ export default function Home() {
 
         <Link
           to="/eye-photo"
-          className="block p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+          className="block p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
+          aria-label="Eye Photo Analysis - AI analysis of your eye photo"
         >
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-violet-100 rounded-xl flex items-center justify-center text-2xl">
@@ -78,7 +83,8 @@ export default function Home() {
 
         <Link
           to="/results"
-          className="block p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+          className="block p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
+          aria-label="View Results - See your eye health snapshot"
         >
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-rose-100 rounded-xl flex items-center justify-center text-2xl">
@@ -91,7 +97,7 @@ export default function Home() {
             <div className="text-slate-400">→</div>
           </div>
         </Link>
-      </div>
+      </main>
 
       {/* Footer */}
       <footer className="mt-12 pb-8 px-6 text-center">
