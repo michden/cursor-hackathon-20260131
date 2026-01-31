@@ -19,6 +19,13 @@ import AmslerGridTest from './pages/AmslerGridTest'
 import AstigmatismTest from './pages/AstigmatismTest'
 import PeripheralVisionTest from './pages/PeripheralVisionTest'
 
+/**
+ * Root application component that mounts providers, routing, and UI chrome.
+ *
+ * Renders an onboarding flow on first launch by checking localStorage key "visioncheck-onboarded"; otherwise renders the main app wrapped with theme, language, TTS, test-results, error boundary, and chat providers and the configured routes.
+ *
+ * @returns {JSX.Element} The application's root React element.
+ */
 function App() {
   const [showOnboarding, setShowOnboarding] = useState(false)
 
