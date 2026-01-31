@@ -69,7 +69,7 @@ test.describe('Health Snapshot - With Results', () => {
   })
 
   test('has download button', async ({ page }) => {
-    await expect(page.getByRole('button', { name: /Download Summary/ })).toBeVisible()
+    await expect(page.getByRole('button', { name: /Download PDF Report/ })).toBeVisible()
   })
 
   test('has clear results button', async ({ page }) => {
