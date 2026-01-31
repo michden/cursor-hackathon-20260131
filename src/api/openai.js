@@ -45,7 +45,7 @@ export async function analyzeEyePhoto(imageBase64, apiKey) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-5',
+      model: 'gpt-5.2',
       messages: [
         {
           role: 'user',
@@ -64,7 +64,7 @@ export async function analyzeEyePhoto(imageBase64, apiKey) {
           ]
         }
       ],
-      max_tokens: 1000,
+      max_completion_tokens: 1000,
     }),
   })
 
