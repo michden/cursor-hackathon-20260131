@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
+    <div className="min-h-screen bg-linear-to-b from-sky-50 to-white">
       {/* Header */}
       <header className="pt-12 pb-8 px-6 text-center">
         <div className="text-6xl mb-4">👁️</div>
@@ -10,13 +10,20 @@ export default function Home() {
         <p className="text-slate-600">Preliminary Eye Health Assessment</p>
       </header>
 
-      {/* Disclaimer */}
+      {/* Medical Disclaimer */}
       <div className="mx-6 mb-8 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-        <p className="text-sm text-amber-800">
-          <strong>Important:</strong> This app is for educational screening purposes only 
-          and is not a substitute for professional eye care. Always consult an eye care 
-          professional for accurate diagnosis.
-        </p>
+        <div className="flex gap-3">
+          <span className="text-amber-600 text-xl">⚠️</span>
+          <div>
+            <p className="text-sm text-amber-800 font-medium mb-1">Medical Disclaimer</p>
+            <p className="text-sm text-amber-700">
+              This app is for <strong>educational screening purposes only</strong> and is 
+              <strong> NOT a medical diagnosis</strong>. Results are approximate and should not 
+              replace professional eye care. Always consult a qualified eye care professional 
+              for accurate assessment and treatment.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Test Options */}
@@ -87,8 +94,15 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="mt-12 pb-8 text-center text-sm text-slate-400">
-        <p>Built for educational purposes</p>
+      <footer className="mt-12 pb-8 px-6 text-center">
+        <div className="max-w-md mx-auto">
+          <p className="text-sm text-slate-400 mb-2">
+            Built for educational purposes only
+          </p>
+          <p className="text-xs text-slate-300">
+            EyeCheck v1.0 | Not intended for medical diagnosis
+          </p>
+        </div>
       </footer>
     </div>
   )
