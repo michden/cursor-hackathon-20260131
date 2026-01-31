@@ -344,7 +344,7 @@ export default function VisualAcuityTest() {
                     <div 
                       className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white border-2 border-slate-700 rounded-full shadow"
                       style={{ 
-                        left: `${((result.level - 1) / (ACUITY_LEVELS.length - 1)) * 100}%`,
+                        left: `${((ACUITY_LEVELS.length - result.level) / (ACUITY_LEVELS.length - 1)) * 100}%`,
                         transform: 'translate(-50%, -50%)'
                       }}
                     />
