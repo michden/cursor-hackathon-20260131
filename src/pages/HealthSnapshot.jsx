@@ -292,14 +292,17 @@ function HistoryChart({ history }) {
   if (history.length < 2) return null
 
   // Helper to get best level from per-eye data
+  // Note: level can be 0 (very poor acuity), so use != null checks, not truthy checks
   const getBestLevel = (va) => {
     if (!va) return null
     // Handle both old format (single value) and new format (per-eye)
     if (va.level !== undefined) return va.level // Old format
     const leftLevel = va.left?.level
     const rightLevel = va.right?.level
-    if (leftLevel && rightLevel) return Math.max(leftLevel, rightLevel)
-    return leftLevel || rightLevel || null
+    if (leftLevel != null && rightLevel != null) return Math.max(leftLevel, rightLevel)
+    if (leftLevel != null) return leftLevel
+    if (rightLevel != null) return rightLevel
+    return null
   }
 
   const getSnellen = (va) => {
@@ -331,7 +334,7 @@ function HistoryChart({ history }) {
   const oldSnellen = getSnellen(oldest.visualAcuity)
   const newSnellen = getSnellen(newest.visualAcuity)
   
-  if (oldLevel && newLevel) {
+  if (oldLevel != null && newLevel != null) {
     if (newLevel > oldLevel) {
       trendText = `Your visual acuity improved from ${oldSnellen} to ${newSnellen}`
     } else if (newLevel < oldLevel) {

@@ -156,6 +156,54 @@ describe('HealthSnapshot', () => {
     })
   })
 
+  describe('level 0 handling (very poor acuity)', () => {
+    it('correctly displays level 0 visual acuity results', () => {
+      setTestResults({
+        visualAcuity: { 
+          left: { snellen: '20/400', level: 0, maxLevel: 10 },
+          right: { snellen: '20/200', level: 2, maxLevel: 10 }
+        }
+      })
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      // Level 0 should still be displayed, not filtered out
+      expect(screen.getByText('20/400')).toBeInTheDocument()
+      expect(screen.getByText('20/200')).toBeInTheDocument()
+      expect(screen.getByText('Level 0/10')).toBeInTheDocument()
+      expect(screen.getByText('Level 2/10')).toBeInTheDocument()
+    })
+
+    it('shows recommendation for level 0 results', () => {
+      setTestResults({
+        visualAcuity: { 
+          left: { snellen: '20/400', level: 0, maxLevel: 10 },
+          right: null
+        }
+      })
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      // Level 0 is < 5, so should recommend eye exam
+      expect(screen.getByText(/Schedule an eye exam for vision assessment/)).toBeInTheDocument()
+    })
+
+    it('handles both eyes having level 0', () => {
+      setTestResults({
+        visualAcuity: { 
+          left: { snellen: '20/400', level: 0, maxLevel: 10 },
+          right: { snellen: '20/400', level: 0, maxLevel: 10 }
+        }
+      })
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      // Both should be displayed
+      const snellenValues = screen.getAllByText('20/400')
+      expect(snellenValues).toHaveLength(2)
+    })
+  })
+
   describe('per-eye display', () => {
     it('displays left and right eye visual acuity separately', () => {
       setTestResults({
@@ -201,6 +249,126 @@ describe('HealthSnapshot', () => {
       // The right eye should show a dash
       const dashes = screen.getAllByText('—')
       expect(dashes.length).toBeGreaterThan(0)
+    })
+  })
+
+  describe('HistoryChart level 0 handling', () => {
+    // Helper to set up both results and history
+    function setResultsAndHistory(results, history) {
+      // Set results
+      const formattedResults = {
+        visualAcuity: results.visualAcuity || { left: null, right: null },
+        colorVision: results.colorVision || null,
+        contrastSensitivity: results.contrastSensitivity || { left: null, right: null },
+        amslerGrid: results.amslerGrid || { left: null, right: null },
+        eyePhoto: results.eyePhoto || null,
+        completedAt: results.completedAt || null
+      }
+      localStorage.setItem('visioncheck-results', JSON.stringify(formattedResults))
+      localStorage.setItem('visioncheck-history', JSON.stringify(history))
+    }
+
+    it('includes sessions with level 0 in history chart', () => {
+      // History is stored newest-first, so put newer session first
+      const history = [
+        {
+          id: 2,
+          date: '2026-01-15T10:00:00Z',
+          visualAcuity: { 
+            left: { snellen: '20/200', level: 2 },
+            right: null
+          }
+        },
+        {
+          id: 1,
+          date: '2026-01-01T10:00:00Z',
+          visualAcuity: { 
+            left: { snellen: '20/400', level: 0 },
+            right: null
+          }
+        }
+      ]
+      
+      setResultsAndHistory({
+        visualAcuity: { 
+          left: { snellen: '20/200', level: 2, maxLevel: 10 },
+          right: null
+        }
+      }, history)
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      // The history chart should show "Your Progress" heading
+      expect(screen.getByText('Your Progress')).toBeInTheDocument()
+      // Should show trend text since we have 2 sessions (including one with level 0)
+      // After reverse, oldest (level 0) comes first, newest (level 2) comes last
+      expect(screen.getByText(/Your visual acuity improved from 20\/400 to 20\/200/)).toBeInTheDocument()
+    })
+
+    it('shows correct trend when improving from level 0', () => {
+      // History is stored newest-first
+      const history = [
+        {
+          id: 2,
+          date: '2026-01-15T10:00:00Z',
+          visualAcuity: { 
+            left: { snellen: '20/100', level: 3 },
+            right: { snellen: '20/100', level: 3 }
+          }
+        },
+        {
+          id: 1,
+          date: '2026-01-01T10:00:00Z',
+          visualAcuity: { 
+            left: { snellen: '20/400', level: 0 },
+            right: { snellen: '20/400', level: 0 }
+          }
+        }
+      ]
+      
+      setResultsAndHistory({
+        visualAcuity: { 
+          left: { snellen: '20/100', level: 3, maxLevel: 10 },
+          right: { snellen: '20/100', level: 3, maxLevel: 10 }
+        }
+      }, history)
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      expect(screen.getByText(/Your visual acuity improved/)).toBeInTheDocument()
+    })
+
+    it('shows stable trend when both sessions have level 0', () => {
+      // History is stored newest-first
+      const history = [
+        {
+          id: 2,
+          date: '2026-01-15T10:00:00Z',
+          visualAcuity: { 
+            left: { snellen: '20/400', level: 0 },
+            right: null
+          }
+        },
+        {
+          id: 1,
+          date: '2026-01-01T10:00:00Z',
+          visualAcuity: { 
+            left: { snellen: '20/400', level: 0 },
+            right: null
+          }
+        }
+      ]
+      
+      setResultsAndHistory({
+        visualAcuity: { 
+          left: { snellen: '20/400', level: 0, maxLevel: 10 },
+          right: null
+        }
+      }, history)
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      expect(screen.getByText(/Your visual acuity has remained stable/)).toBeInTheDocument()
     })
   })
 })
