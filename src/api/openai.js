@@ -74,9 +74,10 @@ function formatTestResultsSummary(testResults) {
  * @param {Array} messages - Conversation history [{role: 'user'|'assistant', content: string}]
  * @param {Object} testResults - User's test results from TestResultsContext
  * @param {string} apiKey - OpenAI API key
+ * @param {string} language - Current UI language code (e.g., 'en', 'de')
  * @returns {Promise<string>} - Assistant's response
  */
-export async function sendChatMessage(messages, testResults, apiKey) {
+export async function sendChatMessage(messages, testResults, apiKey, language = 'en') {
   if (!apiKey) {
     throw new Error('OpenAI API key is required')
   }
@@ -85,8 +86,13 @@ export async function sendChatMessage(messages, testResults, apiKey) {
     throw new Error('At least one message is required')
   }
 
+  // Build language instruction
+  const languageInstruction = language === 'de' 
+    ? '\n\nIMPORTANT: The user has selected German (Deutsch) as their language. Please respond in German.'
+    : ''
+
   // Build system prompt with optional test results context
-  const systemPrompt = CHAT_SYSTEM_PROMPT + formatTestResultsSummary(testResults)
+  const systemPrompt = CHAT_SYSTEM_PROMPT + languageInstruction + formatTestResultsSummary(testResults)
 
   const response = await fetch(OPENAI_API_URL, {
     method: 'POST',

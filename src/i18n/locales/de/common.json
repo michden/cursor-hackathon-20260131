@@ -3,6 +3,22 @@
     "title": "VisionCheck AI",
     "subtitle": "Mobile Augengesundheits-Vorsorge"
   },
+  "chat": {
+    "title": "KI-Assistent",
+    "welcomeTitle": "VisionCheck KI-Assistent",
+    "welcomeMessage": "Fragen Sie mich zu Ihren Testergebnissen, Augengesundheit oder allgemeinen Sehfragen.",
+    "placeholder": "Fragen zur Augengesundheit...",
+    "placeholderNoKey": "Geben Sie oben den API-Schlüssel ein",
+    "apiKeyLabel": "OpenAI API-Schlüssel",
+    "apiKeyHint": "Ihr Schlüssel wird nur lokal verwendet und nie auf einem Server gespeichert.",
+    "show": "Anzeigen",
+    "hide": "Verbergen",
+    "save": "Speichern",
+    "clearChat": "Chat löschen",
+    "closeChat": "Chat schließen",
+    "sendMessage": "Nachricht senden",
+    "disclaimer": "KI-Antworten dienen nur zu Bildungszwecken, keine medizinische Beratung."
+  },
   "nav": {
     "back": "Zurück",
     "backToHome": "Zurück zur Startseite",

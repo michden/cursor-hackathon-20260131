@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const CONSENT_STORAGE_KEY = 'visioncheck-location-consent'
 
@@ -12,6 +13,7 @@ const CONSENT_STORAGE_KEY = 'visioncheck-location-consent'
  * - Remembers consent preference
  */
 export default function FindDoctorButton() {
+  const { t } = useTranslation(['results', 'common'])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [showConsentDialog, setShowConsentDialog] = useState(false)
@@ -137,7 +139,7 @@ export default function FindDoctorButton() {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
             </svg>
-            Finding nearby doctors...
+            {t('results:findDoctor.searching')}
           </>
         ) : (
           <>
@@ -145,7 +147,7 @@ export default function FindDoctorButton() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            Find Eye Doctors Near Me
+            {t('results:actions.findDoctor')}
           </>
         )}
       </button>
@@ -180,10 +182,10 @@ export default function FindDoctorButton() {
                 </svg>
               </div>
               <h2 id="consent-dialog-title" className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">
-                Find Eye Doctors Near You
+                {t('results:findDoctor.title')}
               </h2>
               <p id="consent-dialog-description" className="text-slate-600 dark:text-slate-400">
-                We'll use your location to show nearby eye care professionals on Google Maps.
+                {t('results:findDoctor.description')}
               </p>
             </div>
 
@@ -194,9 +196,9 @@ export default function FindDoctorButton() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
                 <div>
-                  <p className="text-sm font-medium text-slate-700 dark:text-slate-200">Your privacy is protected</p>
+                  <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{t('results:findDoctor.privacyTitle')}</p>
                   <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                    Your location is used once to open Google Maps and is never stored or sent to our servers.
+                    {t('results:findDoctor.privacyText')}
                   </p>
                 </div>
               </div>
@@ -208,19 +210,19 @@ export default function FindDoctorButton() {
                 onClick={handleAllowLocation}
                 className="w-full py-3 bg-emerald-500 text-white font-semibold rounded-xl hover:bg-emerald-600 transition-colors"
               >
-                Allow Location
+                {t('results:findDoctor.allowLocation')}
               </button>
               <button
                 onClick={handleDecline}
                 className="w-full py-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
               >
-                Search Without Location
+                {t('results:findDoctor.searchWithout')}
               </button>
               <button
                 onClick={() => setShowConsentDialog(false)}
                 className="w-full py-2 text-slate-500 dark:text-slate-400 font-medium hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
               >
-                Cancel
+                {t('common:actions.cancel')}
               </button>
             </div>
           </div>

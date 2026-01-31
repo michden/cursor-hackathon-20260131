@@ -3,6 +3,22 @@
     "title": "VisionCheck AI",
     "subtitle": "Mobile Eye Health Pre-Screening"
   },
+  "chat": {
+    "title": "AI Assistant",
+    "welcomeTitle": "VisionCheck AI Assistant",
+    "welcomeMessage": "Ask me about your test results, eye health, or general vision questions.",
+    "placeholder": "Ask about your eye health...",
+    "placeholderNoKey": "Enter API key above to chat",
+    "apiKeyLabel": "OpenAI API Key",
+    "apiKeyHint": "Your key is only used locally and never stored on any server.",
+    "show": "Show",
+    "hide": "Hide",
+    "save": "Save",
+    "clearChat": "Clear chat",
+    "closeChat": "Close chat",
+    "sendMessage": "Send message",
+    "disclaimer": "AI responses are for educational purposes only, not medical advice."
+  },
   "nav": {
     "back": "Back",
     "backToHome": "Back to Home",
