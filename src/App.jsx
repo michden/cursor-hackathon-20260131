@@ -7,6 +7,7 @@ import ColorVisionTest from './pages/ColorVisionTest'
 import EyePhotoAnalysis from './pages/EyePhotoAnalysis'
 import HealthSnapshot from './pages/HealthSnapshot'
 import ContrastSensitivityTest from './pages/ContrastSensitivityTest'
+import AmslerGridTest from './pages/AmslerGridTest'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/color-vision" element={<ColorVisionTest />} />
             <Route path="/eye-photo" element={<EyePhotoAnalysis />} />
             <Route path="/contrast-sensitivity" element={<ContrastSensitivityTest />} />
+            <Route path="/amsler-grid" element={<AmslerGridTest />} />
             <Route path="/results" element={<HealthSnapshot />} />
           </Routes>
         </BrowserRouter>

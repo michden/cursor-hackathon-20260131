@@ -22,8 +22,8 @@ export default function Home() {
       {/* Header */}
       <header className="pt-12 pb-8 px-6 text-center">
         <div className="text-6xl mb-4">👁️</div>
-        <h1 className="text-3xl font-bold text-slate-800 mb-2">EyeCheck</h1>
-        <p className="text-slate-600">Preliminary Eye Health Assessment</p>
+        <h1 className="text-3xl font-bold text-slate-800 mb-2">VisionCheck AI</h1>
+        <p className="text-slate-600">Mobile Eye Health Pre-Screening</p>
         {results.completedAt && (
           <p className="text-sm text-slate-500 mt-2">
             Last tested: {formatLastTested(results.completedAt)}
@@ -101,6 +101,23 @@ export default function Home() {
         </Link>
 
         <Link
+          to="/amsler-grid"
+          className="block p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+          aria-label="Amsler Grid Test - Macular degeneration screening"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center text-2xl">
+              #
+            </div>
+            <div className="flex-1">
+              <h2 className="text-lg font-semibold text-slate-800">Amsler Grid</h2>
+              <p className="text-sm text-slate-500">Macular degeneration screening</p>
+            </div>
+            <div className="text-slate-400">→</div>
+          </div>
+        </Link>
+
+        <Link
           to="/eye-photo"
           className="block p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
           aria-label="Eye Photo Analysis - AI analysis of your eye photo"
@@ -142,7 +159,7 @@ export default function Home() {
             Built for educational purposes only
           </p>
           <p className="text-xs text-slate-300">
-            EyeCheck v1.0 | Not intended for medical diagnosis
+            VisionCheck AI v1.0 | Not intended for medical diagnosis
           </p>
         </div>
       </footer>

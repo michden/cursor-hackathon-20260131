@@ -9,6 +9,7 @@ function ResultCard({ title, icon, status, children, color = 'sky' }) {
     emerald: 'bg-emerald-50 border-emerald-200',
     violet: 'bg-violet-50 border-violet-200',
     amber: 'bg-amber-50 border-amber-200',
+    purple: 'bg-purple-50 border-purple-200',
   }
 
   const statusColors = {
@@ -160,6 +161,49 @@ function ContrastSensitivityResult({ data }) {
   )
 }
 
+function AmslerGridResult({ data }) {
+  if (!data) {
+    return (
+      <p className="text-sm text-slate-500">
+        Complete the Amsler grid test to see results.
+      </p>
+    )
+  }
+
+  const issueLabels = {
+    missing: 'Missing or blank areas',
+    wavy: 'Wavy or bent lines',
+    blurry: 'Blurry or unclear areas',
+    distorted: 'Distorted squares',
+  }
+
+  const reportedIssues = data.answers 
+    ? Object.entries(data.answers).filter(([, v]) => v).map(([k]) => issueLabels[k])
+    : []
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-baseline gap-2">
+        <span className={`text-3xl font-bold ${data.hasIssues ? 'text-amber-600' : 'text-purple-600'}`}>
+          {data.hasIssues ? 'Concerns Noted' : 'Normal'}
+        </span>
+      </div>
+      {data.hasIssues && reportedIssues.length > 0 && (
+        <ul className="text-sm text-slate-600 list-disc list-inside">
+          {reportedIssues.map((issue, i) => (
+            <li key={i}>{issue}</li>
+          ))}
+        </ul>
+      )}
+      {data.hasIssues ? (
+        <p className="text-sm text-amber-600">Recommend professional evaluation</p>
+      ) : (
+        <p className="text-sm text-emerald-600">✓ No distortions detected</p>
+      )}
+    </div>
+  )
+}
+
 function HistoryChart({ history }) {
   if (history.length < 2) return null
 
@@ -220,12 +264,12 @@ export default function HealthSnapshot() {
   const reportRef = useRef(null)
 
   const getOverallStatus = useCallback(() => {
-    const tests = [results.visualAcuity, results.colorVision, results.contrastSensitivity, results.eyePhoto]
+    const tests = [results.visualAcuity, results.colorVision, results.contrastSensitivity, results.amslerGrid, results.eyePhoto]
     const completed = tests.filter(Boolean).length
     
     if (completed === 0) return { status: 'none', message: 'No tests completed' }
-    if (completed === 4) return { status: 'complete', message: 'All tests complete' }
-    return { status: 'partial', message: `${completed}/4 tests complete` }
+    if (completed === 5) return { status: 'complete', message: 'All tests complete' }
+    return { status: 'partial', message: `${completed}/5 tests complete` }
   }, [results])
 
   const getRecommendation = useCallback(() => {
@@ -246,6 +290,12 @@ export default function HealthSnapshot() {
         recommendations.push('Discuss color vision with your eye doctor')
       }
     }
+
+    if (results.amslerGrid) {
+      if (results.amslerGrid.hasIssues) {
+        recommendations.push('Schedule an eye exam for macular evaluation')
+      }
+    }
     
     if (recommendations.length === 0) {
       if (hasAnyResults()) {
@@ -259,7 +309,7 @@ export default function HealthSnapshot() {
 
   const handleShare = useCallback(async () => {
     const shareData = {
-      title: 'EyeCheck - Eye Health Snapshot',
+      title: 'VisionCheck AI - Eye Health Snapshot',
       text: generateShareText(),
       url: window.location.origin,
     }
@@ -284,7 +334,7 @@ export default function HealthSnapshot() {
   }, [results])
 
   const generateShareText = () => {
-    let text = '👁️ EyeCheck - Eye Health Snapshot\n\n'
+    let text = '👁️ VisionCheck AI - Eye Health Snapshot\n\n'
     
     if (results.visualAcuity) {
       text += `📖 Visual Acuity: ${results.visualAcuity.snellen}\n`
@@ -292,6 +342,14 @@ export default function HealthSnapshot() {
     
     if (results.colorVision) {
       text += `🎨 Color Vision: ${results.colorVision.correctCount}/${results.colorVision.totalPlates} correct\n`
+    }
+
+    if (results.contrastSensitivity) {
+      text += `🔆 Contrast Sensitivity: ${results.contrastSensitivity.logCS.toFixed(2)} logCS\n`
+    }
+
+    if (results.amslerGrid) {
+      text += `# Amsler Grid: ${results.amslerGrid.hasIssues ? 'Concerns Noted' : 'Normal'}\n`
     }
     
     if (results.eyePhoto) {
@@ -311,8 +369,8 @@ export default function HealthSnapshot() {
     element.innerHTML = `
       <div style="font-family: Arial, sans-serif; padding: 40px; max-width: 600px;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h1 style="color: #0ea5e9; margin: 0;">👁️ EyeCheck</h1>
-          <p style="color: #64748b;">Eye Health Snapshot</p>
+          <h1 style="color: #0ea5e9; margin: 0;">👁️ VisionCheck AI</h1>
+          <p style="color: #64748b;">Mobile Eye Health Pre-Screening</p>
           <p style="color: #94a3b8; font-size: 14px;">${new Date().toLocaleDateString()}</p>
         </div>
         
@@ -352,6 +410,18 @@ export default function HealthSnapshot() {
           </div>
         ` : ''}
         
+        ${results.amslerGrid ? `
+          <div style="background: #faf5ff; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <h3 style="margin: 0 0 10px 0;"># Amsler Grid</h3>
+            <p style="font-size: 32px; font-weight: bold; color: ${results.amslerGrid.hasIssues ? '#f59e0b' : '#a855f7'}; margin: 0;">
+              ${results.amslerGrid.hasIssues ? 'Concerns Noted' : 'Normal'}
+            </p>
+            <p style="color: #64748b; margin: 5px 0 0 0;">
+              ${results.amslerGrid.message || 'Macular degeneration screening'}
+            </p>
+          </div>
+        ` : ''}
+        
         ${results.eyePhoto ? `
           <div style="background: #faf5ff; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
             <h3 style="margin: 0 0 10px 0;">📸 AI Eye Analysis</h3>
@@ -369,14 +439,14 @@ export default function HealthSnapshot() {
         </div>
         
         <p style="text-align: center; color: #94a3b8; font-size: 12px; margin-top: 30px;">
-          Generated by EyeCheck • ${window.location.origin}
+          Generated by VisionCheck AI • ${window.location.origin}
         </p>
       </div>
     `
     
     const opt = {
       margin: 10,
-      filename: `eyecheck-report-${new Date().toISOString().split('T')[0]}.pdf`,
+      filename: `visioncheck-report-${new Date().toISOString().split('T')[0]}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -429,8 +499,8 @@ export default function HealthSnapshot() {
           <div className="flex items-center gap-3 mb-4">
             <div className="text-4xl">👁️</div>
             <div>
-              <h2 className="text-xl font-bold">EyeCheck</h2>
-              <p className="text-white/80 text-sm">Eye Health Snapshot</p>
+              <h2 className="text-xl font-bold">VisionCheck AI</h2>
+              <p className="text-white/80 text-sm">Mobile Eye Health Pre-Screening</p>
             </div>
           </div>
           
@@ -485,6 +555,18 @@ export default function HealthSnapshot() {
           </ResultCard>
 
           <ResultCard
+            title="Amsler Grid"
+            icon="#"
+            color="purple"
+            status={results.amslerGrid ? 
+              (results.amslerGrid.hasIssues ? 'warning' : 'complete') : 
+              'pending'
+            }
+          >
+            <AmslerGridResult data={results.amslerGrid} />
+          </ResultCard>
+
+          <ResultCard
             title="AI Eye Analysis"
             icon="📸"
             color="violet"
@@ -530,7 +612,7 @@ export default function HealthSnapshot() {
               saveToHistory()
               alert('Session saved to history!')
             }}
-            disabled={!results.visualAcuity && !results.colorVision && !results.contrastSensitivity}
+            disabled={!results.visualAcuity && !results.colorVision && !results.contrastSensitivity && !results.amslerGrid}
             className="w-full py-4 bg-emerald-500 text-white font-semibold rounded-xl hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span>📊</span> Save to History

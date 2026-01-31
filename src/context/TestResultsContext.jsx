@@ -2,8 +2,8 @@ import { createContext, useContext, useState, useEffect } from 'react'
 
 const TestResultsContext = createContext(null)
 
-const STORAGE_KEY = 'eyecheck-results'
-const HISTORY_KEY = 'eyecheck-history'
+const STORAGE_KEY = 'visioncheck-results'
+const HISTORY_KEY = 'visioncheck-history'
 
 // Prepare results for storage (exclude large image data)
 const prepareForStorage = (results) => {
@@ -33,6 +33,7 @@ const loadPersistedResults = () => {
     visualAcuity: null,
     colorVision: null,
     contrastSensitivity: null,
+    amslerGrid: null,
     eyePhoto: null,
     completedAt: null
   }
@@ -96,11 +97,20 @@ export function TestResultsProvider({ children }) {
     }))
   }
 
+  const updateAmslerGrid = (data) => {
+    setResults(prev => ({
+      ...prev,
+      amslerGrid: data,
+      completedAt: new Date().toISOString()
+    }))
+  }
+
   const clearResults = () => {
     setResults({
       visualAcuity: null,
       colorVision: null,
       contrastSensitivity: null,
+      amslerGrid: null,
       eyePhoto: null,
       completedAt: null
     })
@@ -112,12 +122,12 @@ export function TestResultsProvider({ children }) {
   }
 
   const hasAnyResults = () => {
-    return results.visualAcuity || results.colorVision || results.contrastSensitivity || results.eyePhoto
+    return results.visualAcuity || results.colorVision || results.contrastSensitivity || results.amslerGrid || results.eyePhoto
   }
 
   // Save current session to history
   const saveToHistory = () => {
-    if (!results.visualAcuity && !results.colorVision && !results.contrastSensitivity) return
+    if (!results.visualAcuity && !results.colorVision && !results.contrastSensitivity && !results.amslerGrid) return
 
     const session = {
       id: Date.now(),
@@ -135,6 +145,10 @@ export function TestResultsProvider({ children }) {
         logCS: results.contrastSensitivity.logCS,
         level: results.contrastSensitivity.level,
         maxLevel: results.contrastSensitivity.maxLevel
+      } : null,
+      amslerGrid: results.amslerGrid ? {
+        hasIssues: results.amslerGrid.hasIssues,
+        status: results.amslerGrid.status
       } : null
     }
 
@@ -163,6 +177,7 @@ export function TestResultsProvider({ children }) {
       updateVisualAcuity,
       updateColorVision,
       updateContrastSensitivity,
+      updateAmslerGrid,
       updateEyePhoto,
       clearResults,
       hasAnyResults,

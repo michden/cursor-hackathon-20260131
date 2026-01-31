@@ -17,6 +17,7 @@ function TestConsumer({ onMount }) {
       <span data-testid="visual-acuity">{context.results.visualAcuity?.snellen || 'none'}</span>
       <span data-testid="color-vision">{context.results.colorVision?.score || 'none'}</span>
       <span data-testid="contrast-sensitivity">{context.results.contrastSensitivity?.logCS?.toString() || 'none'}</span>
+      <span data-testid="amsler-grid">{context.results.amslerGrid?.status || 'none'}</span>
       <span data-testid="eye-photo">{context.results.eyePhoto?.status || 'none'}</span>
       <span data-testid="history-count">{context.history.length}</span>
     </div>
@@ -208,5 +209,133 @@ describe('TestResultsContext', () => {
     })
 
     expect(screen.getByTestId('history-count')).toHaveTextContent('0')
+  })
+
+  it('updates Amsler grid results', () => {
+    let contextRef
+    
+    render(
+      <TestResultsProvider>
+        <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
+      </TestResultsProvider>
+    )
+
+    act(() => {
+      contextRef.updateAmslerGrid({ 
+        hasIssues: false, 
+        status: 'normal',
+        answers: { missing: false, wavy: false, blurry: false, distorted: false }
+      })
+    })
+
+    expect(screen.getByTestId('has-results')).toHaveTextContent('yes')
+    expect(screen.getByTestId('amsler-grid')).toHaveTextContent('normal')
+  })
+
+  it('updates Amsler grid with concerns', () => {
+    let contextRef
+    
+    render(
+      <TestResultsProvider>
+        <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
+      </TestResultsProvider>
+    )
+
+    act(() => {
+      contextRef.updateAmslerGrid({ 
+        hasIssues: true, 
+        status: 'concerns_noted',
+        answers: { missing: true, wavy: false, blurry: false, distorted: false }
+      })
+    })
+
+    expect(screen.getByTestId('has-results')).toHaveTextContent('yes')
+    expect(screen.getByTestId('amsler-grid')).toHaveTextContent('concerns_noted')
+  })
+
+  it('saves Amsler grid only session to history', () => {
+    let contextRef
+    
+    render(
+      <TestResultsProvider>
+        <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
+      </TestResultsProvider>
+    )
+
+    // Only set amsler grid (no visual acuity, color vision, or contrast sensitivity)
+    act(() => {
+      contextRef.updateAmslerGrid({ 
+        hasIssues: false, 
+        status: 'normal',
+        answers: { missing: false, wavy: false, blurry: false, distorted: false }
+      })
+    })
+
+    act(() => {
+      contextRef.saveToHistory()
+    })
+
+    expect(screen.getByTestId('history-count')).toHaveTextContent('1')
+    expect(contextRef.history[0].amslerGrid).toEqual({
+      hasIssues: false,
+      status: 'normal'
+    })
+  })
+
+  it('includes Amsler grid data in history session with other tests', () => {
+    let contextRef
+    
+    render(
+      <TestResultsProvider>
+        <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
+      </TestResultsProvider>
+    )
+
+    act(() => {
+      contextRef.updateVisualAcuity({ snellen: '20/20', level: 8 })
+      contextRef.updateAmslerGrid({ 
+        hasIssues: true, 
+        status: 'concerns_noted',
+        answers: { missing: true, wavy: true, blurry: false, distorted: false }
+      })
+    })
+
+    act(() => {
+      contextRef.saveToHistory()
+    })
+
+    expect(screen.getByTestId('history-count')).toHaveTextContent('1')
+    expect(contextRef.history[0].visualAcuity).toBeDefined()
+    expect(contextRef.history[0].amslerGrid).toEqual({
+      hasIssues: true,
+      status: 'concerns_noted'
+    })
+  })
+
+  it('clears Amsler grid results', () => {
+    let contextRef
+    
+    render(
+      <TestResultsProvider>
+        <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
+      </TestResultsProvider>
+    )
+
+    act(() => {
+      contextRef.updateAmslerGrid({ 
+        hasIssues: false, 
+        status: 'normal',
+        answers: { missing: false, wavy: false, blurry: false, distorted: false }
+      })
+    })
+
+    expect(screen.getByTestId('has-results')).toHaveTextContent('yes')
+
+    act(() => {
+      contextRef.clearResults()
+    })
+
+    expect(screen.getByTestId('has-results')).toHaveTextContent('no')
+    expect(screen.getByTestId('amsler-grid')).toHaveTextContent('none')
   })
 })
