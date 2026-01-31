@@ -35,7 +35,11 @@ function ResultCard({ title, icon, status, children, color = 'sky' }) {
 }
 
 function VisualAcuityResult({ data }) {
-  if (!data) {
+  const hasLeft = data?.left
+  const hasRight = data?.right
+  const hasAny = hasLeft || hasRight
+
+  if (!hasAny) {
     return (
       <p className="text-sm text-slate-500">
         Complete the visual acuity test to see results.
@@ -43,23 +47,63 @@ function VisualAcuityResult({ data }) {
     )
   }
 
+  const getStatusMessage = (level) => {
+    if (!level && level !== 0) return null
+    if (level >= 8) return { text: '✓ Normal', color: 'emerald' }
+    if (level >= 5) return { text: 'Consider exam', color: 'amber' }
+    return { text: 'Recommend eval', color: 'red' }
+  }
+
+  // Check for asymmetry
+  const hasAsymmetry = hasLeft && hasRight && Math.abs(data.left.level - data.right.level) >= 2
+
   return (
-    <div className="space-y-2">
-      <div className="flex items-baseline gap-2">
-        <span className="text-3xl font-bold text-sky-600">{data.snellen}</span>
-        <span className="text-sm text-slate-500">Snellen equivalent</span>
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-4">
+        {/* Left Eye */}
+        <div className="text-center p-3 bg-white rounded-lg border">
+          <div className="text-xs text-slate-500 mb-1">Left Eye</div>
+          <div className="text-2xl font-bold text-sky-600">
+            {hasLeft ? data.left.snellen : '—'}
+          </div>
+          {hasLeft && (
+            <div className="text-xs text-slate-500 mt-1">
+              Level {data.left.level}/{data.left.maxLevel}
+            </div>
+          )}
+        </div>
+        
+        {/* Right Eye */}
+        <div className="text-center p-3 bg-white rounded-lg border">
+          <div className="text-xs text-slate-500 mb-1">Right Eye</div>
+          <div className="text-2xl font-bold text-sky-600">
+            {hasRight ? data.right.snellen : '—'}
+          </div>
+          {hasRight && (
+            <div className="text-xs text-slate-500 mt-1">
+              Level {data.right.level}/{data.right.maxLevel}
+            </div>
+          )}
+        </div>
       </div>
-      <p className="text-sm text-slate-600">
-        Level {data.level} of {data.maxLevel} achieved
-      </p>
-      {data.level >= 8 && (
-        <p className="text-sm text-emerald-600">✓ Normal vision range</p>
+
+      {/* Status messages */}
+      {hasLeft && getStatusMessage(data.left.level) && (
+        <p className={`text-sm text-${getStatusMessage(data.left.level).color}-600`}>
+          Left: {getStatusMessage(data.left.level).text}
+        </p>
       )}
-      {data.level >= 5 && data.level < 8 && (
-        <p className="text-sm text-amber-600">Consider an eye exam</p>
+      {hasRight && getStatusMessage(data.right.level) && (
+        <p className={`text-sm text-${getStatusMessage(data.right.level).color}-600`}>
+          Right: {getStatusMessage(data.right.level).text}
+        </p>
       )}
-      {data.level < 5 && (
-        <p className="text-sm text-red-600">Recommend professional evaluation</p>
+
+      {/* Asymmetry warning */}
+      {hasAsymmetry && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+          ⚠️ Notable difference between eyes detected. Consider a professional evaluation.
+        </div>
       )}
     </div>
   )
@@ -127,7 +171,11 @@ function EyePhotoResult({ data }) {
 }
 
 function ContrastSensitivityResult({ data }) {
-  if (!data) {
+  const hasLeft = data?.left
+  const hasRight = data?.right
+  const hasAny = hasLeft || hasRight
+
+  if (!hasAny) {
     return (
       <p className="text-sm text-slate-500">
         Complete the contrast sensitivity test to see results.
@@ -136,33 +184,62 @@ function ContrastSensitivityResult({ data }) {
   }
 
   const getInterpretation = (logCS) => {
-    if (logCS >= 1.2) return { text: 'Excellent sensitivity', color: 'emerald' }
-    if (logCS >= 0.9) return { text: 'Good sensitivity', color: 'emerald' }
+    if (logCS >= 1.2) return { text: 'Excellent', color: 'emerald' }
+    if (logCS >= 0.9) return { text: 'Good', color: 'emerald' }
     if (logCS >= 0.6) return { text: 'Mild reduction', color: 'amber' }
-    if (logCS >= 0.3) return { text: 'Moderate reduction', color: 'amber' }
-    return { text: 'Reduced sensitivity', color: 'red' }
+    if (logCS >= 0.3) return { text: 'Moderate', color: 'amber' }
+    return { text: 'Reduced', color: 'red' }
   }
 
-  const interpretation = getInterpretation(data.logCS)
+  // Check for asymmetry
+  const hasAsymmetry = hasLeft && hasRight && Math.abs(data.left.logCS - data.right.logCS) >= 0.3
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-baseline gap-2">
-        <span className="text-3xl font-bold text-amber-600">{data.logCS.toFixed(2)}</span>
-        <span className="text-sm text-slate-500">logCS</span>
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-4">
+        {/* Left Eye */}
+        <div className="text-center p-3 bg-white rounded-lg border">
+          <div className="text-xs text-slate-500 mb-1">Left Eye</div>
+          <div className="text-2xl font-bold text-amber-600">
+            {hasLeft ? data.left.logCS.toFixed(2) : '—'}
+          </div>
+          {hasLeft && (
+            <div className={`text-xs mt-1 text-${getInterpretation(data.left.logCS).color}-600`}>
+              {getInterpretation(data.left.logCS).text}
+            </div>
+          )}
+        </div>
+        
+        {/* Right Eye */}
+        <div className="text-center p-3 bg-white rounded-lg border">
+          <div className="text-xs text-slate-500 mb-1">Right Eye</div>
+          <div className="text-2xl font-bold text-amber-600">
+            {hasRight ? data.right.logCS.toFixed(2) : '—'}
+          </div>
+          {hasRight && (
+            <div className={`text-xs mt-1 text-${getInterpretation(data.right.logCS).color}-600`}>
+              {getInterpretation(data.right.logCS).text}
+            </div>
+          )}
+        </div>
       </div>
-      <p className="text-sm text-slate-600">
-        Level {data.level} of {data.maxLevel} achieved
-      </p>
-      <p className={`text-sm text-${interpretation.color}-600`}>
-        {interpretation.color === 'emerald' && '✓ '}{interpretation.text}
-      </p>
+
+      {/* Asymmetry warning */}
+      {hasAsymmetry && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+          ⚠️ Notable difference between eyes detected. Consider a professional evaluation.
+        </div>
+      )}
     </div>
   )
 }
 
 function AmslerGridResult({ data }) {
-  if (!data) {
+  const hasLeft = data?.left
+  const hasRight = data?.right
+  const hasAny = hasLeft || hasRight
+
+  if (!hasAny) {
     return (
       <p className="text-sm text-slate-500">
         Complete the Amsler grid test to see results.
@@ -170,35 +247,42 @@ function AmslerGridResult({ data }) {
     )
   }
 
-  const issueLabels = {
-    missing: 'Missing or blank areas',
-    wavy: 'Wavy or bent lines',
-    blurry: 'Blurry or unclear areas',
-    distorted: 'Distorted squares',
+  const getEyeStatus = (eyeData) => {
+    if (!eyeData) return null
+    return eyeData.hasIssues ? 'Concerns' : 'Normal'
   }
 
-  const reportedIssues = data.answers 
-    ? Object.entries(data.answers).filter(([, v]) => v).map(([k]) => issueLabels[k])
-    : []
+  const getEyeColor = (eyeData) => {
+    if (!eyeData) return 'slate'
+    return eyeData.hasIssues ? 'amber' : 'purple'
+  }
+
+  const anyIssues = (hasLeft && data.left.hasIssues) || (hasRight && data.right.hasIssues)
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-baseline gap-2">
-        <span className={`text-3xl font-bold ${data.hasIssues ? 'text-amber-600' : 'text-purple-600'}`}>
-          {data.hasIssues ? 'Concerns Noted' : 'Normal'}
-        </span>
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-4">
+        {/* Left Eye */}
+        <div className="text-center p-3 bg-white rounded-lg border">
+          <div className="text-xs text-slate-500 mb-1">Left Eye</div>
+          <div className={`text-xl font-bold text-${getEyeColor(data.left)}-600`}>
+            {hasLeft ? getEyeStatus(data.left) : '—'}
+          </div>
+        </div>
+        
+        {/* Right Eye */}
+        <div className="text-center p-3 bg-white rounded-lg border">
+          <div className="text-xs text-slate-500 mb-1">Right Eye</div>
+          <div className={`text-xl font-bold text-${getEyeColor(data.right)}-600`}>
+            {hasRight ? getEyeStatus(data.right) : '—'}
+          </div>
+        </div>
       </div>
-      {data.hasIssues && reportedIssues.length > 0 && (
-        <ul className="text-sm text-slate-600 list-disc list-inside">
-          {reportedIssues.map((issue, i) => (
-            <li key={i}>{issue}</li>
-          ))}
-        </ul>
-      )}
-      {data.hasIssues ? (
-        <p className="text-sm text-amber-600">Recommend professional evaluation</p>
+
+      {anyIssues ? (
+        <p className="text-sm text-amber-600">⚠️ Recommend professional evaluation</p>
       ) : (
-        <p className="text-sm text-emerald-600">✓ No distortions detected</p>
+        <p className="text-sm text-emerald-600">✓ No distortions detected in tested eyes</p>
       )}
     </div>
   )
@@ -207,9 +291,31 @@ function AmslerGridResult({ data }) {
 function HistoryChart({ history }) {
   if (history.length < 2) return null
 
+  // Helper to get best level from per-eye data
+  const getBestLevel = (va) => {
+    if (!va) return null
+    // Handle both old format (single value) and new format (per-eye)
+    if (va.level !== undefined) return va.level // Old format
+    const leftLevel = va.left?.level
+    const rightLevel = va.right?.level
+    if (leftLevel && rightLevel) return Math.max(leftLevel, rightLevel)
+    return leftLevel || rightLevel || null
+  }
+
+  const getSnellen = (va) => {
+    if (!va) return null
+    if (va.snellen) return va.snellen // Old format
+    // New format - show better eye
+    const leftLevel = va.left?.level ?? 0
+    const rightLevel = va.right?.level ?? 0
+    if (leftLevel >= rightLevel && va.left) return va.left.snellen
+    if (va.right) return va.right.snellen
+    return null
+  }
+
   // Filter sessions with visual acuity data
   const sessions = history
-    .filter(s => s.visualAcuity)
+    .filter(s => getBestLevel(s.visualAcuity) !== null)
     .slice(0, 5)
     .reverse()
 
@@ -220,12 +326,12 @@ function HistoryChart({ history }) {
   const newest = sessions[sessions.length - 1]
   let trendText = null
   
-  if (oldest.visualAcuity && newest.visualAcuity) {
-    const oldSnellen = oldest.visualAcuity.snellen
-    const newSnellen = newest.visualAcuity.snellen
-    const oldLevel = oldest.visualAcuity.level
-    const newLevel = newest.visualAcuity.level
-    
+  const oldLevel = getBestLevel(oldest.visualAcuity)
+  const newLevel = getBestLevel(newest.visualAcuity)
+  const oldSnellen = getSnellen(oldest.visualAcuity)
+  const newSnellen = getSnellen(newest.visualAcuity)
+  
+  if (oldLevel && newLevel) {
     if (newLevel > oldLevel) {
       trendText = `Your visual acuity improved from ${oldSnellen} to ${newSnellen}`
     } else if (newLevel < oldLevel) {
@@ -243,7 +349,7 @@ function HistoryChart({ history }) {
           <div key={session.id} className="flex-1 flex flex-col items-center">
             <div
               className="w-full bg-sky-400 rounded-t"
-              style={{ height: `${(session.visualAcuity.level / 10) * 100}%` }}
+              style={{ height: `${(getBestLevel(session.visualAcuity) / 10) * 100}%` }}
             />
             <span className="text-xs text-slate-500 mt-1">
               {new Date(session.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -251,7 +357,7 @@ function HistoryChart({ history }) {
           </div>
         ))}
       </div>
-      <p className="text-xs text-slate-400 text-center mt-2">Visual acuity over time</p>
+      <p className="text-xs text-slate-400 text-center mt-2">Visual acuity over time (best eye)</p>
       {trendText && (
         <p className="text-sm text-sky-600 text-center mt-2 font-medium">{trendText}</p>
       )}
@@ -264,7 +370,12 @@ export default function HealthSnapshot() {
   const reportRef = useRef(null)
 
   const getOverallStatus = useCallback(() => {
-    const tests = [results.visualAcuity, results.colorVision, results.contrastSensitivity, results.amslerGrid, results.eyePhoto]
+    // Check if per-eye tests have at least one eye completed
+    const hasVisualAcuity = results.visualAcuity?.left || results.visualAcuity?.right
+    const hasContrastSensitivity = results.contrastSensitivity?.left || results.contrastSensitivity?.right
+    const hasAmslerGrid = results.amslerGrid?.left || results.amslerGrid?.right
+    
+    const tests = [hasVisualAcuity, results.colorVision, hasContrastSensitivity, hasAmslerGrid, results.eyePhoto]
     const completed = tests.filter(Boolean).length
     
     if (completed === 0) return { status: 'none', message: 'No tests completed' }
@@ -275,11 +386,19 @@ export default function HealthSnapshot() {
   const getRecommendation = useCallback(() => {
     const recommendations = []
     
-    if (results.visualAcuity) {
-      if (results.visualAcuity.level < 5) {
+    // Visual Acuity - check both eyes, use worst case
+    const vaLeft = results.visualAcuity?.left
+    const vaRight = results.visualAcuity?.right
+    if (vaLeft || vaRight) {
+      const worstLevel = Math.min(vaLeft?.level ?? 10, vaRight?.level ?? 10)
+      if (worstLevel < 5) {
         recommendations.push('Schedule an eye exam for vision assessment')
-      } else if (results.visualAcuity.level < 8) {
+      } else if (worstLevel < 8) {
         recommendations.push('Consider an eye checkup')
+      }
+      // Check asymmetry
+      if (vaLeft && vaRight && Math.abs(vaLeft.level - vaRight.level) >= 2) {
+        recommendations.push('Notable vision difference between eyes - get evaluated')
       }
     }
     
@@ -291,17 +410,29 @@ export default function HealthSnapshot() {
       }
     }
 
-    if (results.amslerGrid) {
-      if (results.amslerGrid.hasIssues) {
+    // Amsler Grid - check both eyes
+    const amslerLeft = results.amslerGrid?.left
+    const amslerRight = results.amslerGrid?.right
+    if (amslerLeft || amslerRight) {
+      const anyIssues = amslerLeft?.hasIssues || amslerRight?.hasIssues
+      if (anyIssues) {
         recommendations.push('Schedule an eye exam for macular evaluation')
       }
     }
 
-    if (results.contrastSensitivity) {
-      if (results.contrastSensitivity.logCS < 0.6) {
+    // Contrast Sensitivity - check both eyes, use worst case
+    const csLeft = results.contrastSensitivity?.left
+    const csRight = results.contrastSensitivity?.right
+    if (csLeft || csRight) {
+      const worstLogCS = Math.min(csLeft?.logCS ?? 1.5, csRight?.logCS ?? 1.5)
+      if (worstLogCS < 0.6) {
         recommendations.push('Get a professional evaluation for contrast sensitivity')
-      } else if (results.contrastSensitivity.logCS < 0.9) {
+      } else if (worstLogCS < 0.9) {
         recommendations.push('Discuss contrast sensitivity with your eye doctor')
+      }
+      // Check asymmetry
+      if (csLeft && csRight && Math.abs(csLeft.logCS - csRight.logCS) >= 0.3) {
+        recommendations.push('Notable contrast sensitivity difference between eyes - get evaluated')
       }
     }
     
@@ -344,20 +475,35 @@ export default function HealthSnapshot() {
   const generateShareText = () => {
     let text = '👁️ VisionCheck AI - Eye Health Snapshot\n\n'
     
-    if (results.visualAcuity) {
-      text += `📖 Visual Acuity: ${results.visualAcuity.snellen}\n`
+    const vaLeft = results.visualAcuity?.left
+    const vaRight = results.visualAcuity?.right
+    if (vaLeft || vaRight) {
+      text += `📖 Visual Acuity: `
+      if (vaLeft) text += `L: ${vaLeft.snellen}`
+      if (vaLeft && vaRight) text += ' / '
+      if (vaRight) text += `R: ${vaRight.snellen}`
+      text += '\n'
     }
     
     if (results.colorVision) {
       text += `🎨 Color Vision: ${results.colorVision.correctCount}/${results.colorVision.totalPlates} correct\n`
     }
 
-    if (results.contrastSensitivity) {
-      text += `🔆 Contrast Sensitivity: ${results.contrastSensitivity.logCS.toFixed(2)} logCS\n`
+    const csLeft = results.contrastSensitivity?.left
+    const csRight = results.contrastSensitivity?.right
+    if (csLeft || csRight) {
+      text += `🔆 Contrast Sensitivity: `
+      if (csLeft) text += `L: ${csLeft.logCS.toFixed(2)}`
+      if (csLeft && csRight) text += ' / '
+      if (csRight) text += `R: ${csRight.logCS.toFixed(2)}`
+      text += ' logCS\n'
     }
 
-    if (results.amslerGrid) {
-      text += `# Amsler Grid: ${results.amslerGrid.hasIssues ? 'Concerns Noted' : 'Normal'}\n`
+    const amslerLeft = results.amslerGrid?.left
+    const amslerRight = results.amslerGrid?.right
+    if (amslerLeft || amslerRight) {
+      const anyIssues = amslerLeft?.hasIssues || amslerRight?.hasIssues
+      text += `# Amsler Grid: ${anyIssues ? 'Concerns Noted' : 'Normal'}\n`
     }
     
     if (results.eyePhoto) {
@@ -372,6 +518,13 @@ export default function HealthSnapshot() {
   }
 
   const handleDownloadPDF = useCallback(async () => {
+    const vaLeft = results.visualAcuity?.left
+    const vaRight = results.visualAcuity?.right
+    const csLeft = results.contrastSensitivity?.left
+    const csRight = results.contrastSensitivity?.right
+    const amslerLeft = results.amslerGrid?.left
+    const amslerRight = results.amslerGrid?.right
+    
     // Create a styled container for the PDF
     const element = document.createElement('div')
     element.innerHTML = `
@@ -382,15 +535,23 @@ export default function HealthSnapshot() {
           <p style="color: #94a3b8; font-size: 14px;">${new Date().toLocaleDateString()}</p>
         </div>
         
-        ${results.visualAcuity ? `
+        ${(vaLeft || vaRight) ? `
           <div style="background: #f0f9ff; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
             <h3 style="margin: 0 0 10px 0;">📖 Visual Acuity</h3>
-            <p style="font-size: 32px; font-weight: bold; color: #0ea5e9; margin: 0;">
-              ${results.visualAcuity.snellen}
-            </p>
-            <p style="color: #64748b; margin: 5px 0 0 0;">
-              Level ${results.visualAcuity.level} of ${results.visualAcuity.maxLevel}
-            </p>
+            <div style="display: flex; gap: 20px;">
+              <div style="flex: 1; text-align: center;">
+                <p style="color: #64748b; margin: 0 0 5px 0; font-size: 12px;">Left Eye</p>
+                <p style="font-size: 24px; font-weight: bold; color: #0ea5e9; margin: 0;">
+                  ${vaLeft ? vaLeft.snellen : '—'}
+                </p>
+              </div>
+              <div style="flex: 1; text-align: center;">
+                <p style="color: #64748b; margin: 0 0 5px 0; font-size: 12px;">Right Eye</p>
+                <p style="font-size: 24px; font-weight: bold; color: #0ea5e9; margin: 0;">
+                  ${vaRight ? vaRight.snellen : '—'}
+                </p>
+              </div>
+            </div>
           </div>
         ` : ''}
         
@@ -406,27 +567,43 @@ export default function HealthSnapshot() {
           </div>
         ` : ''}
         
-        ${results.contrastSensitivity ? `
+        ${(csLeft || csRight) ? `
           <div style="background: #fffbeb; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
             <h3 style="margin: 0 0 10px 0;">🔆 Contrast Sensitivity</h3>
-            <p style="font-size: 32px; font-weight: bold; color: #f59e0b; margin: 0;">
-              ${results.contrastSensitivity.logCS.toFixed(2)}
-            </p>
-            <p style="color: #64748b; margin: 5px 0 0 0;">
-              logCS - Level ${results.contrastSensitivity.level} of ${results.contrastSensitivity.maxLevel}
-            </p>
+            <div style="display: flex; gap: 20px;">
+              <div style="flex: 1; text-align: center;">
+                <p style="color: #64748b; margin: 0 0 5px 0; font-size: 12px;">Left Eye</p>
+                <p style="font-size: 24px; font-weight: bold; color: #f59e0b; margin: 0;">
+                  ${csLeft ? csLeft.logCS.toFixed(2) : '—'}
+                </p>
+              </div>
+              <div style="flex: 1; text-align: center;">
+                <p style="color: #64748b; margin: 0 0 5px 0; font-size: 12px;">Right Eye</p>
+                <p style="font-size: 24px; font-weight: bold; color: #f59e0b; margin: 0;">
+                  ${csRight ? csRight.logCS.toFixed(2) : '—'}
+                </p>
+              </div>
+            </div>
           </div>
         ` : ''}
         
-        ${results.amslerGrid ? `
+        ${(amslerLeft || amslerRight) ? `
           <div style="background: #faf5ff; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
             <h3 style="margin: 0 0 10px 0;"># Amsler Grid</h3>
-            <p style="font-size: 32px; font-weight: bold; color: ${results.amslerGrid.hasIssues ? '#f59e0b' : '#a855f7'}; margin: 0;">
-              ${results.amslerGrid.hasIssues ? 'Concerns Noted' : 'Normal'}
-            </p>
-            <p style="color: #64748b; margin: 5px 0 0 0;">
-              ${results.amslerGrid.message || 'Macular degeneration screening'}
-            </p>
+            <div style="display: flex; gap: 20px;">
+              <div style="flex: 1; text-align: center;">
+                <p style="color: #64748b; margin: 0 0 5px 0; font-size: 12px;">Left Eye</p>
+                <p style="font-size: 20px; font-weight: bold; color: ${amslerLeft?.hasIssues ? '#f59e0b' : '#a855f7'}; margin: 0;">
+                  ${amslerLeft ? (amslerLeft.hasIssues ? 'Concerns' : 'Normal') : '—'}
+                </p>
+              </div>
+              <div style="flex: 1; text-align: center;">
+                <p style="color: #64748b; margin: 0 0 5px 0; font-size: 12px;">Right Eye</p>
+                <p style="font-size: 20px; font-weight: bold; color: ${amslerRight?.hasIssues ? '#f59e0b' : '#a855f7'}; margin: 0;">
+                  ${amslerRight ? (amslerRight.hasIssues ? 'Concerns' : 'Normal') : '—'}
+                </p>
+              </div>
+            </div>
           </div>
         ` : ''}
         
@@ -533,7 +710,16 @@ export default function HealthSnapshot() {
             title="Visual Acuity"
             icon="📖"
             color="sky"
-            status={results.visualAcuity ? 'complete' : 'pending'}
+            status={(() => {
+              const hasAny = results.visualAcuity?.left || results.visualAcuity?.right
+              if (!hasAny) return 'pending'
+              const leftLevel = results.visualAcuity?.left?.level ?? 10
+              const rightLevel = results.visualAcuity?.right?.level ?? 10
+              const worstLevel = Math.min(leftLevel, rightLevel)
+              const hasAsymmetry = results.visualAcuity?.left && results.visualAcuity?.right && 
+                Math.abs(leftLevel - rightLevel) >= 2
+              return worstLevel >= 8 && !hasAsymmetry ? 'complete' : 'warning'
+            })()}
           >
             <VisualAcuityResult data={results.visualAcuity} />
           </ResultCard>
@@ -554,10 +740,16 @@ export default function HealthSnapshot() {
             title="Contrast Sensitivity"
             icon="🔆"
             color="amber"
-            status={results.contrastSensitivity ? 
-              (results.contrastSensitivity.logCS >= 0.9 ? 'complete' : 'warning') : 
-              'pending'
-            }
+            status={(() => {
+              const hasAny = results.contrastSensitivity?.left || results.contrastSensitivity?.right
+              if (!hasAny) return 'pending'
+              const leftLogCS = results.contrastSensitivity?.left?.logCS ?? 1.5
+              const rightLogCS = results.contrastSensitivity?.right?.logCS ?? 1.5
+              const worstLogCS = Math.min(leftLogCS, rightLogCS)
+              const hasAsymmetry = results.contrastSensitivity?.left && results.contrastSensitivity?.right && 
+                Math.abs(leftLogCS - rightLogCS) >= 0.3
+              return worstLogCS >= 0.9 && !hasAsymmetry ? 'complete' : 'warning'
+            })()}
           >
             <ContrastSensitivityResult data={results.contrastSensitivity} />
           </ResultCard>
@@ -566,10 +758,12 @@ export default function HealthSnapshot() {
             title="Amsler Grid"
             icon="#"
             color="purple"
-            status={results.amslerGrid ? 
-              (results.amslerGrid.hasIssues ? 'warning' : 'complete') : 
-              'pending'
-            }
+            status={(() => {
+              const hasAny = results.amslerGrid?.left || results.amslerGrid?.right
+              if (!hasAny) return 'pending'
+              const anyIssues = results.amslerGrid?.left?.hasIssues || results.amslerGrid?.right?.hasIssues
+              return anyIssues ? 'warning' : 'complete'
+            })()}
           >
             <AmslerGridResult data={results.amslerGrid} />
           </ResultCard>
@@ -620,7 +814,10 @@ export default function HealthSnapshot() {
               saveToHistory()
               alert('Session saved to history!')
             }}
-            disabled={!results.visualAcuity && !results.colorVision && !results.contrastSensitivity && !results.amslerGrid}
+            disabled={!(results.visualAcuity?.left || results.visualAcuity?.right) && 
+                      !results.colorVision && 
+                      !(results.contrastSensitivity?.left || results.contrastSensitivity?.right) && 
+                      !(results.amslerGrid?.left || results.amslerGrid?.right)}
             className="w-full py-4 bg-emerald-500 text-white font-semibold rounded-xl hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span>📊</span> Save to History

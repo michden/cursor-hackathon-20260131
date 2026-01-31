@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTestResults } from '../context/TestResultsContext'
+import EyeSelector from '../components/EyeSelector'
 
 // Tumbling E test - the E points in 4 directions
 const DIRECTIONS = ['right', 'down', 'left', 'up']
@@ -100,9 +101,10 @@ function DirectionButton({ direction, onClick, disabled }) {
 
 export default function VisualAcuityTest() {
   const navigate = useNavigate()
-  const { updateVisualAcuity } = useTestResults()
+  const { results, updateVisualAcuity } = useTestResults()
   
-  const [phase, setPhase] = useState('instructions') // instructions, testing, complete
+  const [phase, setPhase] = useState('eye-select') // eye-select, instructions, testing, complete
+  const [currentEye, setCurrentEye] = useState(null) // 'left' | 'right' | null
   const [currentLevel, setCurrentLevel] = useState(0)
   const [trialInLevel, setTrialInLevel] = useState(0)
   const [correctInLevel, setCorrectInLevel] = useState(0)
@@ -206,12 +208,22 @@ export default function VisualAcuityTest() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [phase])
 
+  const resetTestState = () => {
+    setCurrentLevel(0)
+    setTrialInLevel(0)
+    setCorrectInLevel(0)
+    setBestLevel(0)
+    setTestHistory([])
+    generateNewDirection()
+  }
+
   const finishTest = (finalLevel) => {
     const acuityData = finalLevel > 0 
       ? ACUITY_LEVELS[finalLevel - 1]
       : { snellen: 'Unable to determine', level: 0 }
     
-    updateVisualAcuity({
+    // Save result for the current eye
+    updateVisualAcuity(currentEye, {
       snellen: acuityData.snellen,
       level: acuityData.level,
       maxLevel: ACUITY_LEVELS.length,
@@ -222,6 +234,17 @@ export default function VisualAcuityTest() {
     setPhase('complete')
   }
 
+  const handleEyeSelect = (eye) => {
+    setCurrentEye(eye)
+    resetTestState()
+    setPhase('instructions')
+  }
+
+  const handleTestAnotherEye = () => {
+    resetTestState()
+    setPhase('eye-select')
+  }
+
   const startTest = () => {
     setPhase('testing')
     generateNewDirection()
@@ -229,7 +252,7 @@ export default function VisualAcuityTest() {
 
   const currentAcuity = ACUITY_LEVELS[currentLevel]
 
-  if (phase === 'instructions') {
+  if (phase === 'eye-select') {
     return (
       <div className="min-h-screen bg-white">
         <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center gap-4">
@@ -238,12 +261,38 @@ export default function VisualAcuityTest() {
           </Link>
           <h1 className="text-lg font-semibold text-slate-800">Visual Acuity Test</h1>
         </header>
+        <EyeSelector 
+          onSelect={handleEyeSelect}
+          completedEyes={results.visualAcuity}
+          testName="Visual Acuity"
+        />
+      </div>
+    )
+  }
+
+  if (phase === 'instructions') {
+    return (
+      <div className="min-h-screen bg-white">
+        <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setPhase('eye-select')} 
+              className="text-slate-400 hover:text-slate-600"
+            >
+              ← Back
+            </button>
+            <h1 className="text-lg font-semibold text-slate-800">Visual Acuity Test</h1>
+          </div>
+          <div className="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+            {currentEye === 'left' ? '👁️ Left Eye' : '👁️ Right Eye'}
+          </div>
+        </header>
 
         <div className="p-6 max-w-md mx-auto">
           <div className="text-center mb-8">
             <div className="text-6xl mb-4">👁️</div>
             <h2 className="text-2xl font-bold text-slate-800 mb-2">Tumbling E Test</h2>
-            <p className="text-slate-600">Test your visual acuity</p>
+            <p className="text-slate-600">Testing your {currentEye} eye</p>
           </div>
 
           <div className="bg-slate-50 rounded-xl p-6 mb-8">
@@ -288,22 +337,32 @@ export default function VisualAcuityTest() {
 
   if (phase === 'complete') {
     const result = bestLevel > 0 ? ACUITY_LEVELS[bestLevel - 1] : null
+    const otherEye = currentEye === 'left' ? 'right' : 'left'
+    const otherEyeComplete = results.visualAcuity?.[otherEye]
+    const bothComplete = results.visualAcuity?.left && results.visualAcuity?.right
     
     return (
       <div className="min-h-screen bg-white">
-        <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center gap-4">
-          <Link to="/" className="text-slate-400 hover:text-slate-600">
-            ← Back
-          </Link>
-          <h1 className="text-lg font-semibold text-slate-800">Test Complete</h1>
+        <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link to="/" className="text-slate-400 hover:text-slate-600">
+              ← Back
+            </Link>
+            <h1 className="text-lg font-semibold text-slate-800">Test Complete</h1>
+          </div>
+          <div className="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+            {currentEye === 'left' ? '👁️ Left Eye' : '👁️ Right Eye'}
+          </div>
         </header>
 
         <div className="p-6 max-w-md mx-auto text-center">
           <div className="text-6xl mb-4">✅</div>
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">Test Complete!</h2>
+          <h2 className="text-2xl font-bold text-slate-800 mb-2">
+            {currentEye === 'left' ? 'Left' : 'Right'} Eye Complete!
+          </h2>
           
           <div className="bg-sky-50 rounded-xl p-6 my-6">
-            <p className="text-slate-600 mb-2">Your estimated visual acuity:</p>
+            <p className="text-slate-600 mb-2">Estimated visual acuity:</p>
             <p className="text-4xl font-bold text-sky-600">
               {result ? result.snellen : 'N/A'}
             </p>
@@ -371,15 +430,39 @@ export default function VisualAcuityTest() {
           </div>
 
           <div className="space-y-3">
+            {!otherEyeComplete && (
+              <button
+                onClick={handleTestAnotherEye}
+                className="w-full py-4 bg-sky-500 text-white font-semibold rounded-xl hover:bg-sky-600 transition-colors"
+              >
+                Test {otherEye === 'left' ? 'Left' : 'Right'} Eye →
+              </button>
+            )}
+            {bothComplete && (
+              <button
+                onClick={() => navigate('/results')}
+                className="w-full py-4 bg-sky-500 text-white font-semibold rounded-xl hover:bg-sky-600 transition-colors"
+              >
+                View All Results
+              </button>
+            )}
+            {!bothComplete && otherEyeComplete && (
+              <button
+                onClick={() => navigate('/results')}
+                className="w-full py-4 bg-sky-500 text-white font-semibold rounded-xl hover:bg-sky-600 transition-colors"
+              >
+                View All Results
+              </button>
+            )}
             <button
-              onClick={() => navigate('/results')}
-              className="w-full py-4 bg-sky-500 text-white font-semibold rounded-xl hover:bg-sky-600 transition-colors"
+              onClick={handleTestAnotherEye}
+              className="w-full py-4 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors"
             >
-              View All Results
+              {otherEyeComplete ? 'Retest an Eye' : 'Back to Eye Selection'}
             </button>
             <Link
               to="/"
-              className="block w-full py-4 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors"
+              className="block w-full py-4 text-slate-500 font-medium text-center hover:text-slate-700 transition-colors"
             >
               Back to Home
             </Link>
@@ -393,11 +476,17 @@ export default function VisualAcuityTest() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center justify-between">
-        <Link to="/" className="text-slate-400 hover:text-slate-600">
+        <button 
+          onClick={() => setPhase('eye-select')} 
+          className="text-slate-400 hover:text-slate-600"
+        >
           ← Exit
-        </Link>
+        </button>
+        <div className="text-sm text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
+          {currentEye === 'left' ? '👁️ L' : '👁️ R'}
+        </div>
         <div className="text-sm text-slate-500">
-          Level {currentLevel + 1}/{ACUITY_LEVELS.length}
+          Lvl {currentLevel + 1}/{ACUITY_LEVELS.length}
         </div>
         <div className="text-sm text-slate-500">
           {trialInLevel + 1}/{TRIALS_PER_LEVEL}

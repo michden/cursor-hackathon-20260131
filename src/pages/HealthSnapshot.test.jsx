@@ -26,16 +26,28 @@ function renderWithProviders(ui) {
   )
 }
 
-// Helper to set up localStorage with test results
+// Helper to set up localStorage with test results (new per-eye format)
 function setTestResults(results) {
-  localStorage.setItem('visioncheck-results', JSON.stringify(results))
+  // Ensure per-eye structure for tests
+  const formattedResults = {
+    visualAcuity: results.visualAcuity || { left: null, right: null },
+    colorVision: results.colorVision || null,
+    contrastSensitivity: results.contrastSensitivity || { left: null, right: null },
+    amslerGrid: results.amslerGrid || { left: null, right: null },
+    eyePhoto: results.eyePhoto || null,
+    completedAt: results.completedAt || null
+  }
+  localStorage.setItem('visioncheck-results', JSON.stringify(formattedResults))
 }
 
 describe('HealthSnapshot', () => {
-  describe('getRecommendation', () => {
-    it('shows good results message when contrast sensitivity is good (>= 0.9)', () => {
+  describe('getRecommendation with per-eye data', () => {
+    it('shows good results message when contrast sensitivity is good (>= 0.9) for both eyes', () => {
       setTestResults({
-        contrastSensitivity: { logCS: 1.2, level: 8, maxLevel: 10 }
+        contrastSensitivity: { 
+          left: { logCS: 1.2, level: 8, maxLevel: 10 },
+          right: { logCS: 1.1, level: 7, maxLevel: 10 }
+        }
       })
       
       renderWithProviders(<HealthSnapshot />)
@@ -45,7 +57,10 @@ describe('HealthSnapshot', () => {
 
     it('recommends discussing with doctor for mild contrast reduction (0.6 - 0.9)', () => {
       setTestResults({
-        contrastSensitivity: { logCS: 0.7, level: 5, maxLevel: 10 }
+        contrastSensitivity: { 
+          left: { logCS: 0.7, level: 5, maxLevel: 10 },
+          right: { logCS: 0.8, level: 6, maxLevel: 10 }
+        }
       })
       
       renderWithProviders(<HealthSnapshot />)
@@ -55,7 +70,10 @@ describe('HealthSnapshot', () => {
 
     it('recommends professional evaluation for moderate contrast reduction (< 0.6)', () => {
       setTestResults({
-        contrastSensitivity: { logCS: 0.4, level: 3, maxLevel: 10 }
+        contrastSensitivity: { 
+          left: { logCS: 0.4, level: 3, maxLevel: 10 },
+          right: { logCS: 0.9, level: 7, maxLevel: 10 }
+        }
       })
       
       renderWithProviders(<HealthSnapshot />)
@@ -65,7 +83,10 @@ describe('HealthSnapshot', () => {
 
     it('recommends professional evaluation for severe contrast reduction (< 0.3)', () => {
       setTestResults({
-        contrastSensitivity: { logCS: 0.2, level: 1, maxLevel: 10 }
+        contrastSensitivity: { 
+          left: { logCS: 0.2, level: 1, maxLevel: 10 },
+          right: null
+        }
       })
       
       renderWithProviders(<HealthSnapshot />)
@@ -75,8 +96,14 @@ describe('HealthSnapshot', () => {
 
     it('combines contrast sensitivity recommendation with other test recommendations', () => {
       setTestResults({
-        visualAcuity: { snellen: '20/100', level: 3, maxLevel: 10 },
-        contrastSensitivity: { logCS: 0.5, level: 4, maxLevel: 10 }
+        visualAcuity: { 
+          left: { snellen: '20/100', level: 3, maxLevel: 10 },
+          right: { snellen: '20/70', level: 4, maxLevel: 10 }
+        },
+        contrastSensitivity: { 
+          left: { logCS: 0.5, level: 4, maxLevel: 10 },
+          right: null
+        }
       })
       
       renderWithProviders(<HealthSnapshot />)
@@ -88,13 +115,92 @@ describe('HealthSnapshot', () => {
 
     it('shows warning status on card when contrast sensitivity is reduced', () => {
       setTestResults({
-        contrastSensitivity: { logCS: 0.5, level: 4, maxLevel: 10 }
+        contrastSensitivity: { 
+          left: { logCS: 0.5, level: 4, maxLevel: 10 },
+          right: null
+        }
       })
       
       renderWithProviders(<HealthSnapshot />)
       
       // The card should show "Review" status (warning)
       expect(screen.getByText('Review')).toBeInTheDocument()
+    })
+  })
+
+  describe('asymmetry detection', () => {
+    it('warns about visual acuity asymmetry when eyes differ by 2+ levels', () => {
+      setTestResults({
+        visualAcuity: { 
+          left: { snellen: '20/20', level: 8, maxLevel: 10 },
+          right: { snellen: '20/50', level: 4, maxLevel: 10 }
+        }
+      })
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      expect(screen.getByText(/Notable difference between eyes detected/)).toBeInTheDocument()
+    })
+
+    it('warns about contrast sensitivity asymmetry when eyes differ by 0.3+ logCS', () => {
+      setTestResults({
+        contrastSensitivity: { 
+          left: { logCS: 1.2, level: 9, maxLevel: 10 },
+          right: { logCS: 0.6, level: 5, maxLevel: 10 }
+        }
+      })
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      expect(screen.getByText(/Notable difference between eyes detected/)).toBeInTheDocument()
+    })
+  })
+
+  describe('per-eye display', () => {
+    it('displays left and right eye visual acuity separately', () => {
+      setTestResults({
+        visualAcuity: { 
+          left: { snellen: '20/20', level: 8, maxLevel: 10 },
+          right: { snellen: '20/40', level: 5, maxLevel: 10 }
+        }
+      })
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      expect(screen.getByText('Left Eye')).toBeInTheDocument()
+      expect(screen.getByText('Right Eye')).toBeInTheDocument()
+      expect(screen.getByText('20/20')).toBeInTheDocument()
+      expect(screen.getByText('20/40')).toBeInTheDocument()
+    })
+
+    it('displays left and right eye contrast sensitivity separately', () => {
+      setTestResults({
+        contrastSensitivity: { 
+          left: { logCS: 1.2, level: 9, maxLevel: 10 },
+          right: { logCS: 0.9, level: 7, maxLevel: 10 }
+        }
+      })
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      expect(screen.getByText('1.20')).toBeInTheDocument()
+      expect(screen.getByText('0.90')).toBeInTheDocument()
+    })
+
+    it('shows dash for incomplete eye tests', () => {
+      setTestResults({
+        visualAcuity: { 
+          left: { snellen: '20/20', level: 8, maxLevel: 10 },
+          right: null
+        }
+      })
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      expect(screen.getByText('20/20')).toBeInTheDocument()
+      // The right eye should show a dash
+      const dashes = screen.getAllByText('—')
+      expect(dashes.length).toBeGreaterThan(0)
     })
   })
 })

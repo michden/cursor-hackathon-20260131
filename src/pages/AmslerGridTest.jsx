@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTestResults } from '../context/TestResultsContext'
+import EyeSelector from '../components/EyeSelector'
 
 const GRID_SIZE = 20 // 20x20 grid
 const QUESTIONS = [
@@ -48,11 +49,28 @@ function AmslerGrid() {
 
 export default function AmslerGridTest() {
   const navigate = useNavigate()
-  const { updateAmslerGrid } = useTestResults()
+  const { results, updateAmslerGrid } = useTestResults()
   
-  const [phase, setPhase] = useState('instructions')
+  const [phase, setPhase] = useState('eye-select') // eye-select, instructions, testing, complete
+  const [currentEye, setCurrentEye] = useState(null) // 'left' | 'right' | null
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState({})
+
+  const resetTestState = () => {
+    setCurrentQuestion(0)
+    setAnswers({})
+  }
+
+  const handleEyeSelect = (eye) => {
+    setCurrentEye(eye)
+    resetTestState()
+    setPhase('instructions')
+  }
+
+  const handleTestAnotherEye = () => {
+    resetTestState()
+    setPhase('eye-select')
+  }
 
   const handleAnswer = (answer) => {
     const question = QUESTIONS[currentQuestion]
@@ -68,7 +86,8 @@ export default function AmslerGridTest() {
   const finishTest = (finalAnswers) => {
     const hasIssues = Object.values(finalAnswers).some(a => a === true)
     
-    updateAmslerGrid({
+    // Save result for the current eye
+    updateAmslerGrid(currentEye, {
       answers: finalAnswers,
       hasIssues,
       status: hasIssues ? 'concerns_noted' : 'normal',
@@ -81,8 +100,8 @@ export default function AmslerGridTest() {
     setPhase('complete')
   }
 
-  // Instructions phase
-  if (phase === 'instructions') {
+  // Eye selection phase
+  if (phase === 'eye-select') {
     return (
       <div className="min-h-screen bg-linear-to-b from-slate-50 to-slate-100">
         <header className="bg-white/80 backdrop-blur-sm border-b border-slate-100 px-4 py-4 sticky top-0">
@@ -94,6 +113,33 @@ export default function AmslerGridTest() {
             <div className="w-12" />
           </div>
         </header>
+        <EyeSelector 
+          onSelect={handleEyeSelect}
+          completedEyes={results.amslerGrid}
+          testName="Amsler Grid"
+        />
+      </div>
+    )
+  }
+
+  // Instructions phase
+  if (phase === 'instructions') {
+    return (
+      <div className="min-h-screen bg-linear-to-b from-slate-50 to-slate-100">
+        <header className="bg-white/80 backdrop-blur-sm border-b border-slate-100 px-4 py-4 sticky top-0">
+          <div className="max-w-lg mx-auto flex items-center justify-between">
+            <button 
+              onClick={() => setPhase('eye-select')} 
+              className="text-slate-600 hover:text-slate-800 transition-colors"
+            >
+              ← Back
+            </button>
+            <h1 className="font-semibold text-slate-800">Amsler Grid Test</h1>
+            <div className="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+              {currentEye === 'left' ? '👁️ L' : '👁️ R'}
+            </div>
+          </div>
+        </header>
 
         <main className="max-w-lg mx-auto px-4 py-8">
           <div className="text-center mb-8">
@@ -102,7 +148,7 @@ export default function AmslerGridTest() {
             </div>
             <h2 className="text-2xl font-bold text-slate-800 mb-2">Amsler Grid Test</h2>
             <p className="text-slate-600">
-              Screen for macular degeneration by checking for visual distortions
+              Testing your {currentEye} eye for visual distortions
             </p>
           </div>
 
@@ -154,11 +200,14 @@ export default function AmslerGridTest() {
       <div className="min-h-screen bg-slate-900 flex flex-col">
         <header className="bg-slate-800 px-4 py-4 flex items-center justify-between">
           <button 
-            onClick={() => setPhase('instructions')} 
+            onClick={() => setPhase('eye-select')} 
             className="text-white/70 hover:text-white transition-colors"
           >
             ← Exit
           </button>
+          <div className="text-sm text-white/70 bg-slate-700 px-2 py-1 rounded-full">
+            {currentEye === 'left' ? '👁️ L' : '👁️ R'}
+          </div>
           <span className="text-white/70 text-sm">
             {currentQuestion + 1}/{QUESTIONS.length}
           </span>
@@ -206,6 +255,9 @@ export default function AmslerGridTest() {
   if (phase === 'complete') {
     const hasIssues = Object.values(answers).some(a => a === true)
     const issuesList = QUESTIONS.filter(q => answers[q.id])
+    const otherEye = currentEye === 'left' ? 'right' : 'left'
+    const otherEyeComplete = results.amslerGrid?.[otherEye]
+    const bothComplete = results.amslerGrid?.left && results.amslerGrid?.right
     
     return (
       <div className="min-h-screen bg-linear-to-b from-slate-50 to-slate-100">
@@ -215,14 +267,18 @@ export default function AmslerGridTest() {
               ← Back
             </Link>
             <h1 className="font-semibold text-slate-800">Test Complete</h1>
-            <div className="w-12" />
+            <div className="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+              {currentEye === 'left' ? '👁️ L' : '👁️ R'}
+            </div>
           </div>
         </header>
 
         <main className="max-w-lg mx-auto px-4 py-8">
           <div className="text-center mb-8">
             <div className="text-6xl mb-4">{hasIssues ? '⚠️' : '✅'}</div>
-            <h2 className="text-2xl font-bold text-slate-800 mb-2">Test Complete!</h2>
+            <h2 className="text-2xl font-bold text-slate-800 mb-2">
+              {currentEye === 'left' ? 'Left' : 'Right'} Eye Complete!
+            </h2>
           </div>
 
           {/* Result Card */}
@@ -281,15 +337,39 @@ export default function AmslerGridTest() {
 
           {/* Action Buttons */}
           <div className="space-y-3">
+            {!otherEyeComplete && (
+              <button
+                onClick={handleTestAnotherEye}
+                className="w-full py-4 bg-purple-500 text-white font-semibold rounded-xl hover:bg-purple-600 transition-colors"
+              >
+                Test {otherEye === 'left' ? 'Left' : 'Right'} Eye →
+              </button>
+            )}
+            {bothComplete && (
+              <button
+                onClick={() => navigate('/results')}
+                className="w-full py-4 bg-purple-500 text-white font-semibold rounded-xl hover:bg-purple-600 transition-colors"
+              >
+                View All Results
+              </button>
+            )}
+            {!bothComplete && otherEyeComplete && (
+              <button
+                onClick={() => navigate('/results')}
+                className="w-full py-4 bg-purple-500 text-white font-semibold rounded-xl hover:bg-purple-600 transition-colors"
+              >
+                View All Results
+              </button>
+            )}
             <button
-              onClick={() => navigate('/results')}
-              className="w-full py-4 bg-purple-500 text-white font-semibold rounded-xl hover:bg-purple-600 transition-colors"
+              onClick={handleTestAnotherEye}
+              className="w-full py-4 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors"
             >
-              View All Results
+              {otherEyeComplete ? 'Retest an Eye' : 'Back to Eye Selection'}
             </button>
             <Link
               to="/"
-              className="w-full py-4 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors flex items-center justify-center"
+              className="w-full py-4 text-slate-500 font-medium flex items-center justify-center hover:text-slate-700 transition-colors"
             >
               Back to Home
             </Link>

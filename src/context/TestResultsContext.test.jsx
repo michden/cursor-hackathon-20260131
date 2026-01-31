@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, act } from '@testing-library/react'
 import { TestResultsProvider, useTestResults } from './TestResultsContext'
 
@@ -7,17 +7,26 @@ beforeEach(() => {
   localStorage.clear()
 })
 
-// Test component that exposes context values
+// Test component that exposes context values (updated for per-eye structure)
 function TestConsumer({ onMount }) {
   const context = useTestResults()
   onMount?.(context)
+  
+  // Get first available eye for display
+  const vaSnellen = context.results.visualAcuity?.left?.snellen || 
+                    context.results.visualAcuity?.right?.snellen || 'none'
+  const csLogCS = context.results.contrastSensitivity?.left?.logCS?.toString() || 
+                  context.results.contrastSensitivity?.right?.logCS?.toString() || 'none'
+  const amslerStatus = context.results.amslerGrid?.left?.status || 
+                       context.results.amslerGrid?.right?.status || 'none'
+  
   return (
     <div>
       <span data-testid="has-results">{context.hasAnyResults() ? 'yes' : 'no'}</span>
-      <span data-testid="visual-acuity">{context.results.visualAcuity?.snellen || 'none'}</span>
+      <span data-testid="visual-acuity">{vaSnellen}</span>
       <span data-testid="color-vision">{context.results.colorVision?.score || 'none'}</span>
-      <span data-testid="contrast-sensitivity">{context.results.contrastSensitivity?.logCS?.toString() || 'none'}</span>
-      <span data-testid="amsler-grid">{context.results.amslerGrid?.status || 'none'}</span>
+      <span data-testid="contrast-sensitivity">{csLogCS}</span>
+      <span data-testid="amsler-grid">{amslerStatus}</span>
       <span data-testid="eye-photo">{context.results.eyePhoto?.status || 'none'}</span>
       <span data-testid="history-count">{context.history.length}</span>
     </div>
@@ -38,7 +47,7 @@ describe('TestResultsContext', () => {
     expect(screen.getByTestId('eye-photo')).toHaveTextContent('none')
   })
 
-  it('updates visual acuity results', () => {
+  it('updates visual acuity results for left eye', () => {
     let contextRef
     
     render(
@@ -48,11 +57,28 @@ describe('TestResultsContext', () => {
     )
 
     act(() => {
-      contextRef.updateVisualAcuity({ snellen: '20/20', level: 8 })
+      contextRef.updateVisualAcuity('left', { snellen: '20/20', level: 8 })
     })
 
     expect(screen.getByTestId('has-results')).toHaveTextContent('yes')
     expect(screen.getByTestId('visual-acuity')).toHaveTextContent('20/20')
+  })
+
+  it('updates visual acuity results for right eye', () => {
+    let contextRef
+    
+    render(
+      <TestResultsProvider>
+        <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
+      </TestResultsProvider>
+    )
+
+    act(() => {
+      contextRef.updateVisualAcuity('right', { snellen: '20/40', level: 5 })
+    })
+
+    expect(screen.getByTestId('has-results')).toHaveTextContent('yes')
+    expect(contextRef.results.visualAcuity.right.snellen).toBe('20/40')
   })
 
   it('updates color vision results', () => {
@@ -99,7 +125,7 @@ describe('TestResultsContext', () => {
     )
 
     act(() => {
-      contextRef.updateVisualAcuity({ snellen: '20/20', level: 8 })
+      contextRef.updateVisualAcuity('left', { snellen: '20/20', level: 8 })
       contextRef.updateColorVision({ score: 8, total: 10 })
     })
 
@@ -125,7 +151,7 @@ describe('TestResultsContext', () => {
     consoleSpy.mockRestore()
   })
 
-  it('updates contrast sensitivity results', () => {
+  it('updates contrast sensitivity results for left eye', () => {
     let contextRef
     
     render(
@@ -135,7 +161,7 @@ describe('TestResultsContext', () => {
     )
 
     act(() => {
-      contextRef.updateContrastSensitivity({ logCS: 1.5, level: 8, maxLevel: 10 })
+      contextRef.updateContrastSensitivity('left', { logCS: 1.5, level: 8, maxLevel: 10 })
     })
 
     expect(screen.getByTestId('has-results')).toHaveTextContent('yes')
@@ -153,7 +179,7 @@ describe('TestResultsContext', () => {
 
     // Only set contrast sensitivity (no visual acuity or color vision)
     act(() => {
-      contextRef.updateContrastSensitivity({ logCS: 1.2, level: 7, maxLevel: 10 })
+      contextRef.updateContrastSensitivity('left', { logCS: 1.2, level: 7, maxLevel: 10 })
     })
 
     act(() => {
@@ -161,7 +187,7 @@ describe('TestResultsContext', () => {
     })
 
     expect(screen.getByTestId('history-count')).toHaveTextContent('1')
-    expect(contextRef.history[0].contrastSensitivity).toEqual({
+    expect(contextRef.history[0].contrastSensitivity.left).toEqual({
       logCS: 1.2,
       level: 7,
       maxLevel: 10
@@ -178,8 +204,8 @@ describe('TestResultsContext', () => {
     )
 
     act(() => {
-      contextRef.updateVisualAcuity({ snellen: '20/20', level: 8 })
-      contextRef.updateContrastSensitivity({ logCS: 1.5, level: 9, maxLevel: 10 })
+      contextRef.updateVisualAcuity('left', { snellen: '20/20', level: 8 })
+      contextRef.updateContrastSensitivity('right', { logCS: 1.5, level: 9, maxLevel: 10 })
     })
 
     act(() => {
@@ -187,8 +213,8 @@ describe('TestResultsContext', () => {
     })
 
     expect(screen.getByTestId('history-count')).toHaveTextContent('1')
-    expect(contextRef.history[0].visualAcuity).toBeDefined()
-    expect(contextRef.history[0].contrastSensitivity).toEqual({
+    expect(contextRef.history[0].visualAcuity.left).toBeDefined()
+    expect(contextRef.history[0].contrastSensitivity.right).toEqual({
       logCS: 1.5,
       level: 9,
       maxLevel: 10
@@ -211,7 +237,7 @@ describe('TestResultsContext', () => {
     expect(screen.getByTestId('history-count')).toHaveTextContent('0')
   })
 
-  it('updates Amsler grid results', () => {
+  it('updates Amsler grid results for left eye', () => {
     let contextRef
     
     render(
@@ -221,7 +247,7 @@ describe('TestResultsContext', () => {
     )
 
     act(() => {
-      contextRef.updateAmslerGrid({ 
+      contextRef.updateAmslerGrid('left', { 
         hasIssues: false, 
         status: 'normal',
         answers: { missing: false, wavy: false, blurry: false, distorted: false }
@@ -232,7 +258,7 @@ describe('TestResultsContext', () => {
     expect(screen.getByTestId('amsler-grid')).toHaveTextContent('normal')
   })
 
-  it('updates Amsler grid with concerns', () => {
+  it('updates Amsler grid with concerns for right eye', () => {
     let contextRef
     
     render(
@@ -242,7 +268,7 @@ describe('TestResultsContext', () => {
     )
 
     act(() => {
-      contextRef.updateAmslerGrid({ 
+      contextRef.updateAmslerGrid('right', { 
         hasIssues: true, 
         status: 'concerns_noted',
         answers: { missing: true, wavy: false, blurry: false, distorted: false }
@@ -250,7 +276,7 @@ describe('TestResultsContext', () => {
     })
 
     expect(screen.getByTestId('has-results')).toHaveTextContent('yes')
-    expect(screen.getByTestId('amsler-grid')).toHaveTextContent('concerns_noted')
+    expect(contextRef.results.amslerGrid.right.status).toBe('concerns_noted')
   })
 
   it('saves Amsler grid only session to history', () => {
@@ -264,7 +290,7 @@ describe('TestResultsContext', () => {
 
     // Only set amsler grid (no visual acuity, color vision, or contrast sensitivity)
     act(() => {
-      contextRef.updateAmslerGrid({ 
+      contextRef.updateAmslerGrid('left', { 
         hasIssues: false, 
         status: 'normal',
         answers: { missing: false, wavy: false, blurry: false, distorted: false }
@@ -276,7 +302,7 @@ describe('TestResultsContext', () => {
     })
 
     expect(screen.getByTestId('history-count')).toHaveTextContent('1')
-    expect(contextRef.history[0].amslerGrid).toEqual({
+    expect(contextRef.history[0].amslerGrid.left).toEqual({
       hasIssues: false,
       status: 'normal'
     })
@@ -292,8 +318,8 @@ describe('TestResultsContext', () => {
     )
 
     act(() => {
-      contextRef.updateVisualAcuity({ snellen: '20/20', level: 8 })
-      contextRef.updateAmslerGrid({ 
+      contextRef.updateVisualAcuity('left', { snellen: '20/20', level: 8 })
+      contextRef.updateAmslerGrid('right', { 
         hasIssues: true, 
         status: 'concerns_noted',
         answers: { missing: true, wavy: true, blurry: false, distorted: false }
@@ -305,8 +331,8 @@ describe('TestResultsContext', () => {
     })
 
     expect(screen.getByTestId('history-count')).toHaveTextContent('1')
-    expect(contextRef.history[0].visualAcuity).toBeDefined()
-    expect(contextRef.history[0].amslerGrid).toEqual({
+    expect(contextRef.history[0].visualAcuity.left).toBeDefined()
+    expect(contextRef.history[0].amslerGrid.right).toEqual({
       hasIssues: true,
       status: 'concerns_noted'
     })
@@ -322,7 +348,7 @@ describe('TestResultsContext', () => {
     )
 
     act(() => {
-      contextRef.updateAmslerGrid({ 
+      contextRef.updateAmslerGrid('left', { 
         hasIssues: false, 
         status: 'normal',
         answers: { missing: false, wavy: false, blurry: false, distorted: false }
@@ -337,5 +363,23 @@ describe('TestResultsContext', () => {
 
     expect(screen.getByTestId('has-results')).toHaveTextContent('no')
     expect(screen.getByTestId('amsler-grid')).toHaveTextContent('none')
+  })
+
+  it('updates both eyes independently', () => {
+    let contextRef
+    
+    render(
+      <TestResultsProvider>
+        <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
+      </TestResultsProvider>
+    )
+
+    act(() => {
+      contextRef.updateVisualAcuity('left', { snellen: '20/20', level: 8 })
+      contextRef.updateVisualAcuity('right', { snellen: '20/40', level: 5 })
+    })
+
+    expect(contextRef.results.visualAcuity.left.snellen).toBe('20/20')
+    expect(contextRef.results.visualAcuity.right.snellen).toBe('20/40')
   })
 })

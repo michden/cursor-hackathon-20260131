@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTestResults } from '../context/TestResultsContext'
+import EyeSelector from '../components/EyeSelector'
 
 // Letters used in Pelli-Robson test
 const LETTERS = ['C', 'D', 'H', 'K', 'N', 'O', 'R', 'S', 'V', 'Z']
@@ -33,9 +34,10 @@ const MIN_CORRECT = 2
 
 export default function ContrastSensitivityTest() {
   const navigate = useNavigate()
-  const { updateContrastSensitivity } = useTestResults()
+  const { results, updateContrastSensitivity } = useTestResults()
   
-  const [phase, setPhase] = useState('instructions')
+  const [phase, setPhase] = useState('eye-select') // eye-select, instructions, testing, complete
+  const [currentEye, setCurrentEye] = useState(null) // 'left' | 'right' | null
   const [currentLevel, setCurrentLevel] = useState(0)
   const [trialInLevel, setTrialInLevel] = useState(0)
   const [correctInLevel, setCorrectInLevel] = useState(0)
@@ -54,9 +56,20 @@ export default function ContrastSensitivityTest() {
     setCurrentLetter(LETTERS[Math.floor(Math.random() * LETTERS.length)])
   }, [])
 
+  const resetTestState = useCallback(() => {
+    setCurrentLevel(0)
+    setTrialInLevel(0)
+    setCorrectInLevel(0)
+    setBestLevel(0)
+    setTestHistory([])
+    setInputValue('')
+    generateNewLetter()
+  }, [generateNewLetter])
+
   const finishTest = useCallback((finalLevel, updatedHistory) => {
     const result = finalLevel > 0 ? CONTRAST_LEVELS[finalLevel - 1] : null
-    updateContrastSensitivity({
+    // Save result for the current eye
+    updateContrastSensitivity(currentEye, {
       level: finalLevel,
       logCS: result?.logCS || 0,
       maxLevel: CONTRAST_LEVELS.length,
@@ -64,7 +77,18 @@ export default function ContrastSensitivityTest() {
       testedAt: new Date().toISOString()
     })
     setPhase('complete')
-  }, [updateContrastSensitivity])
+  }, [updateContrastSensitivity, currentEye])
+
+  const handleEyeSelect = (eye) => {
+    setCurrentEye(eye)
+    resetTestState()
+    setPhase('instructions')
+  }
+
+  const handleTestAnotherEye = () => {
+    resetTestState()
+    setPhase('eye-select')
+  }
 
   const handleSubmit = useCallback(() => {
     if (!inputValue) return
@@ -159,7 +183,7 @@ export default function ContrastSensitivityTest() {
     return CS_EXPLANATIONS.low
   }
 
-  if (phase === 'instructions') {
+  if (phase === 'eye-select') {
     return (
       <div className="min-h-screen bg-white">
         <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center gap-4">
@@ -168,12 +192,38 @@ export default function ContrastSensitivityTest() {
           </Link>
           <h1 className="text-lg font-semibold text-slate-800">Contrast Sensitivity Test</h1>
         </header>
+        <EyeSelector 
+          onSelect={handleEyeSelect}
+          completedEyes={results.contrastSensitivity}
+          testName="Contrast Sensitivity"
+        />
+      </div>
+    )
+  }
+
+  if (phase === 'instructions') {
+    return (
+      <div className="min-h-screen bg-white">
+        <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setPhase('eye-select')} 
+              className="text-slate-400 hover:text-slate-600"
+            >
+              ← Back
+            </button>
+            <h1 className="text-lg font-semibold text-slate-800">Contrast Sensitivity Test</h1>
+          </div>
+          <div className="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+            {currentEye === 'left' ? '👁️ Left Eye' : '👁️ Right Eye'}
+          </div>
+        </header>
 
         <div className="p-6 max-w-md mx-auto">
           <div className="text-center mb-8">
             <div className="text-6xl mb-4">🔆</div>
             <h2 className="text-2xl font-bold text-slate-800 mb-2">Pelli-Robson Test</h2>
-            <p className="text-slate-600">Test your contrast sensitivity</p>
+            <p className="text-slate-600">Testing your {currentEye} eye</p>
           </div>
 
           <div className="bg-slate-50 rounded-xl p-6 mb-8">
@@ -219,22 +269,32 @@ export default function ContrastSensitivityTest() {
   if (phase === 'complete') {
     const result = bestLevel > 0 ? CONTRAST_LEVELS[bestLevel - 1] : null
     const explanation = result ? getExplanation(result.logCS) : CS_EXPLANATIONS.low
+    const otherEye = currentEye === 'left' ? 'right' : 'left'
+    const otherEyeComplete = results.contrastSensitivity?.[otherEye]
+    const bothComplete = results.contrastSensitivity?.left && results.contrastSensitivity?.right
     
     return (
       <div className="min-h-screen bg-white">
-        <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center gap-4">
-          <Link to="/" className="text-slate-400 hover:text-slate-600">
-            ← Back
-          </Link>
-          <h1 className="text-lg font-semibold text-slate-800">Test Complete</h1>
+        <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link to="/" className="text-slate-400 hover:text-slate-600">
+              ← Back
+            </Link>
+            <h1 className="text-lg font-semibold text-slate-800">Test Complete</h1>
+          </div>
+          <div className="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+            {currentEye === 'left' ? '👁️ Left Eye' : '👁️ Right Eye'}
+          </div>
         </header>
 
         <div className="p-6 max-w-md mx-auto text-center">
           <div className="text-6xl mb-4">✅</div>
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">Test Complete!</h2>
+          <h2 className="text-2xl font-bold text-slate-800 mb-2">
+            {currentEye === 'left' ? 'Left' : 'Right'} Eye Complete!
+          </h2>
           
           <div className="bg-amber-50 rounded-xl p-6 my-6">
-            <p className="text-slate-600 mb-2">Your contrast sensitivity:</p>
+            <p className="text-slate-600 mb-2">Contrast sensitivity:</p>
             <p className="text-4xl font-bold text-amber-600">
               {result ? result.logCS.toFixed(2) : '0.00'} logCS
             </p>
@@ -301,15 +361,39 @@ export default function ContrastSensitivityTest() {
           </div>
 
           <div className="space-y-3">
+            {!otherEyeComplete && (
+              <button
+                onClick={handleTestAnotherEye}
+                className="w-full py-4 bg-amber-500 text-white font-semibold rounded-xl hover:bg-amber-600 transition-colors"
+              >
+                Test {otherEye === 'left' ? 'Left' : 'Right'} Eye →
+              </button>
+            )}
+            {bothComplete && (
+              <button
+                onClick={() => navigate('/results')}
+                className="w-full py-4 bg-amber-500 text-white font-semibold rounded-xl hover:bg-amber-600 transition-colors"
+              >
+                View All Results
+              </button>
+            )}
+            {!bothComplete && otherEyeComplete && (
+              <button
+                onClick={() => navigate('/results')}
+                className="w-full py-4 bg-amber-500 text-white font-semibold rounded-xl hover:bg-amber-600 transition-colors"
+              >
+                View All Results
+              </button>
+            )}
             <button
-              onClick={() => navigate('/results')}
-              className="w-full py-4 bg-amber-500 text-white font-semibold rounded-xl hover:bg-amber-600 transition-colors"
+              onClick={handleTestAnotherEye}
+              className="w-full py-4 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors"
             >
-              View All Results
+              {otherEyeComplete ? 'Retest an Eye' : 'Back to Eye Selection'}
             </button>
             <Link
               to="/"
-              className="block w-full py-4 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors"
+              className="block w-full py-4 text-slate-500 font-medium text-center hover:text-slate-700 transition-colors"
             >
               Back to Home
             </Link>
@@ -325,11 +409,17 @@ export default function ContrastSensitivityTest() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center justify-between">
-        <Link to="/" className="text-slate-400 hover:text-slate-600">
+        <button 
+          onClick={() => setPhase('eye-select')} 
+          className="text-slate-400 hover:text-slate-600"
+        >
           ← Exit
-        </Link>
+        </button>
+        <div className="text-sm text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
+          {currentEye === 'left' ? '👁️ L' : '👁️ R'}
+        </div>
         <div className="text-sm text-slate-500">
-          Level {currentLevel + 1}/{CONTRAST_LEVELS.length}
+          Lvl {currentLevel + 1}/{CONTRAST_LEVELS.length}
         </div>
         <div className="text-sm text-slate-500">
           {trialInLevel + 1}/{TRIALS_PER_LEVEL}
