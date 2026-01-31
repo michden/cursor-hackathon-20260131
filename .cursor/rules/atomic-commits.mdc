@@ -1,0 +1,55 @@
+---
+description: Create atomic commits with clear descriptions after completing tasks
+alwaysApply: true
+---
+
+# Atomic Commits After Task Completion
+
+When you complete a task, create an atomic commit with a clear, descriptive message.
+
+## Commit Guidelines
+
+1. **One logical change per commit** - Each commit should represent a single, cohesive change
+2. **Commit immediately after completing a task** - Don't bundle unrelated changes together
+3. **Use conventional commit format**:
+   ```
+   <type>: <short description>
+   
+   <optional body explaining why>
+   ```
+
+## Commit Types
+
+- `feat`: New feature or functionality
+- `fix`: Bug fix
+- `refactor`: Code restructuring without behavior change
+- `test`: Adding or updating tests
+- `docs`: Documentation changes
+- `style`: Formatting, whitespace (no code change)
+- `chore`: Build, config, dependencies
+
+## Examples
+
+```bash
+# ✅ GOOD - Atomic and descriptive
+feat: add keyboard navigation to visual acuity test
+
+Allow users to respond using arrow keys instead of buttons.
+Improves accessibility and speeds up test completion.
+
+# ✅ GOOD - Focused on one fix
+fix: prevent duplicate answers during feedback delay
+
+# ❌ BAD - Too vague
+update stuff
+
+# ❌ BAD - Multiple unrelated changes
+fix bug and add feature and update tests
+```
+
+## Workflow
+
+1. Complete the requested task
+2. Stage only the files related to that specific change
+3. Write a commit message that explains **what** changed and **why**
+4. If the task involved multiple logical changes, create separate commits for each

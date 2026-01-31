@@ -1,0 +1,79 @@
+---
+description: Require tests for every new feature - unit tests or E2E based on feature type
+alwaysApply: true
+---
+
+# Require Tests for New Features
+
+Every new feature must include appropriate tests before the task is considered complete.
+
+## Choosing the Right Test Type
+
+| Feature Type | Test Type | Location |
+|-------------|-----------|----------|
+| Components, hooks, contexts, utilities | Unit test (Vitest) | `*.test.jsx` alongside source |
+| User flows, page interactions, workflows | E2E test (Playwright) | `e2e/*.spec.js` |
+| Complex features with both | Both types | Both locations |
+
+## Test Patterns
+
+### Unit Tests (Vitest + React Testing Library)
+
+Place test files alongside the source file:
+
+```
+src/
+  context/
+    TestResultsContext.jsx
+    TestResultsContext.test.jsx  # <- test file here
+```
+
+Example structure:
+
+```javascript
+import { describe, it, expect } from 'vitest'
+import { render, screen } from '@testing-library/react'
+
+describe('FeatureName', () => {
+  it('should handle the main use case', () => {
+    // Arrange, Act, Assert
+  })
+})
+```
+
+### E2E Tests (Playwright)
+
+Place test files in the `e2e/` folder:
+
+```
+e2e/
+  visual-acuity.spec.js
+  color-vision.spec.js
+  new-feature.spec.js  # <- new test here
+```
+
+Example structure:
+
+```javascript
+import { test, expect } from '@playwright/test'
+
+test.describe('Feature Name', () => {
+  test('should complete the user flow', async ({ page }) => {
+    await page.goto('/')
+    // Test user interactions
+  })
+})
+```
+
+## Running Tests
+
+- Unit tests: `npm test` (watch mode) or `npm run test:run` (single run)
+- E2E tests: `npm run test:e2e` or `npm run test:e2e:ui` (with UI)
+
+## Checklist
+
+Before completing a feature task:
+
+- [ ] Identified the appropriate test type(s)
+- [ ] Written tests covering main functionality
+- [ ] Tests pass locally
