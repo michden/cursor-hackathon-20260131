@@ -147,10 +147,24 @@ Please analyze the image and provide:
 
 Format your response in a clear, easy-to-read way. Be reassuring but honest. If you cannot properly analyze the image (too blurry, not an eye, etc.), say so clearly.`
 
-export async function analyzeEyePhoto(imageBase64, apiKey) {
+/**
+ * Analyze an eye photo using OpenAI's vision API
+ * @param {string} imageBase64 - Base64-encoded image data
+ * @param {string} apiKey - OpenAI API key
+ * @param {string} language - Language code for the response (e.g., 'en', 'de')
+ * @returns {Promise<string>} - Analysis response
+ */
+export async function analyzeEyePhoto(imageBase64, apiKey, language = 'en') {
   if (!apiKey) {
     throw new Error('OpenAI API key is required')
   }
+
+  // Build language instruction
+  const languageInstruction = language === 'de' 
+    ? '\n\nIMPORTANT: Please respond entirely in German (Deutsch).'
+    : ''
+
+  const prompt = EYE_ANALYSIS_PROMPT + languageInstruction
 
   // Remove data URL prefix if present
   const base64Data = imageBase64.includes('base64,') 
@@ -171,7 +185,7 @@ export async function analyzeEyePhoto(imageBase64, apiKey) {
           content: [
             { 
               type: 'text', 
-              text: EYE_ANALYSIS_PROMPT 
+              text: prompt 
             },
             { 
               type: 'image_url', 
@@ -194,4 +208,18 @@ export async function analyzeEyePhoto(imageBase64, apiKey) {
 
   const data = await response.json()
   return data.choices[0]?.message?.content || 'No analysis available'
+}
+
+/**
+ * Analyze an eye photo in all supported languages (en, de) in parallel
+ * @param {string} imageBase64 - Base64-encoded image data
+ * @param {string} apiKey - OpenAI API key
+ * @returns {Promise<{en: string, de: string}>} - Analysis responses in both languages
+ */
+export async function analyzeEyePhotoAllLanguages(imageBase64, apiKey) {
+  const [en, de] = await Promise.all([
+    analyzeEyePhoto(imageBase64, apiKey, 'en'),
+    analyzeEyePhoto(imageBase64, apiKey, 'de')
+  ])
+  return { en, de }
 }

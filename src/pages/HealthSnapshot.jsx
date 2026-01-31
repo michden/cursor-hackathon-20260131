@@ -187,6 +187,7 @@ function extractSummary(analysis) {
 }
 
 function EyePhotoResult({ data, t }) {
+  const { i18n } = useTranslation()
   const [showFullAnalysis, setShowFullAnalysis] = useState(false)
 
   if (!data) {
@@ -197,7 +198,12 @@ function EyePhotoResult({ data, t }) {
     )
   }
 
-  const summary = extractSummary(data.analysis)
+  // Handle both legacy (string) and new (object with language keys) analysis format
+  const analysisText = typeof data.analysis === 'string' 
+    ? data.analysis 
+    : (data.analysis?.[i18n.language] || data.analysis?.en || '')
+
+  const summary = extractSummary(analysisText)
 
   const handleCardClick = () => {
     setShowFullAnalysis(true)
@@ -286,7 +292,7 @@ function EyePhotoResult({ data, t }) {
               
               {/* Full analysis text with markdown rendering */}
               <div className="text-slate-700 text-sm leading-relaxed space-y-3 [&>h2]:text-base [&>h2]:font-semibold [&>h2]:mt-4 [&>h2]:mb-2 [&>h3]:text-sm [&>h3]:font-semibold [&>h3]:mt-3 [&>h3]:mb-1 [&>p]:mb-2 [&>ul]:list-disc [&>ul]:pl-4 [&>ul]:space-y-1 [&>ol]:list-decimal [&>ol]:pl-4 [&>ol]:space-y-1 [&>hr]:my-3 [&>hr]:border-slate-200">
-                <ReactMarkdown>{data.analysis}</ReactMarkdown>
+                <ReactMarkdown>{analysisText}</ReactMarkdown>
               </div>
             </div>
             
@@ -897,7 +903,10 @@ export default function HealthSnapshot() {
           <div style="background: #faf5ff; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
             <h3 style="margin: 0 0 10px 0;">📸 AI Eye Analysis</h3>
             <p style="color: #64748b; white-space: pre-wrap; font-size: 14px;">
-              ${results.eyePhoto.analysis?.substring(0, 500)}...
+              ${(typeof results.eyePhoto.analysis === 'string' 
+                ? results.eyePhoto.analysis 
+                : (results.eyePhoto.analysis?.[i18n.language] || results.eyePhoto.analysis?.en || '')
+              ).substring(0, 500)}...
             </p>
           </div>
         ` : ''}
@@ -924,7 +933,7 @@ export default function HealthSnapshot() {
     }
     
     await html2pdf().set(opt).from(element).save()
-  }, [results])
+  }, [results, i18n.language])
 
   const overallStatus = getOverallStatus()
 
