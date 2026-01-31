@@ -37,21 +37,30 @@
     "retry": "Erneut versuchen",
     "retake": "Wiederholen",
     "getStarted": "Los geht's",
-    "viewResults": "Ergebnisse anzeigen",
+    "viewResults": "Alle Ergebnisse anzeigen",
     "viewAllResults": "Alle Ergebnisse anzeigen",
     "save": "Speichern",
     "clear": "Löschen",
     "close": "Schließen",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "exit": "Beenden",
+    "testOtherEye": "{{eye}} testen",
+    "retestEye": "Auge erneut testen",
+    "backToEyeSelection": "Zurück zur Augenauswahl"
+  },
+  "note": "Hinweis",
+  "results": {
+    "whatThisMeans": "Was bedeutet das?"
   },
   "eye": {
-    "left": "Linkes Auge",
-    "right": "Rechtes Auge",
+    "left": "Links",
+    "right": "Rechts",
     "leftShort": "L",
     "rightShort": "R",
     "selectPrompt": "Welches Auge möchten Sie testen?",
     "coverTip": "Bedecken Sie Ihr anderes Auge mit der Hand oder einer Augenklappe für genaue Ergebnisse.",
-    "testing": "Test Ihres {{eye}} Auges"
+    "testing": "Test Ihres {{eye}} Auges",
+    "eyeComplete": "Auge abgeschlossen!"
   },
   "status": {
     "complete": "Abgeschlossen",

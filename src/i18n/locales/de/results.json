@@ -6,7 +6,7 @@
     "date": "Datum",
     "noTests": "Keine Tests abgeschlossen",
     "allTests": "Alle Tests abgeschlossen",
-    "someTests": "{{count}}/5 Tests abgeschlossen"
+    "someTests": "{{count}}/6 Tests abgeschlossen"
   },
   "noResults": {
     "title": "Noch keine Ergebnisse",
@@ -18,7 +18,20 @@
     "colorVision": "Farbsehen",
     "contrastSensitivity": "Kontrastempfindlichkeit",
     "amslerGrid": "Amsler-Gitter",
+    "astigmatism": "Astigmatismus",
     "eyePhoto": "Augenfoto-Analyse"
+  },
+  "astigmatism": {
+    "noAstigmatism": "Kein Astigmatismus festgestellt",
+    "possibleAstigmatism": "Möglicher Astigmatismus",
+    "axis": "Achse: {{degrees}}°",
+    "allLinesEqual": "Alle Linien gleich",
+    "severity": {
+      "none": "Keine",
+      "mild": "Leicht",
+      "moderate": "Mäßig",
+      "significant": "Deutlich"
+    }
   },
   "eyeLabels": {
     "leftEye": "Linkes Auge",

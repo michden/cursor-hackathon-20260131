@@ -17,6 +17,10 @@
       "title": "Amsler-Gitter",
       "description": "Makuladegeneration-Screening"
     },
+    "astigmatism": {
+      "title": "Astigmatismus-Screening",
+      "description": "Zifferblatt-Test für Hornhautkrümmung"
+    },
     "eyePhoto": {
       "title": "Augenfoto-Analyse",
       "description": "KI-Analyse Ihres Augenfotos"

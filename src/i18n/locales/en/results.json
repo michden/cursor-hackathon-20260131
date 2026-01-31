@@ -6,7 +6,7 @@
     "date": "Date",
     "noTests": "No tests completed",
     "allTests": "All tests complete",
-    "someTests": "{{count}}/5 tests complete"
+    "someTests": "{{count}}/6 tests complete"
   },
   "noResults": {
     "title": "No Results Yet",
@@ -18,7 +18,20 @@
     "colorVision": "Color Vision",
     "contrastSensitivity": "Contrast Sensitivity",
     "amslerGrid": "Amsler Grid",
+    "astigmatism": "Astigmatism",
     "eyePhoto": "Eye Photo Analysis"
+  },
+  "astigmatism": {
+    "noAstigmatism": "No astigmatism detected",
+    "possibleAstigmatism": "Possible astigmatism",
+    "axis": "Axis: {{degrees}}°",
+    "allLinesEqual": "All lines equal",
+    "severity": {
+      "none": "None",
+      "mild": "Mild",
+      "moderate": "Moderate",
+      "significant": "Significant"
+    }
   },
   "eyeLabels": {
     "leftEye": "Left Eye",
