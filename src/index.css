@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+/* Custom theme colors for medical/health app */
+:root {
+  --color-primary: #0ea5e9;
+  --color-primary-dark: #0284c7;
+  --color-secondary: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #1e293b;
+  --color-text-muted: #64748b;
+}
+
+/* Base styles */
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Mobile-first touch-friendly */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
