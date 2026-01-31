@@ -20,6 +20,20 @@ const ACUITY_LEVELS = [
   { size: 14, snellen: '20/10', level: 10 },
 ]
 
+// Explanations for each Snellen score
+const ACUITY_EXPLANATIONS = {
+  '20/10': { label: 'Exceptional vision', description: 'Significantly better than average' },
+  '20/15': { label: 'Excellent vision', description: 'Better than average' },
+  '20/20': { label: 'Normal vision', description: 'Standard visual acuity' },
+  '20/25': { label: 'Near normal', description: 'Slight reduction, usually fine' },
+  '20/30': { label: 'Mild reduction', description: 'May benefit from correction' },
+  '20/40': { label: 'Moderate reduction', description: 'May need glasses for driving' },
+  '20/50': { label: 'Below average', description: 'Consider an eye exam' },
+  '20/70': { label: 'Poor vision', description: 'Eye exam recommended' },
+  '20/100': { label: 'Low vision', description: 'Professional assessment needed' },
+  '20/200': { label: 'Very low vision', description: 'Significant impairment' },
+}
+
 // Number of trials per level
 const TRIALS_PER_LEVEL = 3
 // Minimum correct to pass a level
@@ -299,13 +313,50 @@ export default function VisualAcuityTest() {
           </div>
 
           <div className="bg-slate-50 rounded-xl p-4 mb-6 text-left">
-            <h3 className="font-semibold text-slate-800 mb-2">What does this mean?</h3>
-            <ul className="text-sm text-slate-600 space-y-1">
-              <li>• <strong>20/20</strong> - Normal vision</li>
-              <li>• <strong>20/40</strong> - May need glasses for driving</li>
-              <li>• <strong>20/70</strong> - Consider an eye exam</li>
-              <li>• <strong>20/200</strong> - Significant vision impairment</li>
-            </ul>
+            <h3 className="font-semibold text-slate-800 mb-3">What does this mean?</h3>
+            
+            {/* Personalized result explanation */}
+            {result && ACUITY_EXPLANATIONS[result.snellen] && (
+              <div className="bg-white border-2 border-sky-200 rounded-lg p-3 mb-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs font-medium text-sky-600 uppercase tracking-wide">Your Result</span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-lg font-bold text-slate-800">{result.snellen}</span>
+                  <span className="text-sm font-medium text-sky-600">{ACUITY_EXPLANATIONS[result.snellen].label}</span>
+                </div>
+                <p className="text-sm text-slate-600 mt-1">{ACUITY_EXPLANATIONS[result.snellen].description}</p>
+              </div>
+            )}
+
+            {/* Visual reference scale */}
+            <div className="mt-3">
+              <p className="text-xs text-slate-500 mb-2">Reference Scale:</p>
+              <div className="relative">
+                <div className="flex justify-between text-xs text-slate-400 mb-1">
+                  <span>20/10</span>
+                  <span>20/20</span>
+                  <span>20/200</span>
+                </div>
+                <div className="h-2 bg-linear-to-r from-emerald-400 via-sky-400 to-red-400 rounded-full relative">
+                  {/* Marker for user's score */}
+                  {result && (
+                    <div 
+                      className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white border-2 border-slate-700 rounded-full shadow"
+                      style={{ 
+                        left: `${((result.level - 1) / (ACUITY_LEVELS.length - 1)) * 100}%`,
+                        transform: 'translate(-50%, -50%)'
+                      }}
+                    />
+                  )}
+                </div>
+                <div className="flex justify-between text-xs text-slate-400 mt-1">
+                  <span>Better</span>
+                  <span>Normal</span>
+                  <span>Lower</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
