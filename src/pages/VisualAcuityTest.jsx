@@ -344,7 +344,11 @@ export default function VisualAcuityTest() {
                     <div 
                       className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white border-2 border-slate-700 rounded-full shadow"
                       style={{ 
-                        left: `${((ACUITY_LEVELS.length - result.level) / (ACUITY_LEVELS.length - 1)) * 100}%`,
+                        // Piecewise linear interpolation to match label positions:
+                        // - Level 10 (20/10) at 0%, Level 8 (20/20) at 50%, Level 1 (20/200) at 100%
+                        left: `${result.level >= 8 
+                          ? ((10 - result.level) / 2) * 50 
+                          : 50 + ((8 - result.level) / 7) * 50}%`,
                         transform: 'translate(-50%, -50%)'
                       }}
                     />
