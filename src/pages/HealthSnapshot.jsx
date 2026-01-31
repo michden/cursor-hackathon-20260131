@@ -144,6 +144,19 @@ function ColorVisionResult({ data }) {
   )
 }
 
+// Helper to strip markdown formatting for plain text display
+function stripMarkdown(text) {
+  if (!text) return ''
+  return text
+    .replace(/\*\*([^*]+)\*\*/g, '$1') // Remove **bold**
+    .replace(/\*([^*]+)\*/g, '$1')     // Remove *italic*
+    .replace(/^#+\s*/gm, '')           // Remove # headers
+    .replace(/^[-*]\s+/gm, '• ')       // Convert list markers to bullets
+    .replace(/\n{2,}/g, ' ')           // Collapse multiple newlines
+    .replace(/\n/g, ' ')               // Replace single newlines with space
+    .trim()
+}
+
 function EyePhotoResult({ data }) {
   if (!data) {
     return (
@@ -152,6 +165,10 @@ function EyePhotoResult({ data }) {
       </p>
     )
   }
+
+  // Strip markdown and get preview text
+  const cleanText = stripMarkdown(data.analysis)
+  const displayText = cleanText.substring(0, 200)
 
   return (
     <div className="space-y-3">
@@ -165,7 +182,7 @@ function EyePhotoResult({ data }) {
         </div>
       )}
       <div className="text-sm text-slate-600 line-clamp-4">
-        {data.analysis?.substring(0, 200)}...
+        {displayText}...
       </div>
       <p className="text-xs text-violet-600">AI analysis complete</p>
     </div>
