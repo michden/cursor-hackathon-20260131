@@ -219,12 +219,12 @@ export default function HealthSnapshot() {
   const reportRef = useRef(null)
 
   const getOverallStatus = useCallback(() => {
-    const tests = [results.visualAcuity, results.colorVision, results.eyePhoto]
+    const tests = [results.visualAcuity, results.colorVision, results.contrastSensitivity, results.eyePhoto]
     const completed = tests.filter(Boolean).length
     
     if (completed === 0) return { status: 'none', message: 'No tests completed' }
-    if (completed === 3) return { status: 'complete', message: 'All tests complete' }
-    return { status: 'partial', message: `${completed}/3 tests complete` }
+    if (completed === 4) return { status: 'complete', message: 'All tests complete' }
+    return { status: 'partial', message: `${completed}/4 tests complete` }
   }, [results])
 
   const getRecommendation = useCallback(() => {
