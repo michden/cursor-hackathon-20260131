@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { TestResultsProvider } from './context/TestResultsContext'
 import ErrorBoundary from './components/ErrorBoundary'
+import Onboarding from './components/Onboarding'
 import Home from './pages/Home'
 import VisualAcuityTest from './pages/VisualAcuityTest'
 import ColorVisionTest from './pages/ColorVisionTest'
@@ -10,6 +12,19 @@ import ContrastSensitivityTest from './pages/ContrastSensitivityTest'
 import AmslerGridTest from './pages/AmslerGridTest'
 
 function App() {
+  const [showOnboarding, setShowOnboarding] = useState(false)
+
+  useEffect(() => {
+    const hasOnboarded = localStorage.getItem('visioncheck-onboarded')
+    if (!hasOnboarded) {
+      setShowOnboarding(true)
+    }
+  }, [])
+
+  if (showOnboarding) {
+    return <Onboarding onComplete={() => setShowOnboarding(false)} />
+  }
+
   return (
     <ErrorBoundary>
       <TestResultsProvider>
