@@ -187,3 +187,106 @@ test.describe('Visual Acuity Test - Mobile', () => {
     expect(box.height).toBeGreaterThanOrEqual(44)
   })
 })
+
+test.describe('Visual Acuity Test - Results Page', () => {
+  // Helper to complete the test by clicking through until completion
+  // Clicks randomly but eventually completes. May pass some levels.
+  const completeTest = async (page) => {
+    await page.goto('/visual-acuity')
+    await page.click('text=Start Test')
+    
+    // Keep clicking until test completes (max 50 clicks to avoid infinite loop)
+    const buttons = ['↑', '↓', '←', '→']
+    let clicks = 0
+    while (!(await page.getByText('Test Complete!').isVisible()) && clicks < 50) {
+      // Click a random button
+      const btn = buttons[clicks % 4]
+      await page.getByRole('button', { name: btn }).click()
+      await page.waitForTimeout(350)
+      clicks++
+    }
+    
+    // Ensure we're on the completion screen
+    await expect(page.getByText('Test Complete!')).toBeVisible()
+  }
+
+  test('shows "What does this mean?" section on completion', async ({ page }) => {
+    await completeTest(page)
+    
+    // Should show the "What does this mean?" section
+    await expect(page.getByText('What does this mean?')).toBeVisible()
+  })
+
+  test('shows reference scale on completion', async ({ page }) => {
+    await completeTest(page)
+    
+    // Should show reference scale section
+    await expect(page.getByText('Reference Scale:')).toBeVisible()
+    
+    // Should show scale labels (use first() to avoid strict mode with 20/10 appearing multiple times)
+    await expect(page.getByText('20/10').first()).toBeVisible()
+    
+    // Should show Better/Normal/Lower labels
+    await expect(page.getByText('Better')).toBeVisible()
+    await expect(page.getByText('Normal')).toBeVisible()
+    await expect(page.getByText('Lower')).toBeVisible()
+  })
+
+  test('shows gradient bar for reference scale', async ({ page }) => {
+    await completeTest(page)
+    
+    // The gradient bar should exist
+    const gradientBar = page.locator('.rounded-full.bg-linear-to-r')
+    await expect(gradientBar).toBeVisible()
+  })
+
+  test('shows personalized result when test passed at least one level', async ({ page }) => {
+    await page.goto('/visual-acuity')
+    await page.click('text=Start Test')
+    
+    // Strategy: Click through trying to pass level 1 by cycling through all directions
+    // This maximizes chance of getting 2/3 correct on level 1
+    const buttons = ['↑', '→', '↓', '←']
+    let clicks = 0
+    
+    while (!(await page.getByText('Test Complete!').isVisible()) && clicks < 60) {
+      const btn = buttons[clicks % 4]
+      await page.getByRole('button', { name: btn }).click()
+      await page.waitForTimeout(350)
+      clicks++
+    }
+    
+    await expect(page.getByText('Test Complete!')).toBeVisible()
+    
+    // Check if we got a valid score (not N/A)
+    const hasValidScore = await page.locator('.text-4xl.font-bold.text-sky-600').textContent()
+    
+    if (hasValidScore && hasValidScore !== 'N/A') {
+      // Should show "Your Result" label when there's a valid score
+      await expect(page.getByText('Your Result')).toBeVisible()
+      
+      // Should show an explanation label
+      const possibleLabels = [
+        'Exceptional vision',
+        'Excellent vision', 
+        'Normal vision',
+        'Near normal',
+        'Mild reduction',
+        'Moderate reduction',
+        'Below average',
+        'Poor vision',
+        'Low vision',
+        'Very low vision'
+      ]
+      
+      let foundLabel = false
+      for (const label of possibleLabels) {
+        if (await page.getByText(label).isVisible()) {
+          foundLabel = true
+          break
+        }
+      }
+      expect(foundLabel).toBeTruthy()
+    }
+  })
+})
