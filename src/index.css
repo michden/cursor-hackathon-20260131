@@ -13,6 +13,19 @@
   --color-text-muted: #64748b;
 }
 
+/* Dark mode colors */
+.dark {
+  --color-primary: #38bdf8;
+  --color-primary-dark: #0ea5e9;
+  --color-secondary: #34d399;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
+}
+
 /* Base styles */
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -20,6 +33,18 @@ body {
   color: var(--color-text);
   min-height: 100vh;
   min-height: 100dvh;
+}
+
+/* Smooth theme transitions */
+* {
+  transition-property: background-color, border-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+/* Disable transitions on page load to prevent flash */
+.no-transitions * {
+  transition: none !important;
 }
 
 /* Smooth scrolling */

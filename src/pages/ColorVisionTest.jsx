@@ -168,12 +168,12 @@ export default function ColorVisionTest() {
 
   if (phase === 'instructions') {
     return (
-      <div className="min-h-screen bg-white">
-        <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center gap-4">
-          <Link to="/" className="text-slate-400 hover:text-slate-600">
+      <div className="min-h-screen bg-white dark:bg-slate-900">
+        <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center gap-4">
+          <Link to="/" className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
             ← Back
           </Link>
-          <h1 className="text-lg font-semibold text-slate-800">Color Vision Test</h1>
+          <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Color Vision Test</h1>
         </header>
 
         <div className="p-6 max-w-md mx-auto">
@@ -235,15 +235,15 @@ export default function ColorVisionTest() {
     const isPerfect = correctCount === TEST_PLATES.length
     
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white dark:bg-slate-900">
         {/* Trigger celebration */}
         <Celebration type={isPerfect ? 'fireworks' : 'confetti'} />
         
-        <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center gap-4">
-          <Link to="/" className="text-slate-400 hover:text-slate-600">
+        <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center gap-4">
+          <Link to="/" className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
             ← Back
           </Link>
-          <h1 className="text-lg font-semibold text-slate-800">Test Complete</h1>
+          <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Test Complete</h1>
         </header>
 
         <div className="p-6 max-w-md mx-auto text-center">
@@ -315,9 +315,9 @@ export default function ColorVisionTest() {
   const plate = TEST_PLATES[currentPlate]
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center justify-between">
-        <Link to="/" className="text-slate-400 hover:text-slate-600">
+    <div className="min-h-screen bg-white dark:bg-slate-900 flex flex-col">
+      <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center justify-between">
+        <Link to="/" className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
           ← Exit
         </Link>
         <div className="text-sm text-slate-500">

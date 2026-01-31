@@ -828,12 +828,12 @@ export default function HealthSnapshot() {
 
   if (!hasAnyResults()) {
     return (
-      <div className="min-h-screen bg-white">
-        <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center gap-4">
-          <Link to="/" className="text-slate-400 hover:text-slate-600">
+      <div className="min-h-screen bg-white dark:bg-slate-900">
+        <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center gap-4">
+          <Link to="/" className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
             ← Back
           </Link>
-          <h1 className="text-lg font-semibold text-slate-800">Health Snapshot</h1>
+          <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Health Snapshot</h1>
         </header>
 
         <div className="p-6 text-center max-w-md mx-auto">
@@ -854,15 +854,15 @@ export default function HealthSnapshot() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       {/* Trigger celebration for new achievements */}
       {showCelebration && <Celebration type="confetti" />}
       
-      <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center gap-4 z-10">
-        <Link to="/" className="text-slate-400 hover:text-slate-600">
+      <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center gap-4 z-10">
+        <Link to="/" className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
           ← Back
         </Link>
-        <h1 className="text-lg font-semibold text-slate-800">Health Snapshot</h1>
+        <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Health Snapshot</h1>
       </header>
 
       <div className="p-6 max-w-2xl mx-auto" ref={reportRef}>

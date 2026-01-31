@@ -271,12 +271,12 @@ export default function VisualAcuityTest() {
 
   if (phase === 'eye-select') {
     return (
-      <div className="min-h-screen bg-white">
-        <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center gap-4">
-          <Link to="/" className="text-slate-400 hover:text-slate-600">
+      <div className="min-h-screen bg-white dark:bg-slate-900">
+        <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center gap-4">
+          <Link to="/" className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
             ← Back
           </Link>
-          <h1 className="text-lg font-semibold text-slate-800">Visual Acuity Test</h1>
+          <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Visual Acuity Test</h1>
         </header>
         <EyeSelector 
           onSelect={handleEyeSelect}
@@ -289,18 +289,18 @@ export default function VisualAcuityTest() {
 
   if (phase === 'instructions') {
     return (
-      <div className="min-h-screen bg-white">
-        <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center justify-between">
+      <div className="min-h-screen bg-white dark:bg-slate-900">
+        <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setPhase('eye-select')} 
-              className="text-slate-400 hover:text-slate-600"
+              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
             >
               ← Back
             </button>
-            <h1 className="text-lg font-semibold text-slate-800">Visual Acuity Test</h1>
+            <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Visual Acuity Test</h1>
           </div>
-          <div className="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+          <div className="text-sm text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
             {currentEye === 'left' ? '👁️ Left Eye' : '👁️ Right Eye'}
           </div>
         </header>
@@ -308,8 +308,8 @@ export default function VisualAcuityTest() {
         <div className="p-6 max-w-md mx-auto">
           <div className="text-center mb-8">
             <div className="text-6xl mb-4">👁️</div>
-            <h2 className="text-2xl font-bold text-slate-800 mb-2">Tumbling E Test</h2>
-            <p className="text-slate-600">Testing your {currentEye} eye</p>
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">Tumbling E Test</h2>
+            <p className="text-slate-600 dark:text-slate-400">Testing your {currentEye} eye</p>
           </div>
 
           <AudioInstructions 
@@ -317,30 +317,30 @@ export default function VisualAcuityTest() {
             label="Test Instructions" 
           />
 
-          <div className="bg-slate-50 rounded-xl p-6 mb-8">
-            <h3 className="font-semibold text-slate-800 mb-4">Instructions:</h3>
-            <ol className="space-y-3 text-slate-600">
+          <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-6 mb-8">
+            <h3 className="font-semibold text-slate-800 dark:text-slate-100 mb-4">Instructions:</h3>
+            <ol className="space-y-3 text-slate-600 dark:text-slate-300">
               <li className="flex gap-3">
-                <span className="shrink-0 w-6 h-6 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center text-sm font-medium">1</span>
+                <span className="shrink-0 w-6 h-6 bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400 rounded-full flex items-center justify-center text-sm font-medium">1</span>
                 <span>Hold your phone at arm's length (~40cm)</span>
               </li>
               <li className="flex gap-3">
-                <span className="shrink-0 w-6 h-6 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center text-sm font-medium">2</span>
+                <span className="shrink-0 w-6 h-6 bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400 rounded-full flex items-center justify-center text-sm font-medium">2</span>
                 <span>Look at the letter "E" on screen</span>
               </li>
               <li className="flex gap-3">
-                <span className="shrink-0 w-6 h-6 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center text-sm font-medium">3</span>
+                <span className="shrink-0 w-6 h-6 bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400 rounded-full flex items-center justify-center text-sm font-medium">3</span>
                 <span>Tap the arrow showing which way the "E" is pointing</span>
               </li>
               <li className="flex gap-3">
-                <span className="shrink-0 w-6 h-6 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center text-sm font-medium">4</span>
+                <span className="shrink-0 w-6 h-6 bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400 rounded-full flex items-center justify-center text-sm font-medium">4</span>
                 <span>The E will get smaller as you progress</span>
               </li>
             </ol>
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8">
-            <p className="text-sm text-amber-800">
+          <div className="bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-8">
+            <p className="text-sm text-amber-800 dark:text-amber-200">
               <strong>Note:</strong> Test each eye separately by covering the other eye. 
               This is a screening tool only, not a medical diagnosis.
             </p>

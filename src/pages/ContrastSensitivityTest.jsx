@@ -203,12 +203,12 @@ export default function ContrastSensitivityTest() {
 
   if (phase === 'eye-select') {
     return (
-      <div className="min-h-screen bg-white">
-        <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center gap-4">
-          <Link to="/" className="text-slate-400 hover:text-slate-600">
+      <div className="min-h-screen bg-white dark:bg-slate-900">
+        <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center gap-4">
+          <Link to="/" className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
             ← Back
           </Link>
-          <h1 className="text-lg font-semibold text-slate-800">Contrast Sensitivity Test</h1>
+          <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Contrast Sensitivity Test</h1>
         </header>
         <EyeSelector 
           onSelect={handleEyeSelect}
@@ -221,16 +221,16 @@ export default function ContrastSensitivityTest() {
 
   if (phase === 'instructions') {
     return (
-      <div className="min-h-screen bg-white">
-        <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center justify-between">
+      <div className="min-h-screen bg-white dark:bg-slate-900">
+        <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setPhase('eye-select')} 
-              className="text-slate-400 hover:text-slate-600"
+              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
             >
               ← Back
             </button>
-            <h1 className="text-lg font-semibold text-slate-800">Contrast Sensitivity Test</h1>
+            <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Contrast Sensitivity Test</h1>
           </div>
           <div className="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
             {currentEye === 'left' ? '👁️ Left Eye' : '👁️ Right Eye'}
@@ -297,16 +297,16 @@ export default function ContrastSensitivityTest() {
     const bothComplete = results.contrastSensitivity?.left && results.contrastSensitivity?.right
     
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white dark:bg-slate-900">
         {/* Trigger celebration */}
         <Celebration type="confetti" />
         
-        <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center justify-between">
+        <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to="/" className="text-slate-400 hover:text-slate-600">
+            <Link to="/" className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
               ← Back
             </Link>
-            <h1 className="text-lg font-semibold text-slate-800">Test Complete</h1>
+            <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Test Complete</h1>
           </div>
           <div className="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
             {currentEye === 'left' ? '👁️ Left Eye' : '👁️ Right Eye'}
@@ -440,11 +440,11 @@ export default function ContrastSensitivityTest() {
   const contrast = CONTRAST_LEVELS[currentLevel]
   
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center justify-between">
+    <div className="min-h-screen bg-white dark:bg-slate-900 flex flex-col">
+      <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center justify-between">
         <button 
           onClick={() => setPhase('eye-select')} 
-          className="text-slate-400 hover:text-slate-600"
+          className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
         >
           ← Exit
         </button>

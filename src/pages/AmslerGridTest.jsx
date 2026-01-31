@@ -120,7 +120,7 @@ export default function AmslerGridTest() {
   // Eye selection phase
   if (phase === 'eye-select') {
     return (
-      <div className="min-h-screen bg-linear-to-b from-slate-50 to-slate-100">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
         <header className="bg-white/80 backdrop-blur-sm border-b border-slate-100 px-4 py-4 sticky top-0">
           <div className="max-w-lg mx-auto flex items-center justify-between">
             <Link to="/" className="text-slate-600 hover:text-slate-800 transition-colors">
@@ -142,7 +142,7 @@ export default function AmslerGridTest() {
   // Instructions phase
   if (phase === 'instructions') {
     return (
-      <div className="min-h-screen bg-linear-to-b from-slate-50 to-slate-100">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
         <header className="bg-white/80 backdrop-blur-sm border-b border-slate-100 px-4 py-4 sticky top-0">
           <div className="max-w-lg mx-auto flex items-center justify-between">
             <button 
@@ -282,7 +282,7 @@ export default function AmslerGridTest() {
     const bothComplete = results.amslerGrid?.left && results.amslerGrid?.right
     
     return (
-      <div className="min-h-screen bg-linear-to-b from-slate-50 to-slate-100">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
         {/* Trigger celebration for normal results */}
         {!hasIssues && <Celebration type="confetti" />}
         

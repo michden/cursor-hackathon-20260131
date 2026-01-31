@@ -35,15 +35,17 @@ export default function AchievementBadge({ achievementId, isNew = false }) {
   return (
     <div className={`
       flex items-center gap-3 p-3 rounded-xl border
-      ${isNew ? 'bg-amber-50 border-amber-200 animate-pulse' : 'bg-slate-50 border-slate-200'}
+      ${isNew 
+        ? 'bg-amber-50 dark:bg-amber-950/50 border-amber-200 dark:border-amber-800 animate-pulse' 
+        : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700'}
     `}>
       <div className="text-3xl">{achievement.icon}</div>
       <div>
-        <div className="font-semibold text-slate-800">{achievement.title}</div>
-        <div className="text-sm text-slate-500">{achievement.description}</div>
+        <div className="font-semibold text-slate-800 dark:text-slate-100">{achievement.title}</div>
+        <div className="text-sm text-slate-500 dark:text-slate-400">{achievement.description}</div>
       </div>
       {isNew && (
-        <div className="ml-auto text-xs font-medium text-amber-600 bg-amber-100 px-2 py-1 rounded-full">
+        <div className="ml-auto text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/50 px-2 py-1 rounded-full">
           NEW
         </div>
       )}

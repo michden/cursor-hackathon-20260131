@@ -56,7 +56,7 @@ function ApiKeyInput({ apiKey, setApiKey }) {
         <button
           type="button"
           onClick={() => setShowKey(!showKey)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 text-sm"
         >
           {showKey ? 'Hide' : 'Show'}
         </button>
@@ -193,12 +193,12 @@ export default function EyePhotoAnalysis() {
   // Instructions phase
   if (phase === 'instructions') {
     return (
-      <div className="min-h-screen bg-white">
-        <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center gap-4">
-          <Link to="/" className="text-slate-400 hover:text-slate-600">
+      <div className="min-h-screen bg-white dark:bg-slate-900">
+        <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center gap-4">
+          <Link to="/" className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
             ← Back
           </Link>
-          <h1 className="text-lg font-semibold text-slate-800">Eye Photo Analysis</h1>
+          <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Eye Photo Analysis</h1>
         </header>
 
         <div className="p-6 max-w-md mx-auto">
@@ -370,7 +370,7 @@ export default function EyePhotoAnalysis() {
   // Analyzing phase
   if (phase === 'analyzing') {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
+      <div className="min-h-screen bg-white dark:bg-slate-900 flex flex-col items-center justify-center p-6">
         <div className="text-center">
           <div className="animate-pulse text-6xl mb-6">🔍</div>
           <h2 className="text-xl font-semibold text-slate-800 mb-2">Analyzing your eye photo...</h2>
@@ -396,12 +396,12 @@ export default function EyePhotoAnalysis() {
   // Results phase
   if (phase === 'results') {
     return (
-      <div className="min-h-screen bg-white">
-        <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center gap-4">
-          <Link to="/" className="text-slate-400 hover:text-slate-600">
+      <div className="min-h-screen bg-white dark:bg-slate-900">
+        <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center gap-4">
+          <Link to="/" className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
             ← Home
           </Link>
-          <h1 className="text-lg font-semibold text-slate-800">Analysis Results</h1>
+          <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Analysis Results</h1>
         </header>
 
         <div className="p-6 max-w-2xl mx-auto">

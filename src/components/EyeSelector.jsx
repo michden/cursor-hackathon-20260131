@@ -11,7 +11,7 @@ export default function EyeSelector({ onSelect, completedEyes = {}, testName = '
 
   return (
     <div className="p-6 max-w-md mx-auto">
-      <h2 className="text-xl font-bold text-slate-800 text-center mb-6">
+      <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 text-center mb-6">
         Which eye would you like to test?
       </h2>
       
@@ -22,15 +22,15 @@ export default function EyeSelector({ onSelect, completedEyes = {}, testName = '
           className={`
             flex-1 p-6 rounded-2xl border-2 transition-all
             ${completedEyes.left 
-              ? 'border-emerald-300 bg-emerald-50' 
-              : 'border-slate-200 bg-white hover:border-sky-300'
+              ? 'border-emerald-300 dark:border-emerald-600 bg-emerald-50 dark:bg-emerald-950/50' 
+              : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-sky-300 dark:hover:border-sky-600'
             }
           `}
         >
           <div className="text-4xl mb-2">👁️</div>
-          <div className="font-semibold text-slate-800">Left Eye</div>
+          <div className="font-semibold text-slate-800 dark:text-slate-100">Left Eye</div>
           {completedEyes.left && (
-            <div className="text-sm text-emerald-600 mt-1">
+            <div className="text-sm text-emerald-600 dark:text-emerald-400 mt-1">
               ✓ Complete
             </div>
           )}
@@ -42,15 +42,15 @@ export default function EyeSelector({ onSelect, completedEyes = {}, testName = '
           className={`
             flex-1 p-6 rounded-2xl border-2 transition-all
             ${completedEyes.right 
-              ? 'border-emerald-300 bg-emerald-50' 
-              : 'border-slate-200 bg-white hover:border-sky-300'
+              ? 'border-emerald-300 dark:border-emerald-600 bg-emerald-50 dark:bg-emerald-950/50' 
+              : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-sky-300 dark:hover:border-sky-600'
             }
           `}
         >
           <div className="text-4xl mb-2">👁️</div>
-          <div className="font-semibold text-slate-800">Right Eye</div>
+          <div className="font-semibold text-slate-800 dark:text-slate-100">Right Eye</div>
           {completedEyes.right && (
-            <div className="text-sm text-emerald-600 mt-1">
+            <div className="text-sm text-emerald-600 dark:text-emerald-400 mt-1">
               ✓ Complete
             </div>
           )}
@@ -58,8 +58,8 @@ export default function EyeSelector({ onSelect, completedEyes = {}, testName = '
       </div>
 
       {/* Cover instruction */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
-        <p className="text-sm text-amber-800 text-center">
+      <div className="bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-6">
+        <p className="text-sm text-amber-800 dark:text-amber-200 text-center">
           <strong>Tip:</strong> Cover your other eye with your hand or an eye patch for accurate results.
         </p>
       </div>
