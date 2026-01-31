@@ -99,5 +99,11 @@
     "tryAgain": "Bitte versuchen Sie es erneut",
     "cameraAccess": "Kamera konnte nicht zugegriffen werden",
     "locationAccess": "Standort konnte nicht ermittelt werden"
+  },
+  "voice": {
+    "enable": "Sprachbefehle aktivieren",
+    "disable": "Sprachbefehle deaktivieren",
+    "listening": "Höre zu...",
+    "notSupported": "Sprachbefehle werden in diesem Browser nicht unterstützt"
   }
 }
