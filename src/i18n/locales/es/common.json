@@ -1,0 +1,79 @@
+{
+  "app": {
+    "title": "VisionCheck AI",
+    "subtitle": "Evaluación Móvil de Salud Ocular"
+  },
+  "nav": {
+    "back": "Atrás",
+    "backToHome": "Volver al Inicio",
+    "backToEyeSelection": "Volver a Selección de Ojo",
+    "home": "Inicio",
+    "results": "Resultados",
+    "skip": "Omitir"
+  },
+  "actions": {
+    "start": "Iniciar Prueba",
+    "startTest": "Iniciar Prueba",
+    "continue": "Continuar",
+    "next": "Siguiente",
+    "finish": "Finalizar",
+    "submit": "Enviar",
+    "retry": "Intentar de Nuevo",
+    "retake": "Repetir",
+    "getStarted": "Comenzar",
+    "viewResults": "Ver Resultados",
+    "viewAllResults": "Ver Todos los Resultados",
+    "save": "Guardar",
+    "clear": "Limpiar",
+    "close": "Cerrar",
+    "cancel": "Cancelar"
+  },
+  "eye": {
+    "left": "Ojo Izquierdo",
+    "right": "Ojo Derecho",
+    "leftShort": "I",
+    "rightShort": "D",
+    "selectPrompt": "¿Qué ojo desea evaluar?",
+    "coverTip": "Cubra su otro ojo con la mano o un parche para obtener resultados precisos.",
+    "testing": "Evaluando su ojo {{eye}}"
+  },
+  "status": {
+    "complete": "Completado",
+    "notDone": "No Realizado",
+    "review": "Revisar",
+    "loading": "Cargando...",
+    "analyzing": "Analizando...",
+    "new": "NUEVO"
+  },
+  "disclaimer": {
+    "title": "Aviso Médico",
+    "text": "Esta aplicación es solo para fines de evaluación educativa y NO constituye un diagnóstico médico. Los resultados son aproximados y no deben reemplazar la atención oftalmológica profesional. Siempre consulte a un profesional de la salud visual calificado para una evaluación y tratamiento precisos.",
+    "short": "Esta aplicación es solo para evaluación, no un diagnóstico médico. Siempre consulte a un profesional de la salud visual."
+  },
+  "audio": {
+    "listen": "Escuchar",
+    "playing": "Reproduciendo",
+    "testInstructions": "Instrucciones de la Prueba",
+    "welcomeOverview": "Bienvenida y Descripción",
+    "autoPlay": "Reproducción automática",
+    "autoPlayDescription": "Cuando está activado, las instrucciones de audio se reproducirán automáticamente al entrar a una nueva pantalla."
+  },
+  "theme": {
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema",
+    "toggle": "Cambiar tema"
+  },
+  "language": {
+    "select": "Seleccionar idioma",
+    "en": "English",
+    "de": "Deutsch",
+    "es": "Español"
+  },
+  "errors": {
+    "generic": "Algo salió mal",
+    "tryAgain": "Por favor, intente de nuevo",
+    "cameraAccess": "No se pudo acceder a la cámara",
+    "locationAccess": "No se pudo obtener su ubicación"
+  }
+}

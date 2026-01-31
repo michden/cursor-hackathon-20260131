@@ -14,6 +14,12 @@ import deHome from './locales/de/home.json'
 import deTests from './locales/de/tests.json'
 import deResults from './locales/de/results.json'
 
+// Import Spanish translations
+import esCommon from './locales/es/common.json'
+import esHome from './locales/es/home.json'
+import esTests from './locales/es/tests.json'
+import esResults from './locales/es/results.json'
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -30,6 +36,12 @@ i18n
         home: deHome,
         tests: deTests,
         results: deResults,
+      },
+      es: {
+        common: esCommon,
+        home: esHome,
+        tests: esTests,
+        results: esResults,
       },
     },
     fallbackLng: 'en',

@@ -67,7 +67,8 @@
   "language": {
     "select": "Sprache auswählen",
     "en": "English",
-    "de": "Deutsch"
+    "de": "Deutsch",
+    "es": "Español"
   },
   "errors": {
     "generic": "Etwas ist schief gelaufen",
