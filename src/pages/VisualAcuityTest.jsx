@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTestResults } from '../context/TestResultsContext'
 
@@ -150,6 +150,29 @@ export default function VisualAcuityTest() {
       generateNewDirection()
     }
   }, [currentDirection, currentLevel, trialInLevel, correctInLevel, bestLevel, generateNewDirection])
+
+  // Keyboard arrow key support
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (phase !== 'testing' || feedback !== null) return
+
+      const keyToDirection = {
+        'ArrowUp': 'up',
+        'ArrowDown': 'down',
+        'ArrowLeft': 'left',
+        'ArrowRight': 'right'
+      }
+
+      const direction = keyToDirection[event.key]
+      if (direction) {
+        event.preventDefault()
+        handleAnswer(direction)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [phase, feedback, handleAnswer])
 
   const finishTest = (finalLevel) => {
     const acuityData = finalLevel > 0 
