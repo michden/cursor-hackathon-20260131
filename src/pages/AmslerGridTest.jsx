@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTestResults } from '../context/TestResultsContext'
 import EyeSelector from '../components/EyeSelector'
+import Celebration from '../components/Celebration'
+import AchievementBadge from '../components/AchievementBadge'
 
 const GRID_SIZE = 20 // 20x20 grid
 const QUESTIONS = [
@@ -49,12 +51,13 @@ function AmslerGrid() {
 
 export default function AmslerGridTest() {
   const navigate = useNavigate()
-  const { results, updateAmslerGrid } = useTestResults()
+  const { results, updateAmslerGrid, checkAndUnlockAchievements } = useTestResults()
   
   const [phase, setPhase] = useState('eye-select') // eye-select, instructions, testing, complete
   const [currentEye, setCurrentEye] = useState(null) // 'left' | 'right' | null
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState({})
+  const [newAchievements, setNewAchievements] = useState([])
 
   const resetTestState = () => {
     setCurrentQuestion(0)
@@ -86,8 +89,7 @@ export default function AmslerGridTest() {
   const finishTest = (finalAnswers) => {
     const hasIssues = Object.values(finalAnswers).some(a => a === true)
     
-    // Save result for the current eye
-    updateAmslerGrid(currentEye, {
+    const newResult = {
       answers: finalAnswers,
       hasIssues,
       status: hasIssues ? 'concerns_noted' : 'normal',
@@ -95,7 +97,21 @@ export default function AmslerGridTest() {
         ? 'Some visual distortions were noted. Please consult an eye care professional.'
         : 'No obvious distortions detected. Continue with regular eye care.',
       testedAt: new Date().toISOString()
-    })
+    }
+    
+    // Save result for the current eye
+    updateAmslerGrid(currentEye, newResult)
+    
+    // Check for newly unlocked achievements
+    const updatedResults = {
+      ...results,
+      amslerGrid: {
+        ...results.amslerGrid,
+        [currentEye]: newResult
+      }
+    }
+    const unlocked = checkAndUnlockAchievements(updatedResults)
+    setNewAchievements(unlocked)
     
     setPhase('complete')
   }
@@ -261,6 +277,9 @@ export default function AmslerGridTest() {
     
     return (
       <div className="min-h-screen bg-linear-to-b from-slate-50 to-slate-100">
+        {/* Trigger celebration for normal results */}
+        {!hasIssues && <Celebration type="confetti" />}
+        
         <header className="bg-white/80 backdrop-blur-sm border-b border-slate-100 px-4 py-4 sticky top-0">
           <div className="max-w-lg mx-auto flex items-center justify-between">
             <Link to="/" className="text-slate-600 hover:text-slate-800 transition-colors">
@@ -275,7 +294,9 @@ export default function AmslerGridTest() {
 
         <main className="max-w-lg mx-auto px-4 py-8">
           <div className="text-center mb-8">
-            <div className="text-6xl mb-4">{hasIssues ? '⚠️' : '✅'}</div>
+            <div className={`text-6xl mb-4 ${!hasIssues ? 'animate-bounce' : ''}`}>
+              {hasIssues ? '⚠️' : '✅'}
+            </div>
             <h2 className="text-2xl font-bold text-slate-800 mb-2">
               {currentEye === 'left' ? 'Left' : 'Right'} Eye Complete!
             </h2>
@@ -326,6 +347,18 @@ export default function AmslerGridTest() {
               </p>
             </div>
           </div>
+
+          {/* Show achievement if earned */}
+          {newAchievements.includes('all-tests') && (
+            <div className="mb-6 animate-slide-up">
+              <AchievementBadge achievementId="all-tests" isNew />
+            </div>
+          )}
+          {newAchievements.includes('first-test') && !newAchievements.includes('all-tests') && (
+            <div className="mb-6 animate-slide-up">
+              <AchievementBadge achievementId="first-test" isNew />
+            </div>
+          )}
 
           {/* Disclaimer */}
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8">

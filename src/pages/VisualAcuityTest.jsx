@@ -2,6 +2,8 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTestResults } from '../context/TestResultsContext'
 import EyeSelector from '../components/EyeSelector'
+import Celebration from '../components/Celebration'
+import AchievementBadge from '../components/AchievementBadge'
 
 // Tumbling E test - the E points in 4 directions
 const DIRECTIONS = ['right', 'down', 'left', 'up']
@@ -101,7 +103,8 @@ function DirectionButton({ direction, onClick, disabled }) {
 
 export default function VisualAcuityTest() {
   const navigate = useNavigate()
-  const { results, updateVisualAcuity } = useTestResults()
+  const { results, updateVisualAcuity, checkAndUnlockAchievements, hasAchievement, isAchievementNew } = useTestResults()
+  const [newAchievements, setNewAchievements] = useState([])
   
   const [phase, setPhase] = useState('eye-select') // eye-select, instructions, testing, complete
   const [currentEye, setCurrentEye] = useState(null) // 'left' | 'right' | null
@@ -222,14 +225,27 @@ export default function VisualAcuityTest() {
       ? ACUITY_LEVELS[finalLevel - 1]
       : { snellen: 'Unable to determine', level: 0 }
     
-    // Save result for the current eye
-    updateVisualAcuity(currentEye, {
+    const newResult = {
       snellen: acuityData.snellen,
       level: acuityData.level,
       maxLevel: ACUITY_LEVELS.length,
       history: testHistory,
       testedAt: new Date().toISOString()
-    })
+    }
+    
+    // Save result for the current eye
+    updateVisualAcuity(currentEye, newResult)
+    
+    // Check for newly unlocked achievements with the updated result
+    const updatedResults = {
+      ...results,
+      visualAcuity: {
+        ...results.visualAcuity,
+        [currentEye]: newResult
+      }
+    }
+    const unlocked = checkAndUnlockAchievements(updatedResults)
+    setNewAchievements(unlocked)
     
     setPhase('complete')
   }
@@ -340,9 +356,13 @@ export default function VisualAcuityTest() {
     const otherEye = currentEye === 'left' ? 'right' : 'left'
     const otherEyeComplete = results.visualAcuity?.[otherEye]
     const bothComplete = results.visualAcuity?.left && results.visualAcuity?.right
+    const isPerfect = result?.level >= 8 // 20/20 or better
     
     return (
       <div className="min-h-screen bg-white">
+        {/* Trigger celebration */}
+        <Celebration type={isPerfect ? 'fireworks' : 'confetti'} />
+        
         <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="/" className="text-slate-400 hover:text-slate-600">
@@ -356,9 +376,11 @@ export default function VisualAcuityTest() {
         </header>
 
         <div className="p-6 max-w-md mx-auto text-center">
-          <div className="text-6xl mb-4">✅</div>
+          <div className="text-6xl mb-4 animate-bounce">
+            {isPerfect ? '🎉' : '✅'}
+          </div>
           <h2 className="text-2xl font-bold text-slate-800 mb-2">
-            {currentEye === 'left' ? 'Left' : 'Right'} Eye Complete!
+            {isPerfect ? 'Perfect Vision!' : `${currentEye === 'left' ? 'Left' : 'Right'} Eye Complete!`}
           </h2>
           
           <div className="bg-sky-50 rounded-xl p-6 my-6">
@@ -421,6 +443,18 @@ export default function VisualAcuityTest() {
               </div>
             </div>
           </div>
+
+          {/* Show achievement if earned */}
+          {newAchievements.includes('perfect-acuity') && (
+            <div className="mb-6 animate-slide-up">
+              <AchievementBadge achievementId="perfect-acuity" isNew />
+            </div>
+          )}
+          {newAchievements.includes('first-test') && !newAchievements.includes('perfect-acuity') && (
+            <div className="mb-6 animate-slide-up">
+              <AchievementBadge achievementId="first-test" isNew />
+            </div>
+          )}
 
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
             <p className="text-sm text-amber-800">

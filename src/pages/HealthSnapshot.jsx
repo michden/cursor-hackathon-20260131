@@ -1,7 +1,9 @@
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import html2pdf from 'html2pdf.js'
 import { useTestResults } from '../context/TestResultsContext'
+import AchievementBadge, { ACHIEVEMENTS } from '../components/AchievementBadge'
+import Celebration from '../components/Celebration'
 
 function ResultCard({ title, icon, status, children, color = 'sky' }) {
   const colorClasses = {
@@ -369,8 +371,46 @@ function HistoryChart({ history }) {
 }
 
 export default function HealthSnapshot() {
-  const { results, hasAnyResults, clearResults, history, saveToHistory, clearHistory } = useTestResults()
+  const { 
+    results, 
+    hasAnyResults, 
+    clearResults, 
+    history, 
+    saveToHistory, 
+    clearHistory,
+    getUnlockedAchievements,
+    isAchievementNew,
+    markAchievementSeen,
+    checkAndUnlockAchievements
+  } = useTestResults()
   const reportRef = useRef(null)
+  const [showCelebration, setShowCelebration] = useState(false)
+  
+  // Get unlocked achievements
+  const unlockedAchievementIds = getUnlockedAchievements()
+  const hasNewAchievements = unlockedAchievementIds.some(id => isAchievementNew(id))
+  
+  // Check for achievements on page load and trigger celebration if new ones
+  useEffect(() => {
+    const unlocked = checkAndUnlockAchievements()
+    if (unlocked.length > 0) {
+      setShowCelebration(true)
+    }
+  }, [])
+  
+  // Mark achievements as seen after viewing
+  useEffect(() => {
+    if (hasNewAchievements) {
+      const timer = setTimeout(() => {
+        unlockedAchievementIds.forEach(id => {
+          if (isAchievementNew(id)) {
+            markAchievementSeen(id)
+          }
+        })
+      }, 3000) // Mark as seen after 3 seconds
+      return () => clearTimeout(timer)
+    }
+  }, [hasNewAchievements, unlockedAchievementIds])
 
   const getOverallStatus = useCallback(() => {
     // Check if per-eye tests have at least one eye completed
@@ -674,6 +714,9 @@ export default function HealthSnapshot() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      {/* Trigger celebration for new achievements */}
+      {showCelebration && <Celebration type="confetti" />}
+      
       <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center gap-4 z-10">
         <Link to="/" className="text-slate-400 hover:text-slate-600">
           ← Back
@@ -780,6 +823,29 @@ export default function HealthSnapshot() {
             <EyePhotoResult data={results.eyePhoto} />
           </ResultCard>
         </div>
+
+        {/* Achievements Section */}
+        {unlockedAchievementIds.length > 0 && (
+          <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">
+            <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+              <span>🏆</span> Your Achievements
+              {hasNewAchievements && (
+                <span className="text-xs font-medium text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full animate-pulse">
+                  NEW
+                </span>
+              )}
+            </h3>
+            <div className="space-y-2">
+              {unlockedAchievementIds.map(id => (
+                <AchievementBadge 
+                  key={id} 
+                  achievementId={id} 
+                  isNew={isAchievementNew(id)} 
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Recommendation */}
         <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">

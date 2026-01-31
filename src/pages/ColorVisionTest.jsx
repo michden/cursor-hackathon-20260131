@@ -2,6 +2,8 @@ import { useState, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTestResults } from '../context/TestResultsContext'
 import ColorPlate from '../components/ColorPlate'
+import Celebration from '../components/Celebration'
+import AchievementBadge from '../components/AchievementBadge'
 
 // Test plates configuration
 // Each plate has a number, type, and what people with different conditions see
@@ -67,13 +69,14 @@ function NumberPad({ value, onChange, onSubmit, disabled }) {
 
 export default function ColorVisionTest() {
   const navigate = useNavigate()
-  const { updateColorVision } = useTestResults()
+  const { results, updateColorVision, checkAndUnlockAchievements } = useTestResults()
   
   const [phase, setPhase] = useState('instructions') // instructions, testing, complete
   const [currentPlate, setCurrentPlate] = useState(0)
   const [inputValue, setInputValue] = useState('')
   const [answers, setAnswers] = useState([])
   const [feedback, setFeedback] = useState(null)
+  const [newAchievements, setNewAchievements] = useState([])
 
   const handleSubmit = useCallback(() => {
     if (!inputValue) return
@@ -129,7 +132,7 @@ export default function ColorVisionTest() {
       message = 'You may have mild difficulty with some red-green colors. Consider a professional evaluation.'
     }
     
-    updateColorVision({
+    const newResult = {
       totalPlates: TEST_PLATES.length,
       correctCount,
       redGreenCorrect,
@@ -140,7 +143,17 @@ export default function ColorVisionTest() {
       message,
       answers: finalAnswers,
       testedAt: new Date().toISOString()
-    })
+    }
+    
+    updateColorVision(newResult)
+    
+    // Check for newly unlocked achievements
+    const updatedResults = {
+      ...results,
+      colorVision: newResult
+    }
+    const unlocked = checkAndUnlockAchievements(updatedResults)
+    setNewAchievements(unlocked)
     
     setPhase('complete')
   }
@@ -213,9 +226,13 @@ export default function ColorVisionTest() {
     const correctCount = answers.filter(a => a.correct).length
     const redGreenCorrect = answers.filter(a => a.type === 'redGreen' && a.correct).length
     const redGreenTotal = answers.filter(a => a.type === 'redGreen').length
+    const isPerfect = correctCount === TEST_PLATES.length
     
     return (
       <div className="min-h-screen bg-white">
+        {/* Trigger celebration */}
+        <Celebration type={isPerfect ? 'fireworks' : 'confetti'} />
+        
         <header className="sticky top-0 bg-white border-b border-slate-100 px-4 py-4 flex items-center gap-4">
           <Link to="/" className="text-slate-400 hover:text-slate-600">
             ← Back
@@ -224,8 +241,12 @@ export default function ColorVisionTest() {
         </header>
 
         <div className="p-6 max-w-md mx-auto text-center">
-          <div className="text-6xl mb-4">✅</div>
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">Test Complete!</h2>
+          <div className="text-6xl mb-4 animate-bounce">
+            {isPerfect ? '🎉' : '✅'}
+          </div>
+          <h2 className="text-2xl font-bold text-slate-800 mb-2">
+            {isPerfect ? 'Perfect Score!' : 'Test Complete!'}
+          </h2>
           
           <div className="bg-emerald-50 rounded-xl p-6 my-6">
             <p className="text-slate-600 mb-2">Your score:</p>
@@ -245,6 +266,18 @@ export default function ColorVisionTest() {
               <li>• <strong>3+ missed</strong> - May indicate color vision deficiency</li>
             </ul>
           </div>
+
+          {/* Show achievement if earned */}
+          {newAchievements.includes('color-perfect') && (
+            <div className="mb-6 animate-slide-up">
+              <AchievementBadge achievementId="color-perfect" isNew />
+            </div>
+          )}
+          {newAchievements.includes('first-test') && !newAchievements.includes('color-perfect') && (
+            <div className="mb-6 animate-slide-up">
+              <AchievementBadge achievementId="first-test" isNew />
+            </div>
+          )}
 
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
             <p className="text-sm text-amber-800">

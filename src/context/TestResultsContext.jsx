@@ -4,6 +4,7 @@ const TestResultsContext = createContext(null)
 
 const STORAGE_KEY = 'visioncheck-results'
 const HISTORY_KEY = 'visioncheck-history'
+const ACHIEVEMENTS_KEY = 'visioncheck-achievements'
 
 // Default empty state with per-eye structure
 const getDefaultResults = () => ({
@@ -100,9 +101,51 @@ const loadPersistedHistory = () => {
   return []
 }
 
+// Load achievements from localStorage
+const loadPersistedAchievements = () => {
+  try {
+    const saved = localStorage.getItem(ACHIEVEMENTS_KEY)
+    if (saved) {
+      return JSON.parse(saved)
+    }
+  } catch (e) {
+    console.warn('Failed to load persisted achievements:', e)
+  }
+  return {}
+}
+
+// Check for 3-day streak in history
+const hasThreeDayStreak = (historyData) => {
+  if (historyData.length < 3) return false
+  
+  // Get unique dates (YYYY-MM-DD format)
+  const uniqueDates = [...new Set(
+    historyData.map(session => session.date.split('T')[0])
+  )].sort().reverse() // Most recent first
+  
+  if (uniqueDates.length < 3) return false
+  
+  // Check for 3 consecutive days
+  for (let i = 0; i < uniqueDates.length - 2; i++) {
+    const date1 = new Date(uniqueDates[i])
+    const date2 = new Date(uniqueDates[i + 1])
+    const date3 = new Date(uniqueDates[i + 2])
+    
+    const diff1 = (date1 - date2) / (1000 * 60 * 60 * 24)
+    const diff2 = (date2 - date3) / (1000 * 60 * 60 * 24)
+    
+    if (diff1 === 1 && diff2 === 1) {
+      return true
+    }
+  }
+  
+  return false
+}
+
 export function TestResultsProvider({ children }) {
   const [results, setResults] = useState(loadPersistedResults)
   const [history, setHistory] = useState(loadPersistedHistory)
+  const [achievements, setAchievements] = useState(loadPersistedAchievements)
 
   // Persist to localStorage whenever results change
   useEffect(() => {
@@ -240,6 +283,112 @@ export function TestResultsProvider({ children }) {
     }
   }
 
+  // Unlock a specific achievement
+  const unlockAchievement = (achievementId) => {
+    if (achievements[achievementId]) return false // Already unlocked
+    
+    const newAchievements = {
+      ...achievements,
+      [achievementId]: {
+        unlockedAt: new Date().toISOString(),
+        isNew: true
+      }
+    }
+    setAchievements(newAchievements)
+    try {
+      localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify(newAchievements))
+    } catch (e) {
+      console.warn('Failed to persist achievements:', e)
+    }
+    return true
+  }
+
+  // Mark achievement as seen (no longer new)
+  const markAchievementSeen = (achievementId) => {
+    if (!achievements[achievementId]) return
+    
+    const newAchievements = {
+      ...achievements,
+      [achievementId]: {
+        ...achievements[achievementId],
+        isNew: false
+      }
+    }
+    setAchievements(newAchievements)
+    try {
+      localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify(newAchievements))
+    } catch (e) {
+      console.warn('Failed to persist achievements:', e)
+    }
+  }
+
+  // Check and unlock achievements based on current state
+  // Returns array of newly unlocked achievement IDs
+  const checkAndUnlockAchievements = (currentResults = results, currentHistory = history) => {
+    const newlyUnlocked = []
+    
+    const hasVisualAcuity = currentResults.visualAcuity?.left || currentResults.visualAcuity?.right
+    const hasContrastSensitivity = currentResults.contrastSensitivity?.left || currentResults.contrastSensitivity?.right
+    const hasAmslerGrid = currentResults.amslerGrid?.left || currentResults.amslerGrid?.right
+    const hasColorVision = currentResults.colorVision
+    
+    // First test achievement
+    if (!achievements['first-test'] && (hasVisualAcuity || hasColorVision || hasContrastSensitivity || hasAmslerGrid)) {
+      if (unlockAchievement('first-test')) {
+        newlyUnlocked.push('first-test')
+      }
+    }
+    
+    // Perfect acuity (20/20 or better, level >= 8)
+    if (!achievements['perfect-acuity']) {
+      const leftPerfect = currentResults.visualAcuity?.left?.level >= 8
+      const rightPerfect = currentResults.visualAcuity?.right?.level >= 8
+      if (leftPerfect || rightPerfect) {
+        if (unlockAchievement('perfect-acuity')) {
+          newlyUnlocked.push('perfect-acuity')
+        }
+      }
+    }
+    
+    // Color perfect (8/8)
+    if (!achievements['color-perfect'] && currentResults.colorVision?.correctCount === 8) {
+      if (unlockAchievement('color-perfect')) {
+        newlyUnlocked.push('color-perfect')
+      }
+    }
+    
+    // All tests completed
+    if (!achievements['all-tests'] && hasVisualAcuity && hasColorVision && hasContrastSensitivity && hasAmslerGrid) {
+      if (unlockAchievement('all-tests')) {
+        newlyUnlocked.push('all-tests')
+      }
+    }
+    
+    // 3-day streak
+    if (!achievements['streak-3'] && hasThreeDayStreak(currentHistory)) {
+      if (unlockAchievement('streak-3')) {
+        newlyUnlocked.push('streak-3')
+      }
+    }
+    
+    return newlyUnlocked
+  }
+
+  // Get list of unlocked achievement IDs
+  const getUnlockedAchievements = () => {
+    return Object.keys(achievements)
+  }
+
+  // Check if a specific achievement is unlocked
+  const hasAchievement = (achievementId) => {
+    return !!achievements[achievementId]
+  }
+
+  // Check if achievement is new (unseen)
+  const isAchievementNew = (achievementId) => {
+    return achievements[achievementId]?.isNew === true
+  }
+
   return (
     <TestResultsContext.Provider value={{
       results,
@@ -252,7 +401,14 @@ export function TestResultsProvider({ children }) {
       hasAnyResults,
       history,
       saveToHistory,
-      clearHistory
+      clearHistory,
+      achievements,
+      unlockAchievement,
+      markAchievementSeen,
+      checkAndUnlockAchievements,
+      getUnlockedAchievements,
+      hasAchievement,
+      isAchievementNew
     }}>
       {children}
     </TestResultsContext.Provider>
