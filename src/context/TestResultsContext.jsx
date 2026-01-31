@@ -1,14 +1,52 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 
 const TestResultsContext = createContext(null)
 
-export function TestResultsProvider({ children }) {
-  const [results, setResults] = useState({
+const STORAGE_KEY = 'eyecheck-results'
+
+// Prepare results for storage (exclude large image data)
+const prepareForStorage = (results) => {
+  if (results.eyePhoto?.imageData) {
+    return {
+      ...results,
+      eyePhoto: {
+        ...results.eyePhoto,
+        imageData: null // Exclude large base64 image
+      }
+    }
+  }
+  return results
+}
+
+// Load initial state from localStorage
+const loadPersistedResults = () => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (saved) {
+      return JSON.parse(saved)
+    }
+  } catch (e) {
+    console.warn('Failed to load persisted results:', e)
+  }
+  return {
     visualAcuity: null,
     colorVision: null,
     eyePhoto: null,
     completedAt: null
-  })
+  }
+}
+
+export function TestResultsProvider({ children }) {
+  const [results, setResults] = useState(loadPersistedResults)
+
+  // Persist to localStorage whenever results change
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(prepareForStorage(results)))
+    } catch (e) {
+      console.warn('Failed to persist results:', e)
+    }
+  }, [results])
 
   const updateVisualAcuity = (data) => {
     setResults(prev => ({
@@ -41,6 +79,11 @@ export function TestResultsProvider({ children }) {
       eyePhoto: null,
       completedAt: null
     })
+    try {
+      localStorage.removeItem(STORAGE_KEY)
+    } catch (e) {
+      console.warn('Failed to clear persisted results:', e)
+    }
   }
 
   const hasAnyResults = () => {

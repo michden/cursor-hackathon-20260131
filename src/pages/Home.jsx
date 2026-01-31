@@ -1,7 +1,21 @@
 import { Link } from 'react-router-dom'
 import SkipLink from '../components/SkipLink'
+import { useTestResults } from '../context/TestResultsContext'
 
 export default function Home() {
+  const { results } = useTestResults()
+
+  const formatLastTested = (isoDate) => {
+    const date = new Date(isoDate)
+    return date.toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    })
+  }
+
   return (
     <div className="min-h-screen bg-linear-to-b from-sky-50 to-white">
       <SkipLink targetId="test-options" />
@@ -10,6 +24,11 @@ export default function Home() {
         <div className="text-6xl mb-4">👁️</div>
         <h1 className="text-3xl font-bold text-slate-800 mb-2">EyeCheck</h1>
         <p className="text-slate-600">Preliminary Eye Health Assessment</p>
+        {results.completedAt && (
+          <p className="text-sm text-slate-500 mt-2">
+            Last tested: {formatLastTested(results.completedAt)}
+          </p>
+        )}
       </header>
 
       {/* Medical Disclaimer */}
