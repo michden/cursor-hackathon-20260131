@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { TestResultsProvider } from './context/TestResultsContext'
 import { TTSSettingsProvider } from './context/TTSSettingsContext'
+import { ChatProvider } from './context/ChatContext'
 import ErrorBoundary from './components/ErrorBoundary'
 import Onboarding from './components/Onboarding'
+import ChatFAB from './components/ChatFAB'
+import ChatDrawer from './components/ChatDrawer'
 import Home from './pages/Home'
 import VisualAcuityTest from './pages/VisualAcuityTest'
 import ColorVisionTest from './pages/ColorVisionTest'
@@ -34,17 +37,21 @@ function App() {
     <ErrorBoundary>
       <TTSSettingsProvider>
         <TestResultsProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/visual-acuity" element={<VisualAcuityTest />} />
-            <Route path="/color-vision" element={<ColorVisionTest />} />
-            <Route path="/eye-photo" element={<EyePhotoAnalysis />} />
-            <Route path="/contrast-sensitivity" element={<ContrastSensitivityTest />} />
-            <Route path="/amsler-grid" element={<AmslerGridTest />} />
-            <Route path="/results" element={<HealthSnapshot />} />
-          </Routes>
-        </BrowserRouter>
+          <BrowserRouter>
+            <ChatProvider>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/visual-acuity" element={<VisualAcuityTest />} />
+                <Route path="/color-vision" element={<ColorVisionTest />} />
+                <Route path="/eye-photo" element={<EyePhotoAnalysis />} />
+                <Route path="/contrast-sensitivity" element={<ContrastSensitivityTest />} />
+                <Route path="/amsler-grid" element={<AmslerGridTest />} />
+                <Route path="/results" element={<HealthSnapshot />} />
+              </Routes>
+              <ChatFAB />
+              <ChatDrawer />
+            </ChatProvider>
+          </BrowserRouter>
         </TestResultsProvider>
       </TTSSettingsProvider>
     </ErrorBoundary>
