@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import SkipLink from '../components/SkipLink'
+import AudioInstructions from '../components/AudioInstructions'
 import { useTestResults } from '../context/TestResultsContext'
 
 export default function Home() {
@@ -30,6 +31,14 @@ export default function Home() {
           </p>
         )}
       </header>
+
+      {/* Audio Instructions */}
+      <div className="mx-6 mb-4">
+        <AudioInstructions 
+          audioSrc="/audio/home-welcome.mp3" 
+          label="Welcome & Overview" 
+        />
+      </div>
 
       {/* Medical Disclaimer */}
       <div className="mx-6 mb-8 p-4 bg-amber-50 border border-amber-200 rounded-xl">

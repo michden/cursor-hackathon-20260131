@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { TestResultsProvider } from './context/TestResultsContext'
+import { TTSSettingsProvider } from './context/TTSSettingsContext'
 import ErrorBoundary from './components/ErrorBoundary'
 import Onboarding from './components/Onboarding'
 import Home from './pages/Home'
@@ -22,12 +23,17 @@ function App() {
   }, [])
 
   if (showOnboarding) {
-    return <Onboarding onComplete={() => setShowOnboarding(false)} />
+    return (
+      <TTSSettingsProvider>
+        <Onboarding onComplete={() => setShowOnboarding(false)} />
+      </TTSSettingsProvider>
+    )
   }
 
   return (
     <ErrorBoundary>
-      <TestResultsProvider>
+      <TTSSettingsProvider>
+        <TestResultsProvider>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -39,7 +45,8 @@ function App() {
             <Route path="/results" element={<HealthSnapshot />} />
           </Routes>
         </BrowserRouter>
-      </TestResultsProvider>
+        </TestResultsProvider>
+      </TTSSettingsProvider>
     </ErrorBoundary>
   )
 }

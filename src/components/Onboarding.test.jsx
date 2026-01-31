@@ -1,6 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import Onboarding from './Onboarding'
+import { TTSSettingsProvider } from '../context/TTSSettingsContext'
+
+// Mock HTMLMediaElement methods for audio
+window.HTMLMediaElement.prototype.play = vi.fn().mockResolvedValue(undefined)
+window.HTMLMediaElement.prototype.pause = vi.fn()
+window.HTMLMediaElement.prototype.load = vi.fn()
 
 // Mock localStorage
 const localStorageMock = {
@@ -10,6 +16,15 @@ const localStorageMock = {
   clear: vi.fn()
 }
 Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+
+// Wrapper to provide TTS context
+const renderWithProvider = (ui) => {
+  return render(
+    <TTSSettingsProvider>
+      {ui}
+    </TTSSettingsProvider>
+  )
+}
 
 describe('Onboarding', () => {
   const mockOnComplete = vi.fn()
@@ -35,42 +50,43 @@ describe('Onboarding', () => {
 
   describe('Initial render', () => {
     it('renders the welcome step first', () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       expect(screen.getByText('Welcome to VisionCheck AI')).toBeInTheDocument()
       expect(screen.getByText('A quick way to screen your eye health from your phone.')).toBeInTheDocument()
     })
 
     it('renders the welcome icon', () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       expect(screen.getByText('👁️')).toBeInTheDocument()
     })
 
     it('renders Skip button', () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       expect(screen.getByText('Skip')).toBeInTheDocument()
     })
 
     it('renders Next button on first step', () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       expect(screen.getByText('Next')).toBeInTheDocument()
     })
 
     it('renders progress dots for all steps', () => {
-      const { container } = render(<Onboarding onComplete={mockOnComplete} />)
+      const { container } = renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
-      // 6 steps = 6 progress dots
-      const dots = container.querySelectorAll('.rounded-full')
+      // 6 steps = 6 progress dots (h-2 distinguishes them from other rounded elements)
+      const dots = container.querySelectorAll('.h-2.rounded-full')
       expect(dots.length).toBe(6)
     })
 
     it('highlights the first progress dot', () => {
-      const { container } = render(<Onboarding onComplete={mockOnComplete} />)
+      const { container } = renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
-      const dots = container.querySelectorAll('.rounded-full')
+      // Progress dots have h-2 class
+      const dots = container.querySelectorAll('.h-2.rounded-full')
       expect(dots[0].className).toContain('bg-white')
       expect(dots[0].className).toContain('w-6')
     })
@@ -78,7 +94,7 @@ describe('Onboarding', () => {
 
   describe('Step navigation', () => {
     it('advances to next step when Next is clicked', async () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       await goToStep(1)
       
@@ -86,7 +102,7 @@ describe('Onboarding', () => {
     })
 
     it('progresses through all steps', async () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       // Step 1: Welcome -> Visual Acuity
       await goToStep(1)
@@ -110,7 +126,7 @@ describe('Onboarding', () => {
     })
 
     it('shows Get Started button on last step', async () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       // Navigate to last step (5 clicks)
       await goToStep(5)
@@ -121,7 +137,7 @@ describe('Onboarding', () => {
 
   describe('Skip functionality', () => {
     it('calls onComplete when Skip is clicked', () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       fireEvent.click(screen.getByText('Skip'))
       
@@ -129,7 +145,7 @@ describe('Onboarding', () => {
     })
 
     it('sets localStorage when Skip is clicked', () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       fireEvent.click(screen.getByText('Skip'))
       
@@ -139,7 +155,7 @@ describe('Onboarding', () => {
 
   describe('Completion', () => {
     it('calls onComplete when Get Started is clicked on last step', async () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       // Navigate to last step
       await goToStep(5)
@@ -152,7 +168,7 @@ describe('Onboarding', () => {
     })
 
     it('sets localStorage when completing onboarding', async () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       // Navigate to last step
       await goToStep(5)
@@ -165,7 +181,7 @@ describe('Onboarding', () => {
 
   describe('Step content', () => {
     it('displays Visual Acuity step correctly', async () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       await goToStep(1)
       
@@ -175,7 +191,7 @@ describe('Onboarding', () => {
     })
 
     it('displays Color Vision step correctly', async () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       await goToStep(2)
       
@@ -185,7 +201,7 @@ describe('Onboarding', () => {
     })
 
     it('displays Contrast Sensitivity step correctly', async () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       await goToStep(3)
       
@@ -195,7 +211,7 @@ describe('Onboarding', () => {
     })
 
     it('displays Amsler Grid step correctly', async () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       await goToStep(4)
       
@@ -205,7 +221,7 @@ describe('Onboarding', () => {
     })
 
     it('displays Disclaimer step correctly', async () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       await goToStep(5)
       
@@ -217,7 +233,7 @@ describe('Onboarding', () => {
 
   describe('Animations', () => {
     it('renders Tumbling E animation on Visual Acuity step', async () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       await goToStep(1)
       
@@ -227,7 +243,7 @@ describe('Onboarding', () => {
     })
 
     it('renders color dots animation on Color Vision step', async () => {
-      const { container } = render(<Onboarding onComplete={mockOnComplete} />)
+      const { container } = renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       await goToStep(2)
       
@@ -237,7 +253,7 @@ describe('Onboarding', () => {
     })
 
     it('renders contrast letters animation on Contrast Sensitivity step', async () => {
-      render(<Onboarding onComplete={mockOnComplete} />)
+      renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       await goToStep(3)
       
@@ -247,7 +263,7 @@ describe('Onboarding', () => {
     })
 
     it('renders Amsler grid animation on Amsler Grid step', async () => {
-      const { container } = render(<Onboarding onComplete={mockOnComplete} />)
+      const { container } = renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       await goToStep(4)
       
@@ -259,7 +275,7 @@ describe('Onboarding', () => {
 
   describe('Visual styling', () => {
     it('applies gradient background based on step color', () => {
-      const { container } = render(<Onboarding onComplete={mockOnComplete} />)
+      const { container } = renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       const mainDiv = container.firstChild
       expect(mainDiv.className).toContain('from-sky-400')
@@ -267,7 +283,7 @@ describe('Onboarding', () => {
     })
 
     it('changes background color for emerald step (Color Vision)', async () => {
-      const { container } = render(<Onboarding onComplete={mockOnComplete} />)
+      const { container } = renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       await goToStep(2)
       
@@ -277,7 +293,7 @@ describe('Onboarding', () => {
     })
 
     it('changes background color for amber step (Contrast Sensitivity)', async () => {
-      const { container } = render(<Onboarding onComplete={mockOnComplete} />)
+      const { container } = renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       await goToStep(3)
       
@@ -287,7 +303,7 @@ describe('Onboarding', () => {
     })
 
     it('changes background color for purple step (Amsler Grid)', async () => {
-      const { container } = render(<Onboarding onComplete={mockOnComplete} />)
+      const { container } = renderWithProvider(<Onboarding onComplete={mockOnComplete} />)
       
       await goToStep(4)
       

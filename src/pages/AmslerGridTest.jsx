@@ -4,6 +4,7 @@ import { useTestResults } from '../context/TestResultsContext'
 import EyeSelector from '../components/EyeSelector'
 import Celebration from '../components/Celebration'
 import AchievementBadge from '../components/AchievementBadge'
+import AudioInstructions from '../components/AudioInstructions'
 
 const GRID_SIZE = 20 // 20x20 grid
 const QUESTIONS = [
@@ -167,6 +168,11 @@ export default function AmslerGridTest() {
               Testing your {currentEye} eye for visual distortions
             </p>
           </div>
+
+          <AudioInstructions 
+            audioSrc="/audio/amsler-grid-instructions.mp3" 
+            label="Test Instructions" 
+          />
 
           <div className="bg-slate-50 rounded-xl p-6 mb-6">
             <h3 className="font-semibold text-slate-700 mb-4">Instructions:</h3>

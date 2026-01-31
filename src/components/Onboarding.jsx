@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import AudioInstructions from './AudioInstructions'
 
 const ONBOARDING_STEPS = [
   {
@@ -6,7 +7,8 @@ const ONBOARDING_STEPS = [
     title: 'Welcome to VisionCheck AI',
     description: 'A quick way to screen your eye health from your phone.',
     icon: '👁️',
-    color: 'sky'
+    color: 'sky',
+    audioSrc: '/audio/onboarding-step-1.mp3'
   },
   {
     id: 'visual-acuity',
@@ -14,7 +16,8 @@ const ONBOARDING_STEPS = [
     description: 'Test how clearly you can see at different sizes using the Tumbling E chart.',
     icon: '📖',
     color: 'sky',
-    animation: 'tumbling-e'
+    animation: 'tumbling-e',
+    audioSrc: '/audio/onboarding-step-2.mp3'
   },
   {
     id: 'color-vision',
@@ -22,7 +25,8 @@ const ONBOARDING_STEPS = [
     description: 'Screen for color blindness using Ishihara-style plates.',
     icon: '🎨',
     color: 'emerald',
-    animation: 'color-dots'
+    animation: 'color-dots',
+    audioSrc: '/audio/onboarding-step-3.mp3'
   },
   {
     id: 'contrast-sensitivity',
@@ -30,7 +34,8 @@ const ONBOARDING_STEPS = [
     description: 'Test your ability to distinguish faint letters from their background.',
     icon: '🔆',
     color: 'amber',
-    animation: 'contrast-letters'
+    animation: 'contrast-letters',
+    audioSrc: '/audio/onboarding-step-4.mp3'
   },
   {
     id: 'amsler-grid',
@@ -38,14 +43,16 @@ const ONBOARDING_STEPS = [
     description: 'Screen for macular degeneration by checking for visual distortions.',
     icon: '#',
     color: 'purple',
-    animation: 'amsler-grid'
+    animation: 'amsler-grid',
+    audioSrc: '/audio/onboarding-step-5.mp3'
   },
   {
     id: 'disclaimer',
     title: 'Important Note',
     description: 'This app is for screening only—not a medical diagnosis. Always consult an eye care professional.',
     icon: '⚠️',
-    color: 'amber'
+    color: 'amber',
+    audioSrc: '/audio/onboarding-step-6.mp3'
   }
 ]
 
@@ -193,7 +200,16 @@ export default function Onboarding({ onComplete }) {
         {renderAnimation()}
 
         <h1 className="text-3xl font-bold mb-4">{step.title}</h1>
-        <p className="text-lg text-white/90 max-w-xs">{step.description}</p>
+        <p className="text-lg text-white/90 max-w-xs mb-6">{step.description}</p>
+        
+        {/* Audio Instructions - key forces remount on step change */}
+        <div className="w-full max-w-xs">
+          <AudioInstructions 
+            key={step.id}
+            audioSrc={step.audioSrc} 
+            label={step.title} 
+          />
+        </div>
       </div>
 
       {/* Progress dots & button */}

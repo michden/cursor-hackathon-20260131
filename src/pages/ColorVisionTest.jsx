@@ -4,6 +4,7 @@ import { useTestResults } from '../context/TestResultsContext'
 import ColorPlate from '../components/ColorPlate'
 import Celebration from '../components/Celebration'
 import AchievementBadge from '../components/AchievementBadge'
+import AudioInstructions from '../components/AudioInstructions'
 
 // Test plates configuration
 // Each plate has a number, type, and what people with different conditions see
@@ -181,6 +182,11 @@ export default function ColorVisionTest() {
             <h2 className="text-2xl font-bold text-slate-800 mb-2">Ishihara Color Test</h2>
             <p className="text-slate-600">Screen for color vision deficiencies</p>
           </div>
+
+          <AudioInstructions 
+            audioSrc="/audio/color-vision-instructions.mp3" 
+            label="Test Instructions" 
+          />
 
           <div className="bg-slate-50 rounded-xl p-6 mb-8">
             <h3 className="font-semibold text-slate-800 mb-4">Instructions:</h3>

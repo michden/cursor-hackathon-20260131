@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTestResults } from '../context/TestResultsContext'
 import { analyzeEyePhoto } from '../api/openai'
+import AudioInstructions from '../components/AudioInstructions'
 
 // Camera states
 const CAMERA_STATES = {
@@ -205,6 +206,11 @@ export default function EyePhotoAnalysis() {
             <h2 className="text-2xl font-bold text-slate-800 mb-2">AI Eye Analysis</h2>
             <p className="text-slate-600">Analyze your eye photo with AI</p>
           </div>
+
+          <AudioInstructions 
+            audioSrc="/audio/eye-photo-instructions.mp3" 
+            label="Instructions" 
+          />
 
           <div className="bg-slate-50 rounded-xl p-6 mb-6">
             <h3 className="font-semibold text-slate-800 mb-4">For best results:</h3>
