@@ -1,5 +1,12 @@
 import { test, expect } from '@playwright/test'
 
+// Skip onboarding for all tests
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('visioncheck-onboarded', 'true')
+  })
+})
+
 test.describe('Astigmatism Test', () => {
   test('displays home page with Astigmatism option', async ({ page }) => {
     await page.goto('/')
@@ -71,7 +78,10 @@ test.describe('Astigmatism Test - Complete Flow', () => {
     await page.click('text=All lines appear equal')
     await page.click('text=Confirm Selection')
     
-    await page.click(/Test Right/i)
+    // Click the button to test the other eye - this goes to eye selection
+    await page.getByRole('button', { name: /Test Right/i }).click()
+    // Now select the right eye from eye selection
+    await page.click('text=Right')
     await page.click('text=Start Test')
     await page.click('text=All lines appear equal')
     await page.click('text=Confirm Selection')
@@ -86,7 +96,9 @@ test.describe('Astigmatism Test - Complete Flow', () => {
     await page.click('text=All lines appear equal')
     await page.click('text=Confirm Selection')
     
-    await page.click('text=View All Results')
+    // After testing one eye, navigate to results via "Back to Home" then to results page
+    await page.click('text=Back to Home')
+    await page.goto('/results')
     await expect(page).toHaveURL('/results')
     await expect(page.getByText('Astigmatism').first()).toBeVisible()
   })
