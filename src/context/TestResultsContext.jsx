@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect } from 'react'
 const TestResultsContext = createContext(null)
 
 const STORAGE_KEY = 'eyecheck-results'
+const HISTORY_KEY = 'eyecheck-history'
 
 // Prepare results for storage (exclude large image data)
 const prepareForStorage = (results) => {
@@ -36,8 +37,22 @@ const loadPersistedResults = () => {
   }
 }
 
+// Load history from localStorage
+const loadPersistedHistory = () => {
+  try {
+    const saved = localStorage.getItem(HISTORY_KEY)
+    if (saved) {
+      return JSON.parse(saved)
+    }
+  } catch (e) {
+    console.warn('Failed to load persisted history:', e)
+  }
+  return []
+}
+
 export function TestResultsProvider({ children }) {
   const [results, setResults] = useState(loadPersistedResults)
+  const [history, setHistory] = useState(loadPersistedHistory)
 
   // Persist to localStorage whenever results change
   useEffect(() => {
@@ -90,6 +105,43 @@ export function TestResultsProvider({ children }) {
     return results.visualAcuity || results.colorVision || results.eyePhoto
   }
 
+  // Save current session to history
+  const saveToHistory = () => {
+    if (!results.visualAcuity && !results.colorVision) return
+
+    const session = {
+      id: Date.now(),
+      date: new Date().toISOString(),
+      visualAcuity: results.visualAcuity ? {
+        snellen: results.visualAcuity.snellen,
+        level: results.visualAcuity.level
+      } : null,
+      colorVision: results.colorVision ? {
+        correctCount: results.colorVision.correctCount,
+        totalPlates: results.colorVision.totalPlates,
+        status: results.colorVision.status
+      } : null
+    }
+
+    const newHistory = [session, ...history].slice(0, 20) // Keep last 20
+    setHistory(newHistory)
+    try {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(newHistory))
+    } catch (e) {
+      console.warn('Failed to persist history:', e)
+    }
+  }
+
+  // Clear all history
+  const clearHistory = () => {
+    setHistory([])
+    try {
+      localStorage.removeItem(HISTORY_KEY)
+    } catch (e) {
+      console.warn('Failed to clear history:', e)
+    }
+  }
+
   return (
     <TestResultsContext.Provider value={{
       results,
@@ -97,7 +149,10 @@ export function TestResultsProvider({ children }) {
       updateColorVision,
       updateEyePhoto,
       clearResults,
-      hasAnyResults
+      hasAnyResults,
+      history,
+      saveToHistory,
+      clearHistory
     }}>
       {children}
     </TestResultsContext.Provider>

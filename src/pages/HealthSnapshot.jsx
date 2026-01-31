@@ -124,8 +124,63 @@ function EyePhotoResult({ data }) {
   )
 }
 
+function HistoryChart({ history }) {
+  if (history.length < 2) return null
+
+  // Filter sessions with visual acuity data
+  const sessions = history
+    .filter(s => s.visualAcuity)
+    .slice(0, 5)
+    .reverse()
+
+  if (sessions.length < 2) return null
+
+  // Calculate trend text
+  const oldest = sessions[0]
+  const newest = sessions[sessions.length - 1]
+  let trendText = null
+  
+  if (oldest.visualAcuity && newest.visualAcuity) {
+    const oldSnellen = oldest.visualAcuity.snellen
+    const newSnellen = newest.visualAcuity.snellen
+    const oldLevel = oldest.visualAcuity.level
+    const newLevel = newest.visualAcuity.level
+    
+    if (newLevel > oldLevel) {
+      trendText = `Your visual acuity improved from ${oldSnellen} to ${newSnellen}`
+    } else if (newLevel < oldLevel) {
+      trendText = `Your visual acuity changed from ${oldSnellen} to ${newSnellen}`
+    } else {
+      trendText = `Your visual acuity has remained stable at ${newSnellen}`
+    }
+  }
+
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">
+      <h3 className="font-semibold text-slate-800 mb-3">Your Progress</h3>
+      <div className="flex items-end justify-between h-24 gap-2">
+        {sessions.map((session) => (
+          <div key={session.id} className="flex-1 flex flex-col items-center">
+            <div
+              className="w-full bg-sky-400 rounded-t"
+              style={{ height: `${(session.visualAcuity.level / 10) * 100}%` }}
+            />
+            <span className="text-xs text-slate-500 mt-1">
+              {new Date(session.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+            </span>
+          </div>
+        ))}
+      </div>
+      <p className="text-xs text-slate-400 text-center mt-2">Visual acuity over time</p>
+      {trendText && (
+        <p className="text-sm text-sky-600 text-center mt-2 font-medium">{trendText}</p>
+      )}
+    </div>
+  )
+}
+
 export default function HealthSnapshot() {
-  const { results, hasAnyResults, clearResults } = useTestResults()
+  const { results, hasAnyResults, clearResults, history, saveToHistory, clearHistory } = useTestResults()
   const reportRef = useRef(null)
 
   const getOverallStatus = useCallback(() => {
@@ -288,6 +343,9 @@ export default function HealthSnapshot() {
           </div>
         </div>
 
+        {/* History Chart */}
+        <HistoryChart history={history} />
+
         {/* Test Results */}
         <div className="space-y-4 mb-6">
           <ResultCard
@@ -351,6 +409,17 @@ export default function HealthSnapshot() {
           >
             <span>💾</span> Download Summary
           </button>
+
+          <button
+            onClick={() => {
+              saveToHistory()
+              alert('Session saved to history!')
+            }}
+            disabled={!results.visualAcuity && !results.colorVision}
+            className="w-full py-4 bg-emerald-500 text-white font-semibold rounded-xl hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span>📊</span> Save to History
+          </button>
           
           <Link
             to="/"
@@ -369,6 +438,19 @@ export default function HealthSnapshot() {
           >
             Clear All Results
           </button>
+
+          {history.length > 0 && (
+            <button
+              onClick={() => {
+                if (confirm('Are you sure you want to clear all session history?')) {
+                  clearHistory()
+                }
+              }}
+              className="w-full py-3 text-slate-400 font-medium hover:text-slate-500 transition-colors text-center"
+            >
+              Clear History ({history.length} sessions)
+            </button>
+          )}
         </div>
       </div>
     </div>
