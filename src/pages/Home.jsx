@@ -154,6 +154,23 @@ export default function Home() {
         </Link>
 
         <Link
+          to="/peripheral-vision"
+          className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+          aria-label={`${t('home:tests.peripheralVision.title')} - ${t('home:tests.peripheralVision.description')}`}
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-fuchsia-100 dark:bg-fuchsia-900/50 rounded-xl flex items-center justify-center text-2xl">
+              👁️‍🗨️
+            </div>
+            <div className="flex-1">
+              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.peripheralVision.title')}</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.peripheralVision.description')}</p>
+            </div>
+            <div className="text-slate-400 dark:text-slate-500">→</div>
+          </div>
+        </Link>
+
+        <Link
           to="/eye-photo"
           className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
           aria-label={`${t('home:tests.eyePhoto.title')} - ${t('home:tests.eyePhoto.description')}`}

@@ -21,6 +21,10 @@
       "title": "Astigmatismus-Screening",
       "description": "Zifferblatt-Test für Hornhautkrümmung"
     },
+    "peripheralVision": {
+      "title": "Peripheres Sehtest",
+      "description": "Glaukom-Screening für seitliches Sehen"
+    },
     "eyePhoto": {
       "title": "Augenfoto-Analyse",
       "description": "KI-Analyse Ihres Augenfotos"

@@ -25,6 +25,10 @@ const getDefaultResults = () => ({
     left: null,
     right: null
   },
+  peripheralVision: {
+    left: null,
+    right: null
+  },
   eyePhoto: null,
   completedAt: null
 })
@@ -78,6 +82,11 @@ const migrateResults = (saved) => {
   // If astigmatism doesn't exist, add it
   if (!saved.astigmatism) {
     saved.astigmatism = defaults.astigmatism
+  }
+  
+  // If peripheralVision doesn't exist, add it
+  if (!saved.peripheralVision) {
+    saved.peripheralVision = defaults.peripheralVision
   }
   
   return saved
@@ -229,6 +238,18 @@ export function TestResultsProvider({ children }) {
     }))
   }
 
+  // Update peripheral vision for a specific eye
+  const updatePeripheralVision = (eye, data) => {
+    setResults(prev => ({
+      ...prev,
+      peripheralVision: {
+        ...prev.peripheralVision,
+        [eye]: data
+      },
+      completedAt: new Date().toISOString()
+    }))
+  }
+
   const clearResults = () => {
     setResults(getDefaultResults())
     try {
@@ -243,7 +264,8 @@ export function TestResultsProvider({ children }) {
     const hasContrastSensitivity = results.contrastSensitivity?.left || results.contrastSensitivity?.right
     const hasAmslerGrid = results.amslerGrid?.left || results.amslerGrid?.right
     const hasAstigmatism = results.astigmatism?.left || results.astigmatism?.right
-    return hasVisualAcuity || results.colorVision || hasContrastSensitivity || hasAmslerGrid || hasAstigmatism || results.eyePhoto
+    const hasPeripheralVision = results.peripheralVision?.left || results.peripheralVision?.right
+    return hasVisualAcuity || results.colorVision || hasContrastSensitivity || hasAmslerGrid || hasAstigmatism || hasPeripheralVision || results.eyePhoto
   }
 
   // Save current session to history
@@ -252,8 +274,9 @@ export function TestResultsProvider({ children }) {
     const hasContrastSensitivity = results.contrastSensitivity?.left || results.contrastSensitivity?.right
     const hasAmslerGrid = results.amslerGrid?.left || results.amslerGrid?.right
     const hasAstigmatism = results.astigmatism?.left || results.astigmatism?.right
+    const hasPeripheralVision = results.peripheralVision?.left || results.peripheralVision?.right
     
-    if (!hasVisualAcuity && !results.colorVision && !hasContrastSensitivity && !hasAmslerGrid && !hasAstigmatism) return
+    if (!hasVisualAcuity && !results.colorVision && !hasContrastSensitivity && !hasAmslerGrid && !hasAstigmatism && !hasPeripheralVision) return
 
     // Helper to get summary for an eye
     const getEyeSummary = (eyeData, fields) => {
@@ -288,6 +311,10 @@ export function TestResultsProvider({ children }) {
       astigmatism: hasAstigmatism ? {
         left: getEyeSummary(results.astigmatism.left, ['allLinesEqual', 'severity', 'estimatedAxis']),
         right: getEyeSummary(results.astigmatism.right, ['allLinesEqual', 'severity', 'estimatedAxis'])
+      } : null,
+      peripheralVision: hasPeripheralVision ? {
+        left: getEyeSummary(results.peripheralVision.left, ['detectionRate', 'avgReactionTime', 'severity']),
+        right: getEyeSummary(results.peripheralVision.right, ['detectionRate', 'avgReactionTime', 'severity'])
       } : null
     }
 
@@ -358,10 +385,11 @@ export function TestResultsProvider({ children }) {
     const hasContrastSensitivity = currentResults.contrastSensitivity?.left || currentResults.contrastSensitivity?.right
     const hasAmslerGrid = currentResults.amslerGrid?.left || currentResults.amslerGrid?.right
     const hasAstigmatism = currentResults.astigmatism?.left || currentResults.astigmatism?.right
+    const hasPeripheralVision = currentResults.peripheralVision?.left || currentResults.peripheralVision?.right
     const hasColorVision = currentResults.colorVision
     
     // First test achievement
-    if (!achievements['first-test'] && (hasVisualAcuity || hasColorVision || hasContrastSensitivity || hasAmslerGrid || hasAstigmatism)) {
+    if (!achievements['first-test'] && (hasVisualAcuity || hasColorVision || hasContrastSensitivity || hasAmslerGrid || hasAstigmatism || hasPeripheralVision)) {
       if (unlockAchievement('first-test')) {
         newlyUnlocked.push('first-test')
       }
@@ -385,8 +413,8 @@ export function TestResultsProvider({ children }) {
       }
     }
     
-    // All tests completed (now includes astigmatism - 5 tests total)
-    if (!achievements['all-tests'] && hasVisualAcuity && hasColorVision && hasContrastSensitivity && hasAmslerGrid && hasAstigmatism) {
+    // All tests completed (now includes astigmatism and peripheral vision - 6 tests total)
+    if (!achievements['all-tests'] && hasVisualAcuity && hasColorVision && hasContrastSensitivity && hasAmslerGrid && hasAstigmatism && hasPeripheralVision) {
       if (unlockAchievement('all-tests')) {
         newlyUnlocked.push('all-tests')
       }
@@ -425,6 +453,7 @@ export function TestResultsProvider({ children }) {
       updateContrastSensitivity,
       updateAmslerGrid,
       updateAstigmatism,
+      updatePeripheralVision,
       updateEyePhoto,
       clearResults,
       hasAnyResults,

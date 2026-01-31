@@ -16,6 +16,7 @@ function ResultCard({ title, icon, status, children, color = 'sky', t }) {
     amber: 'bg-amber-50 border-amber-200',
     purple: 'bg-purple-50 border-purple-200',
     teal: 'bg-teal-50 border-teal-200',
+    fuchsia: 'bg-fuchsia-50 border-fuchsia-200',
   }
 
   const statusColors = {
@@ -513,6 +514,80 @@ function AstigmatismResult({ data, t }) {
   )
 }
 
+function PeripheralVisionResult({ data, t }) {
+  const hasLeft = data?.left
+  const hasRight = data?.right
+  const hasAny = hasLeft || hasRight
+
+  if (!hasAny) {
+    return (
+      <p className="text-sm text-slate-500">
+        {t('results:noResults.description')}
+      </p>
+    )
+  }
+
+  const isNormal = (eyeData) => {
+    if (!eyeData) return true
+    return eyeData.severity === 'excellent' || eyeData.severity === 'normal'
+  }
+
+  const getEyeColor = (eyeData) => {
+    if (!eyeData) return 'slate'
+    return isNormal(eyeData) ? 'fuchsia' : 'amber'
+  }
+
+  const anyConcerns = (hasLeft && !isNormal(data.left)) || (hasRight && !isNormal(data.right))
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-4">
+        {/* Left Eye */}
+        <div className="text-center p-3 bg-white rounded-lg border">
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.leftEye')}</div>
+          <div className={`text-2xl font-bold text-${getEyeColor(data.left)}-600`}>
+            {hasLeft ? `${data.left.detectionRate}%` : '—'}
+          </div>
+          {hasLeft && (
+            <div className="text-xs text-slate-500 mt-1">
+              {data.left.avgReactionTime}ms
+            </div>
+          )}
+          {hasLeft && (
+            <div className={`text-xs mt-1 text-${getEyeColor(data.left)}-600`}>
+              {t(`results:peripheralVision.severity.${data.left.severity}`)}
+            </div>
+          )}
+        </div>
+        
+        {/* Right Eye */}
+        <div className="text-center p-3 bg-white rounded-lg border">
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.rightEye')}</div>
+          <div className={`text-2xl font-bold text-${getEyeColor(data.right)}-600`}>
+            {hasRight ? `${data.right.detectionRate}%` : '—'}
+          </div>
+          {hasRight && (
+            <div className="text-xs text-slate-500 mt-1">
+              {data.right.avgReactionTime}ms
+            </div>
+          )}
+          {hasRight && (
+            <div className={`text-xs mt-1 text-${getEyeColor(data.right)}-600`}>
+              {t(`results:peripheralVision.severity.${data.right.severity}`)}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {anyConcerns ? (
+        <p className="text-sm text-amber-600">⚠️ {t('results:recommendations.seeDoctor')}</p>
+      ) : (
+        <p className="text-sm text-emerald-600">✓ {t('results:peripheralVision.normal')}</p>
+      )}
+    </div>
+  )
+}
+
 function HistoryChart({ history, t, i18n }) {
   if (history.length < 2) return null
 
@@ -644,12 +719,13 @@ export default function HealthSnapshot() {
     const hasContrastSensitivity = results.contrastSensitivity?.left || results.contrastSensitivity?.right
     const hasAmslerGrid = results.amslerGrid?.left || results.amslerGrid?.right
     const hasAstigmatism = results.astigmatism?.left || results.astigmatism?.right
+    const hasPeripheralVision = results.peripheralVision?.left || results.peripheralVision?.right
     
-    const tests = [hasVisualAcuity, results.colorVision, hasContrastSensitivity, hasAmslerGrid, hasAstigmatism, results.eyePhoto]
+    const tests = [hasVisualAcuity, results.colorVision, hasContrastSensitivity, hasAmslerGrid, hasAstigmatism, hasPeripheralVision, results.eyePhoto]
     const completed = tests.filter(Boolean).length
     
     if (completed === 0) return { status: 'none', message: t('results:header.noTests') }
-    if (completed === 6) return { status: 'complete', message: t('results:header.allTests') }
+    if (completed === 7) return { status: 'complete', message: t('results:header.allTests') }
     return { status: 'partial', message: t('results:header.someTests', { count: completed }) }
   }, [results, t])
 
@@ -717,6 +793,17 @@ export default function HealthSnapshot() {
       // Check asymmetry
       if (astigLeft && astigRight && astigLeft.allLinesEqual !== astigRight.allLinesEqual) {
         recommendations.push(t('results:recommendations.followUp'))
+      }
+    }
+
+    // Peripheral Vision - check both eyes
+    const pvLeft = results.peripheralVision?.left
+    const pvRight = results.peripheralVision?.right
+    if (pvLeft || pvRight) {
+      const isNormal = (eyeData) => eyeData?.severity === 'excellent' || eyeData?.severity === 'normal'
+      const anyConcerns = (pvLeft && !isNormal(pvLeft)) || (pvRight && !isNormal(pvRight))
+      if (anyConcerns) {
+        recommendations.push(t('results:recommendations.seeDoctor'))
       }
     }
     
@@ -1079,6 +1166,24 @@ export default function HealthSnapshot() {
           </ResultCard>
 
           <ResultCard
+            title={t('results:cards.peripheralVision')}
+            icon="👁️‍🗨️"
+            color="fuchsia"
+            t={t}
+            status={(() => {
+              const hasAny = results.peripheralVision?.left || results.peripheralVision?.right
+              if (!hasAny) return 'pending'
+              const isNormal = (eyeData) => eyeData?.severity === 'excellent' || eyeData?.severity === 'normal'
+              const anyConcerns = 
+                (results.peripheralVision?.left && !isNormal(results.peripheralVision.left)) || 
+                (results.peripheralVision?.right && !isNormal(results.peripheralVision.right))
+              return anyConcerns ? 'warning' : 'complete'
+            })()}
+          >
+            <PeripheralVisionResult data={results.peripheralVision} t={t} />
+          </ResultCard>
+
+          <ResultCard
             title={t('results:cards.eyePhoto')}
             icon="📸"
             color="violet"
@@ -1139,7 +1244,12 @@ export default function HealthSnapshot() {
           const astigRight = results.astigmatism?.right
           const hasAstigConcern = (astigLeft && !astigLeft.allLinesEqual) || (astigRight && !astigRight.allLinesEqual)
           
-          const showFindDoctor = hasVAConcern || hasColorConcern || hasCSConcern || hasAmslerConcern || hasAstigConcern
+          const pvLeft = results.peripheralVision?.left
+          const pvRight = results.peripheralVision?.right
+          const isNormal = (eyeData) => eyeData?.severity === 'excellent' || eyeData?.severity === 'normal'
+          const hasPVConcern = (pvLeft && !isNormal(pvLeft)) || (pvRight && !isNormal(pvRight))
+          
+          const showFindDoctor = hasVAConcern || hasColorConcern || hasCSConcern || hasAmslerConcern || hasAstigConcern || hasPVConcern
           
           return showFindDoctor ? (
             <div className="mb-6">

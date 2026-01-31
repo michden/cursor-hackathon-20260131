@@ -6,7 +6,7 @@
     "date": "Date",
     "noTests": "No tests completed",
     "allTests": "All tests complete",
-    "someTests": "{{count}}/6 tests complete"
+    "someTests": "{{count}}/7 tests complete"
   },
   "noResults": {
     "title": "No Results Yet",
@@ -19,6 +19,7 @@
     "contrastSensitivity": "Contrast Sensitivity",
     "amslerGrid": "Amsler Grid",
     "astigmatism": "Astigmatism",
+    "peripheralVision": "Peripheral Vision",
     "eyePhoto": "Eye Photo Analysis"
   },
   "astigmatism": {
@@ -31,6 +32,19 @@
       "mild": "Mild",
       "moderate": "Moderate",
       "significant": "Significant"
+    }
+  },
+  "peripheralVision": {
+    "normal": "Normal",
+    "concerns": "Concerns noted",
+    "detectionRate": "{{rate}}% detected",
+    "reactionTime": "{{time}}ms avg",
+    "severity": {
+      "excellent": "Excellent",
+      "normal": "Normal",
+      "mild": "Mild reduction",
+      "moderate": "Moderate reduction",
+      "significant": "Significant reduction"
     }
   },
   "eyeLabels": {

@@ -21,6 +21,10 @@
       "title": "Astigmatism Screening",
       "description": "Clock dial test for corneal curvature"
     },
+    "peripheralVision": {
+      "title": "Peripheral Vision Test",
+      "description": "Glaucoma screening for side vision"
+    },
     "eyePhoto": {
       "title": "Eye Photo Analysis",
       "description": "AI analysis of your eye photo"
