@@ -4,6 +4,7 @@ import html2pdf from 'html2pdf.js'
 import { useTestResults } from '../context/TestResultsContext'
 import AchievementBadge, { ACHIEVEMENTS } from '../components/AchievementBadge'
 import Celebration from '../components/Celebration'
+import FindDoctorButton from '../components/FindDoctorButton'
 
 function ResultCard({ title, icon, status, children, color = 'sky' }) {
   const colorClasses = {
@@ -869,6 +870,32 @@ export default function HealthSnapshot() {
           <h3 className="font-semibold text-slate-800 mb-2">📋 Recommendation</h3>
           <p className="text-slate-600">{getRecommendation()}</p>
         </div>
+
+        {/* Find Eye Doctor Button - shown when concerning results detected */}
+        {(() => {
+          // Check for concerning results that warrant professional evaluation
+          const vaLeft = results.visualAcuity?.left
+          const vaRight = results.visualAcuity?.right
+          const hasVAConcern = (vaLeft && vaLeft.level < 8) || (vaRight && vaRight.level < 8)
+          
+          const hasColorConcern = results.colorVision && results.colorVision.status !== 'normal'
+          
+          const csLeft = results.contrastSensitivity?.left
+          const csRight = results.contrastSensitivity?.right
+          const hasCSConcern = (csLeft && csLeft.logCS < 0.9) || (csRight && csRight.logCS < 0.9)
+          
+          const amslerLeft = results.amslerGrid?.left
+          const amslerRight = results.amslerGrid?.right
+          const hasAmslerConcern = amslerLeft?.hasIssues || amslerRight?.hasIssues
+          
+          const showFindDoctor = hasVAConcern || hasColorConcern || hasCSConcern || hasAmslerConcern
+          
+          return showFindDoctor ? (
+            <div className="mb-6">
+              <FindDoctorButton />
+            </div>
+          ) : null
+        })()}
 
         {/* Disclaimer */}
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">

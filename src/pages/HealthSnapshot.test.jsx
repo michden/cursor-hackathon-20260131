@@ -371,4 +371,115 @@ describe('HealthSnapshot', () => {
       expect(screen.getByText(/Your visual acuity has remained stable/)).toBeInTheDocument()
     })
   })
+
+  describe('FindDoctorButton visibility', () => {
+    it('shows Find Doctor button when visual acuity is below normal', () => {
+      setTestResults({
+        visualAcuity: { 
+          left: { snellen: '20/50', level: 5, maxLevel: 10 },
+          right: null
+        }
+      })
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      expect(screen.getByRole('button', { name: /find eye doctors near me/i })).toBeInTheDocument()
+    })
+
+    it('shows Find Doctor button when color vision is not normal', () => {
+      setTestResults({
+        colorVision: { 
+          correctCount: 5, 
+          totalPlates: 10, 
+          redGreenCorrect: 3, 
+          redGreenTotal: 6,
+          status: 'mild_difficulty' 
+        }
+      })
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      expect(screen.getByRole('button', { name: /find eye doctors near me/i })).toBeInTheDocument()
+    })
+
+    it('shows Find Doctor button when contrast sensitivity is below 0.9', () => {
+      setTestResults({
+        contrastSensitivity: { 
+          left: { logCS: 0.7, level: 5, maxLevel: 10 },
+          right: null
+        }
+      })
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      expect(screen.getByRole('button', { name: /find eye doctors near me/i })).toBeInTheDocument()
+    })
+
+    it('shows Find Doctor button when Amsler grid shows issues', () => {
+      setTestResults({
+        amslerGrid: { 
+          left: { hasIssues: true },
+          right: null
+        }
+      })
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      expect(screen.getByRole('button', { name: /find eye doctors near me/i })).toBeInTheDocument()
+    })
+
+    it('does NOT show Find Doctor button when all results are normal', () => {
+      setTestResults({
+        visualAcuity: { 
+          left: { snellen: '20/20', level: 10, maxLevel: 10 },
+          right: { snellen: '20/20', level: 10, maxLevel: 10 }
+        },
+        colorVision: { 
+          correctCount: 10, 
+          totalPlates: 10, 
+          redGreenCorrect: 6, 
+          redGreenTotal: 6,
+          status: 'normal' 
+        },
+        contrastSensitivity: { 
+          left: { logCS: 1.2, level: 9, maxLevel: 10 },
+          right: { logCS: 1.2, level: 9, maxLevel: 10 }
+        },
+        amslerGrid: { 
+          left: { hasIssues: false },
+          right: { hasIssues: false }
+        }
+      })
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      expect(screen.queryByRole('button', { name: /find eye doctors near me/i })).not.toBeInTheDocument()
+    })
+
+    it('does NOT show Find Doctor button when visual acuity is exactly 8', () => {
+      setTestResults({
+        visualAcuity: { 
+          left: { snellen: '20/25', level: 8, maxLevel: 10 },
+          right: { snellen: '20/25', level: 8, maxLevel: 10 }
+        }
+      })
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      expect(screen.queryByRole('button', { name: /find eye doctors near me/i })).not.toBeInTheDocument()
+    })
+
+    it('does NOT show Find Doctor button when contrast sensitivity is exactly 0.9', () => {
+      setTestResults({
+        contrastSensitivity: { 
+          left: { logCS: 0.9, level: 7, maxLevel: 10 },
+          right: { logCS: 0.9, level: 7, maxLevel: 10 }
+        }
+      })
+      
+      renderWithProviders(<HealthSnapshot />)
+      
+      expect(screen.queryByRole('button', { name: /find eye doctors near me/i })).not.toBeInTheDocument()
+    })
+  })
 })
