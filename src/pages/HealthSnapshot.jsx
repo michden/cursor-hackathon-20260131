@@ -124,6 +124,41 @@ function EyePhotoResult({ data }) {
   )
 }
 
+function ContrastSensitivityResult({ data }) {
+  if (!data) {
+    return (
+      <p className="text-sm text-slate-500">
+        Complete the contrast sensitivity test to see results.
+      </p>
+    )
+  }
+
+  const getInterpretation = (logCS) => {
+    if (logCS >= 1.2) return { text: 'Excellent sensitivity', color: 'emerald' }
+    if (logCS >= 0.9) return { text: 'Good sensitivity', color: 'emerald' }
+    if (logCS >= 0.6) return { text: 'Mild reduction', color: 'amber' }
+    if (logCS >= 0.3) return { text: 'Moderate reduction', color: 'amber' }
+    return { text: 'Reduced sensitivity', color: 'red' }
+  }
+
+  const interpretation = getInterpretation(data.logCS)
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-baseline gap-2">
+        <span className="text-3xl font-bold text-amber-600">{data.logCS.toFixed(2)}</span>
+        <span className="text-sm text-slate-500">logCS</span>
+      </div>
+      <p className="text-sm text-slate-600">
+        Level {data.level} of {data.maxLevel} achieved
+      </p>
+      <p className={`text-sm text-${interpretation.color}-600`}>
+        {interpretation.color === 'emerald' && '✓ '}{interpretation.text}
+      </p>
+    </div>
+  )
+}
+
 function HistoryChart({ history }) {
   if (history.length < 2) return null
 
@@ -367,6 +402,18 @@ export default function HealthSnapshot() {
             }
           >
             <ColorVisionResult data={results.colorVision} />
+          </ResultCard>
+
+          <ResultCard
+            title="Contrast Sensitivity"
+            icon="🔆"
+            color="amber"
+            status={results.contrastSensitivity ? 
+              (results.contrastSensitivity.logCS >= 0.9 ? 'complete' : 'warning') : 
+              'pending'
+            }
+          >
+            <ContrastSensitivityResult data={results.contrastSensitivity} />
           </ResultCard>
 
           <ResultCard

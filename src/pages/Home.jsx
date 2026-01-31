@@ -84,6 +84,23 @@ export default function Home() {
         </Link>
 
         <Link
+          to="/contrast-sensitivity"
+          className="block p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+          aria-label="Contrast Sensitivity Test - Pelli-Robson letter test"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-amber-100 rounded-xl flex items-center justify-center text-2xl">
+              🔆
+            </div>
+            <div className="flex-1">
+              <h2 className="text-lg font-semibold text-slate-800">Contrast Sensitivity</h2>
+              <p className="text-sm text-slate-500">Pelli-Robson letter test</p>
+            </div>
+            <div className="text-slate-400">→</div>
+          </div>
+        </Link>
+
+        <Link
           to="/eye-photo"
           className="block p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
           aria-label="Eye Photo Analysis - AI analysis of your eye photo"

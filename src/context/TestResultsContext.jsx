@@ -32,6 +32,7 @@ const loadPersistedResults = () => {
   return {
     visualAcuity: null,
     colorVision: null,
+    contrastSensitivity: null,
     eyePhoto: null,
     completedAt: null
   }
@@ -87,10 +88,19 @@ export function TestResultsProvider({ children }) {
     }))
   }
 
+  const updateContrastSensitivity = (data) => {
+    setResults(prev => ({
+      ...prev,
+      contrastSensitivity: data,
+      completedAt: new Date().toISOString()
+    }))
+  }
+
   const clearResults = () => {
     setResults({
       visualAcuity: null,
       colorVision: null,
+      contrastSensitivity: null,
       eyePhoto: null,
       completedAt: null
     })
@@ -102,7 +112,7 @@ export function TestResultsProvider({ children }) {
   }
 
   const hasAnyResults = () => {
-    return results.visualAcuity || results.colorVision || results.eyePhoto
+    return results.visualAcuity || results.colorVision || results.contrastSensitivity || results.eyePhoto
   }
 
   // Save current session to history
@@ -147,6 +157,7 @@ export function TestResultsProvider({ children }) {
       results,
       updateVisualAcuity,
       updateColorVision,
+      updateContrastSensitivity,
       updateEyePhoto,
       clearResults,
       hasAnyResults,

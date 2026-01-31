@@ -6,6 +6,7 @@ import VisualAcuityTest from './pages/VisualAcuityTest'
 import ColorVisionTest from './pages/ColorVisionTest'
 import EyePhotoAnalysis from './pages/EyePhotoAnalysis'
 import HealthSnapshot from './pages/HealthSnapshot'
+import ContrastSensitivityTest from './pages/ContrastSensitivityTest'
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/visual-acuity" element={<VisualAcuityTest />} />
             <Route path="/color-vision" element={<ColorVisionTest />} />
             <Route path="/eye-photo" element={<EyePhotoAnalysis />} />
+            <Route path="/contrast-sensitivity" element={<ContrastSensitivityTest />} />
             <Route path="/results" element={<HealthSnapshot />} />
           </Routes>
         </BrowserRouter>
