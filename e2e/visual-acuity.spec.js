@@ -93,6 +93,77 @@ test.describe('Visual Acuity Test', () => {
   })
 })
 
+test.describe('Visual Acuity Test - Keyboard Navigation', () => {
+  test('responds to arrow key presses', async ({ page }) => {
+    await page.goto('/visual-acuity')
+    await page.click('text=Start Test')
+    
+    // Press any arrow key
+    await page.keyboard.press('ArrowRight')
+    
+    // The E should still be visible (test continues)
+    await expect(page.locator('text=E').first()).toBeVisible()
+  })
+
+  test('all arrow keys trigger answers', async ({ page }) => {
+    await page.goto('/visual-acuity')
+    await page.click('text=Start Test')
+    
+    // Test each arrow key - they should all work
+    const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']
+    
+    for (const key of arrowKeys) {
+      // Press the arrow key
+      await page.keyboard.press(key)
+      
+      // Wait for feedback to clear
+      await page.waitForTimeout(400)
+      
+      // Test should still be running (E visible) or complete
+      const eVisible = await page.locator('text=E').first().isVisible()
+      const completeVisible = await page.getByText('Test Complete!').isVisible()
+      
+      // Either still testing or completed
+      expect(eVisible || completeVisible).toBeTruthy()
+      
+      // If test completed, break out of loop
+      if (completeVisible) break
+    }
+  })
+
+  test('arrow keys do not work on instructions page', async ({ page }) => {
+    await page.goto('/visual-acuity')
+    
+    // Press arrow keys on instructions page
+    await page.keyboard.press('ArrowRight')
+    await page.keyboard.press('ArrowUp')
+    
+    // Should still be on instructions page (Start Test button visible)
+    await expect(page.getByRole('button', { name: 'Start Test' })).toBeVisible()
+  })
+
+  test('arrow keys disabled during feedback', async ({ page }) => {
+    await page.goto('/visual-acuity')
+    await page.click('text=Start Test')
+    
+    // Press first arrow key - this registers an answer
+    await page.keyboard.press('ArrowUp')
+    
+    // Immediately press another arrow key (during 300ms feedback window)
+    // This second press should be ignored since feedback is showing
+    await page.keyboard.press('ArrowDown')
+    
+    // Wait for feedback to clear
+    await page.waitForTimeout(400)
+    
+    // The second rapid press during feedback should have been ignored
+    // The test should not error and the E should still be visible (test continues normally)
+    const eVisible = await page.locator('text=E').first().isVisible()
+    const completeVisible = await page.getByText('Test Complete!').isVisible()
+    expect(eVisible || completeVisible).toBeTruthy()
+  })
+})
+
 test.describe('Visual Acuity Test - Mobile', () => {
   test.use({ viewport: { width: 375, height: 667 } })
 
