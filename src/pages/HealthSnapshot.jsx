@@ -2,24 +2,32 @@ import { useRef, useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import html2pdf from 'html2pdf.js'
 import ReactMarkdown from 'react-markdown'
+import { useTranslation } from 'react-i18next'
 import { useTestResults } from '../context/TestResultsContext'
 import AchievementBadge, { ACHIEVEMENTS } from '../components/AchievementBadge'
 import Celebration from '../components/Celebration'
 import FindDoctorButton from '../components/FindDoctorButton'
 
-function ResultCard({ title, icon, status, children, color = 'sky' }) {
+function ResultCard({ title, icon, status, children, color = 'sky', t }) {
   const colorClasses = {
     sky: 'bg-sky-50 border-sky-200',
     emerald: 'bg-emerald-50 border-emerald-200',
     violet: 'bg-violet-50 border-violet-200',
     amber: 'bg-amber-50 border-amber-200',
     purple: 'bg-purple-50 border-purple-200',
+    teal: 'bg-teal-50 border-teal-200',
   }
 
   const statusColors = {
     complete: 'text-emerald-600 bg-emerald-100',
     pending: 'text-slate-500 bg-slate-100',
     warning: 'text-amber-600 bg-amber-100',
+  }
+
+  const statusText = {
+    complete: t('status.complete'),
+    pending: t('status.notDone'),
+    warning: t('status.review'),
   }
 
   return (
@@ -30,7 +38,7 @@ function ResultCard({ title, icon, status, children, color = 'sky' }) {
           <h3 className="font-semibold text-slate-800">{title}</h3>
         </div>
         <span className={`text-xs font-medium px-2 py-1 rounded-full ${statusColors[status]}`}>
-          {status === 'complete' ? 'Complete' : status === 'warning' ? 'Review' : 'Not Done'}
+          {statusText[status]}
         </span>
       </div>
       {children}
@@ -38,7 +46,7 @@ function ResultCard({ title, icon, status, children, color = 'sky' }) {
   )
 }
 
-function VisualAcuityResult({ data }) {
+function VisualAcuityResult({ data, t }) {
   const hasLeft = data?.left
   const hasRight = data?.right
   const hasAny = hasLeft || hasRight
@@ -46,16 +54,16 @@ function VisualAcuityResult({ data }) {
   if (!hasAny) {
     return (
       <p className="text-sm text-slate-500">
-        Complete the visual acuity test to see results.
+        {t('results:noResults.description')}
       </p>
     )
   }
 
   const getStatusMessage = (level) => {
     if (!level && level !== 0) return null
-    if (level >= 8) return { text: '✓ Normal', color: 'emerald' }
-    if (level >= 5) return { text: 'Consider exam', color: 'amber' }
-    return { text: 'Recommend eval', color: 'red' }
+    if (level >= 8) return { text: `✓ ${t('results:status.normal')}`, color: 'emerald' }
+    if (level >= 5) return { text: t('results:recommendations.followUp'), color: 'amber' }
+    return { text: t('results:recommendations.seeDoctor'), color: 'red' }
   }
 
   // Check for asymmetry
@@ -66,7 +74,7 @@ function VisualAcuityResult({ data }) {
       <div className="grid grid-cols-2 gap-4">
         {/* Left Eye */}
         <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">Left Eye</div>
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.leftEye')}</div>
           <div className="text-2xl font-bold text-sky-600">
             {hasLeft ? data.left.snellen : '—'}
           </div>
@@ -79,7 +87,7 @@ function VisualAcuityResult({ data }) {
         
         {/* Right Eye */}
         <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">Right Eye</div>
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.rightEye')}</div>
           <div className="text-2xl font-bold text-sky-600">
             {hasRight ? data.right.snellen : '—'}
           </div>
@@ -91,33 +99,21 @@ function VisualAcuityResult({ data }) {
         </div>
       </div>
 
-      {/* Status messages */}
-      {hasLeft && getStatusMessage(data.left.level) && (
-        <p className={`text-sm text-${getStatusMessage(data.left.level).color}-600`}>
-          Left: {getStatusMessage(data.left.level).text}
-        </p>
-      )}
-      {hasRight && getStatusMessage(data.right.level) && (
-        <p className={`text-sm text-${getStatusMessage(data.right.level).color}-600`}>
-          Right: {getStatusMessage(data.right.level).text}
-        </p>
-      )}
-
       {/* Asymmetry warning */}
       {hasAsymmetry && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
-          ⚠️ Notable difference between eyes detected. Consider a professional evaluation.
+          ⚠️ {t('results:recommendations.followUp')}
         </div>
       )}
     </div>
   )
 }
 
-function ColorVisionResult({ data }) {
+function ColorVisionResult({ data, t }) {
   if (!data) {
     return (
       <p className="text-sm text-slate-500">
-        Complete the color vision test to see results.
+        {t('results:noResults.description')}
       </p>
     )
   }
@@ -128,19 +124,16 @@ function ColorVisionResult({ data }) {
         <span className="text-3xl font-bold text-emerald-600">
           {data.correctCount}/{data.totalPlates}
         </span>
-        <span className="text-sm text-slate-500">plates correct</span>
+        <span className="text-sm text-slate-500">{t('tests:colorVision.results.score', { correct: '', total: '' }).replace('/', '').trim()}</span>
       </div>
-      <p className="text-sm text-slate-600">
-        Red-green plates: {data.redGreenCorrect}/{data.redGreenTotal}
-      </p>
       {data.status === 'normal' && (
-        <p className="text-sm text-emerald-600">✓ Normal color vision likely</p>
+        <p className="text-sm text-emerald-600">✓ {t('tests:colorVision.results.status.normal')}</p>
       )}
       {data.status === 'mild_difficulty' && (
-        <p className="text-sm text-amber-600">Mild difficulty detected</p>
+        <p className="text-sm text-amber-600">{t('tests:colorVision.results.status.mild')}</p>
       )}
       {data.status === 'possible_deficiency' && (
-        <p className="text-sm text-red-600">Possible color vision deficiency</p>
+        <p className="text-sm text-red-600">{t('tests:colorVision.results.status.significant')}</p>
       )}
     </div>
   )
@@ -193,13 +186,13 @@ function extractSummary(analysis) {
   return null
 }
 
-function EyePhotoResult({ data }) {
+function EyePhotoResult({ data, t }) {
   const [showFullAnalysis, setShowFullAnalysis] = useState(false)
 
   if (!data) {
     return (
       <p className="text-sm text-slate-500">
-        Complete the eye photo analysis to see results.
+        {t('results:noResults.description')}
       </p>
     )
   }
@@ -218,13 +211,13 @@ function EyePhotoResult({ data }) {
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCardClick(); } }}
         role="button"
         tabIndex={0}
-        aria-label="View full AI eye analysis"
+        aria-label={t('results:cards.eyePhoto')}
       >
         {data.imageData && (
           <div className="flex justify-center">
             <img
               src={data.imageData}
-              alt="Analyzed eye"
+              alt={t('results:cards.eyePhoto')}
               className="w-16 h-16 object-cover rounded-full border-2 border-violet-200"
             />
           </div>
@@ -233,7 +226,7 @@ function EyePhotoResult({ data }) {
         {/* Status indicator */}
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-          <span className="text-sm font-medium text-emerald-600">Analysis Complete</span>
+          <span className="text-sm font-medium text-emerald-600">{t('tests:eyePhoto.status.complete')}</span>
         </div>
         
         {/* Summary text */}
@@ -245,7 +238,7 @@ function EyePhotoResult({ data }) {
         
         {/* View details hint */}
         <p className="text-xs text-violet-600 flex items-center gap-1">
-          <span>Tap to view full observations</span>
+          <span>{t('actions.viewResults')}</span>
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
@@ -266,12 +259,12 @@ function EyePhotoResult({ data }) {
             <div className="bg-violet-50 p-4 border-b border-violet-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-2xl">📸</span>
-                <h3 className="font-semibold text-slate-800">AI Eye Analysis</h3>
+                <h3 className="font-semibold text-slate-800">{t('results:cards.eyePhoto')}</h3>
               </div>
               <button
                 onClick={() => setShowFullAnalysis(false)}
                 className="w-8 h-8 rounded-full bg-violet-100 hover:bg-violet-200 flex items-center justify-center transition-colors"
-                aria-label="Close"
+                aria-label={t('actions.close')}
               >
                 <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -285,7 +278,7 @@ function EyePhotoResult({ data }) {
                 <div className="flex justify-center mb-4">
                   <img
                     src={data.imageData}
-                    alt="Analyzed eye"
+                    alt={t('results:cards.eyePhoto')}
                     className="w-24 h-24 object-cover rounded-full border-4 border-violet-200"
                   />
                 </div>
@@ -303,7 +296,7 @@ function EyePhotoResult({ data }) {
                 onClick={() => setShowFullAnalysis(false)}
                 className="w-full py-3 bg-violet-500 text-white font-medium rounded-xl hover:bg-violet-600 transition-colors"
               >
-                Close
+                {t('actions.close')}
               </button>
             </div>
           </div>
@@ -313,7 +306,7 @@ function EyePhotoResult({ data }) {
   )
 }
 
-function ContrastSensitivityResult({ data }) {
+function ContrastSensitivityResult({ data, t }) {
   const hasLeft = data?.left
   const hasRight = data?.right
   const hasAny = hasLeft || hasRight
@@ -321,17 +314,17 @@ function ContrastSensitivityResult({ data }) {
   if (!hasAny) {
     return (
       <p className="text-sm text-slate-500">
-        Complete the contrast sensitivity test to see results.
+        {t('results:noResults.description')}
       </p>
     )
   }
 
   const getInterpretation = (logCS) => {
-    if (logCS >= 1.2) return { text: 'Excellent', color: 'emerald' }
-    if (logCS >= 0.9) return { text: 'Good', color: 'emerald' }
-    if (logCS >= 0.6) return { text: 'Mild reduction', color: 'amber' }
-    if (logCS >= 0.3) return { text: 'Moderate', color: 'amber' }
-    return { text: 'Reduced', color: 'red' }
+    if (logCS >= 1.2) return { text: t('tests:contrastSensitivity.results.interpretations.excellent.label'), color: 'emerald' }
+    if (logCS >= 0.9) return { text: t('tests:contrastSensitivity.results.interpretations.normal.label'), color: 'emerald' }
+    if (logCS >= 0.6) return { text: t('tests:contrastSensitivity.results.interpretations.mild.label'), color: 'amber' }
+    if (logCS >= 0.3) return { text: t('tests:contrastSensitivity.results.interpretations.moderate.label'), color: 'amber' }
+    return { text: t('tests:contrastSensitivity.results.interpretations.significant.label'), color: 'red' }
   }
 
   // Check for asymmetry
@@ -342,7 +335,7 @@ function ContrastSensitivityResult({ data }) {
       <div className="grid grid-cols-2 gap-4">
         {/* Left Eye */}
         <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">Left Eye</div>
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.leftEye')}</div>
           <div className="text-2xl font-bold text-amber-600">
             {hasLeft ? data.left.logCS.toFixed(2) : '—'}
           </div>
@@ -355,7 +348,7 @@ function ContrastSensitivityResult({ data }) {
         
         {/* Right Eye */}
         <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">Right Eye</div>
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.rightEye')}</div>
           <div className="text-2xl font-bold text-amber-600">
             {hasRight ? data.right.logCS.toFixed(2) : '—'}
           </div>
@@ -370,14 +363,14 @@ function ContrastSensitivityResult({ data }) {
       {/* Asymmetry warning */}
       {hasAsymmetry && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
-          ⚠️ Notable difference between eyes detected. Consider a professional evaluation.
+          ⚠️ {t('results:recommendations.followUp')}
         </div>
       )}
     </div>
   )
 }
 
-function AmslerGridResult({ data }) {
+function AmslerGridResult({ data, t }) {
   const hasLeft = data?.left
   const hasRight = data?.right
   const hasAny = hasLeft || hasRight
@@ -385,14 +378,14 @@ function AmslerGridResult({ data }) {
   if (!hasAny) {
     return (
       <p className="text-sm text-slate-500">
-        Complete the Amsler grid test to see results.
+        {t('results:noResults.description')}
       </p>
     )
   }
 
   const getEyeStatus = (eyeData) => {
     if (!eyeData) return null
-    return eyeData.hasIssues ? 'Concerns' : 'Normal'
+    return eyeData.hasIssues ? t('results:status.concerns') : t('results:status.normal')
   }
 
   const getEyeColor = (eyeData) => {
@@ -407,7 +400,7 @@ function AmslerGridResult({ data }) {
       <div className="grid grid-cols-2 gap-4">
         {/* Left Eye */}
         <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">Left Eye</div>
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.leftEye')}</div>
           <div className={`text-xl font-bold text-${getEyeColor(data.left)}-600`}>
             {hasLeft ? getEyeStatus(data.left) : '—'}
           </div>
@@ -415,7 +408,7 @@ function AmslerGridResult({ data }) {
         
         {/* Right Eye */}
         <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">Right Eye</div>
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.rightEye')}</div>
           <div className={`text-xl font-bold text-${getEyeColor(data.right)}-600`}>
             {hasRight ? getEyeStatus(data.right) : '—'}
           </div>
@@ -423,15 +416,104 @@ function AmslerGridResult({ data }) {
       </div>
 
       {anyIssues ? (
-        <p className="text-sm text-amber-600">⚠️ Recommend professional evaluation</p>
+        <p className="text-sm text-amber-600">⚠️ {t('results:recommendations.seeDoctor')}</p>
       ) : (
-        <p className="text-sm text-emerald-600">✓ No distortions detected in tested eyes</p>
+        <p className="text-sm text-emerald-600">✓ {t('tests:amslerGrid.results.normal')}</p>
       )}
     </div>
   )
 }
 
-function HistoryChart({ history }) {
+function AstigmatismResult({ data, t }) {
+  const hasLeft = data?.left
+  const hasRight = data?.right
+  const hasAny = hasLeft || hasRight
+
+  if (!hasAny) {
+    return (
+      <p className="text-sm text-slate-500">
+        {t('results:noResults.description')}
+      </p>
+    )
+  }
+
+  const getEyeStatus = (eyeData) => {
+    if (!eyeData) return null
+    return eyeData.allLinesEqual 
+      ? t('results:astigmatism.noAstigmatism') 
+      : t('results:astigmatism.possibleAstigmatism')
+  }
+
+  const getEyeColor = (eyeData) => {
+    if (!eyeData) return 'slate'
+    return eyeData.allLinesEqual ? 'teal' : 'amber'
+  }
+
+  const anyAstigmatism = (hasLeft && !data.left.allLinesEqual) || (hasRight && !data.right.allLinesEqual)
+
+  // Check for asymmetry between eyes
+  const hasAsymmetry = hasLeft && hasRight && 
+    data.left.allLinesEqual !== data.right.allLinesEqual
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-4">
+        {/* Left Eye */}
+        <div className="text-center p-3 bg-white rounded-lg border">
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.leftEye')}</div>
+          <div className={`text-lg font-bold text-${getEyeColor(data.left)}-600`}>
+            {hasLeft ? (data.left.allLinesEqual ? '✓' : '⚠️') : '—'}
+          </div>
+          {hasLeft && (
+            <div className="text-xs text-slate-600 mt-1">
+              {data.left.allLinesEqual 
+                ? t('results:astigmatism.allLinesEqual')
+                : t(`results:astigmatism.severity.${data.left.severity}`)}
+            </div>
+          )}
+          {hasLeft && !data.left.allLinesEqual && data.left.estimatedAxis !== null && (
+            <div className="text-xs text-slate-500 mt-0.5">
+              {t('results:astigmatism.axis', { degrees: data.left.estimatedAxis })}
+            </div>
+          )}
+        </div>
+        
+        {/* Right Eye */}
+        <div className="text-center p-3 bg-white rounded-lg border">
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.rightEye')}</div>
+          <div className={`text-lg font-bold text-${getEyeColor(data.right)}-600`}>
+            {hasRight ? (data.right.allLinesEqual ? '✓' : '⚠️') : '—'}
+          </div>
+          {hasRight && (
+            <div className="text-xs text-slate-600 mt-1">
+              {data.right.allLinesEqual 
+                ? t('results:astigmatism.allLinesEqual')
+                : t(`results:astigmatism.severity.${data.right.severity}`)}
+            </div>
+          )}
+          {hasRight && !data.right.allLinesEqual && data.right.estimatedAxis !== null && (
+            <div className="text-xs text-slate-500 mt-0.5">
+              {t('results:astigmatism.axis', { degrees: data.right.estimatedAxis })}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Asymmetry warning */}
+      {hasAsymmetry && (
+        <p className="text-sm text-orange-600">⚠️ {t('results:recommendations.followUp')}</p>
+      )}
+
+      {anyAstigmatism ? (
+        <p className="text-sm text-amber-600">⚠️ {t('results:recommendations.seeDoctor')}</p>
+      ) : (
+        <p className="text-sm text-emerald-600">✓ {t('tests:astigmatism.results.noAstigmatism')}</p>
+      )}
+    </div>
+  )
+}
+
+function HistoryChart({ history, t, i18n }) {
   if (history.length < 2) return null
 
   // Helper to get best level from per-eye data
@@ -479,17 +561,19 @@ function HistoryChart({ history }) {
   
   if (oldLevel != null && newLevel != null) {
     if (newLevel > oldLevel) {
-      trendText = `Your visual acuity improved from ${oldSnellen} to ${newSnellen}`
+      trendText = t('results:history.improved', { from: oldSnellen, to: newSnellen })
     } else if (newLevel < oldLevel) {
-      trendText = `Your visual acuity changed from ${oldSnellen} to ${newSnellen}`
+      trendText = t('results:history.changed', { from: oldSnellen, to: newSnellen })
     } else {
-      trendText = `Your visual acuity has remained stable at ${newSnellen}`
+      trendText = t('results:history.stable', { value: newSnellen })
     }
   }
 
+  const dateLocale = i18n.language === 'de' ? 'de-DE' : 'en-US'
+
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">
-      <h3 className="font-semibold text-slate-800 mb-3">Your Progress</h3>
+      <h3 className="font-semibold text-slate-800 mb-3">{t('results:history.progress')}</h3>
       <div className="flex items-end justify-between h-24 gap-2">
         {sessions.map((session) => (
           <div key={session.id} className="flex-1 flex flex-col items-center">
@@ -498,12 +582,12 @@ function HistoryChart({ history }) {
               style={{ height: `${(getBestLevel(session.visualAcuity) / 10) * 100}%` }}
             />
             <span className="text-xs text-slate-500 mt-1">
-              {new Date(session.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              {new Date(session.date).toLocaleDateString(dateLocale, { month: 'short', day: 'numeric' })}
             </span>
           </div>
         ))}
       </div>
-      <p className="text-xs text-slate-400 text-center mt-2">Visual acuity over time (best eye)</p>
+      <p className="text-xs text-slate-400 text-center mt-2">{t('results:history.acuityOverTime')}</p>
       {trendText && (
         <p className="text-sm text-sky-600 text-center mt-2 font-medium">{trendText}</p>
       )}
@@ -512,6 +596,7 @@ function HistoryChart({ history }) {
 }
 
 export default function HealthSnapshot() {
+  const { t, i18n } = useTranslation(['common', 'results', 'tests'])
   const { 
     results, 
     hasAnyResults, 
@@ -558,14 +643,15 @@ export default function HealthSnapshot() {
     const hasVisualAcuity = results.visualAcuity?.left || results.visualAcuity?.right
     const hasContrastSensitivity = results.contrastSensitivity?.left || results.contrastSensitivity?.right
     const hasAmslerGrid = results.amslerGrid?.left || results.amslerGrid?.right
+    const hasAstigmatism = results.astigmatism?.left || results.astigmatism?.right
     
-    const tests = [hasVisualAcuity, results.colorVision, hasContrastSensitivity, hasAmslerGrid, results.eyePhoto]
+    const tests = [hasVisualAcuity, results.colorVision, hasContrastSensitivity, hasAmslerGrid, hasAstigmatism, results.eyePhoto]
     const completed = tests.filter(Boolean).length
     
-    if (completed === 0) return { status: 'none', message: 'No tests completed' }
-    if (completed === 5) return { status: 'complete', message: 'All tests complete' }
-    return { status: 'partial', message: `${completed}/5 tests complete` }
-  }, [results])
+    if (completed === 0) return { status: 'none', message: t('results:header.noTests') }
+    if (completed === 6) return { status: 'complete', message: t('results:header.allTests') }
+    return { status: 'partial', message: t('results:header.someTests', { count: completed }) }
+  }, [results, t])
 
   const getRecommendation = useCallback(() => {
     const recommendations = []
@@ -576,21 +662,21 @@ export default function HealthSnapshot() {
     if (vaLeft || vaRight) {
       const worstLevel = Math.min(vaLeft?.level ?? 10, vaRight?.level ?? 10)
       if (worstLevel < 5) {
-        recommendations.push('Schedule an eye exam for vision assessment')
+        recommendations.push(t('results:recommendations.seeDoctor'))
       } else if (worstLevel < 8) {
-        recommendations.push('Consider an eye checkup')
+        recommendations.push(t('results:recommendations.followUp'))
       }
       // Check asymmetry
       if (vaLeft && vaRight && Math.abs(vaLeft.level - vaRight.level) >= 2) {
-        recommendations.push('Notable vision difference between eyes - get evaluated')
+        recommendations.push(t('results:recommendations.followUp'))
       }
     }
     
     if (results.colorVision) {
       if (results.colorVision.status === 'possible_deficiency') {
-        recommendations.push('Get a professional color vision evaluation')
+        recommendations.push(t('results:recommendations.seeDoctor'))
       } else if (results.colorVision.status === 'mild_difficulty') {
-        recommendations.push('Discuss color vision with your eye doctor')
+        recommendations.push(t('results:recommendations.followUp'))
       }
     }
 
@@ -600,7 +686,7 @@ export default function HealthSnapshot() {
     if (amslerLeft || amslerRight) {
       const anyIssues = amslerLeft?.hasIssues || amslerRight?.hasIssues
       if (anyIssues) {
-        recommendations.push('Schedule an eye exam for macular evaluation')
+        recommendations.push(t('results:recommendations.seeDoctor'))
       }
     }
 
@@ -610,25 +696,41 @@ export default function HealthSnapshot() {
     if (csLeft || csRight) {
       const worstLogCS = Math.min(csLeft?.logCS ?? 1.5, csRight?.logCS ?? 1.5)
       if (worstLogCS < 0.6) {
-        recommendations.push('Get a professional evaluation for contrast sensitivity')
+        recommendations.push(t('results:recommendations.seeDoctor'))
       } else if (worstLogCS < 0.9) {
-        recommendations.push('Discuss contrast sensitivity with your eye doctor')
+        recommendations.push(t('results:recommendations.followUp'))
       }
       // Check asymmetry
       if (csLeft && csRight && Math.abs(csLeft.logCS - csRight.logCS) >= 0.3) {
-        recommendations.push('Notable contrast sensitivity difference between eyes - get evaluated')
+        recommendations.push(t('results:recommendations.followUp'))
+      }
+    }
+
+    // Astigmatism - check both eyes
+    const astigLeft = results.astigmatism?.left
+    const astigRight = results.astigmatism?.right
+    if (astigLeft || astigRight) {
+      const anyAstigmatism = (astigLeft && !astigLeft.allLinesEqual) || (astigRight && !astigRight.allLinesEqual)
+      if (anyAstigmatism) {
+        recommendations.push(t('results:recommendations.followUp'))
+      }
+      // Check asymmetry
+      if (astigLeft && astigRight && astigLeft.allLinesEqual !== astigRight.allLinesEqual) {
+        recommendations.push(t('results:recommendations.followUp'))
       }
     }
     
     if (recommendations.length === 0) {
       if (hasAnyResults()) {
-        return 'Your screening results look good! Continue with regular eye care.'
+        return t('results:recommendations.allNormal')
       }
-      return 'Complete the tests to get personalized recommendations.'
+      return t('results:noResults.description')
     }
     
-    return recommendations.join('. ') + '.'
-  }, [results, hasAnyResults])
+    // Remove duplicates and join
+    const uniqueRecommendations = [...new Set(recommendations)]
+    return uniqueRecommendations.join(' ')
+  }, [results, hasAnyResults, t])
 
   const handleShare = useCallback(async () => {
     const shareData = {
@@ -831,22 +933,22 @@ export default function HealthSnapshot() {
       <div className="min-h-screen bg-white dark:bg-slate-900">
         <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center gap-4">
           <Link to="/" className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
-            ← Back
+            ← {t('nav.back')}
           </Link>
-          <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Health Snapshot</h1>
+          <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('results:title')}</h1>
         </header>
 
         <div className="p-6 text-center max-w-md mx-auto">
           <div className="text-6xl mb-4">📋</div>
-          <h2 className="text-xl font-semibold text-slate-800 mb-2">No Results Yet</h2>
+          <h2 className="text-xl font-semibold text-slate-800 mb-2">{t('results:noResults.title')}</h2>
           <p className="text-slate-500 mb-6">
-            Complete at least one test to see your eye health snapshot.
+            {t('results:noResults.description')}
           </p>
           <Link 
             to="/"
             className="inline-block px-6 py-3 bg-sky-500 text-white font-medium rounded-xl hover:bg-sky-600 transition-colors"
           >
-            Start Testing
+            {t('results:noResults.startTesting')}
           </Link>
         </div>
       </div>
@@ -860,9 +962,9 @@ export default function HealthSnapshot() {
       
       <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center gap-4 z-10">
         <Link to="/" className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
-          ← Back
+          ← {t('nav.back')}
         </Link>
-        <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Health Snapshot</h1>
+        <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('results:title')}</h1>
       </header>
 
       <div className="p-6 max-w-2xl mx-auto" ref={reportRef}>
@@ -872,31 +974,32 @@ export default function HealthSnapshot() {
             <div className="text-4xl">👁️</div>
             <div>
               <h2 className="text-xl font-bold">VisionCheck AI</h2>
-              <p className="text-white/80 text-sm">Mobile Eye Health Pre-Screening</p>
+              <p className="text-white/80 text-sm">{t('app.subtitle')}</p>
             </div>
           </div>
           
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white/80 text-sm">Status</p>
+              <p className="text-white/80 text-sm">{t('results:header.status')}</p>
               <p className="font-semibold">{overallStatus.message}</p>
             </div>
             <div className="text-right">
-              <p className="text-white/80 text-sm">Date</p>
-              <p className="font-semibold">{new Date().toLocaleDateString()}</p>
+              <p className="text-white/80 text-sm">{t('results:header.date')}</p>
+              <p className="font-semibold">{new Date().toLocaleDateString(i18n.language === 'de' ? 'de-DE' : 'en-US')}</p>
             </div>
           </div>
         </div>
 
         {/* History Chart */}
-        <HistoryChart history={history} />
+        <HistoryChart history={history} t={t} i18n={i18n} />
 
         {/* Test Results */}
         <div className="space-y-4 mb-6">
           <ResultCard
-            title="Visual Acuity"
+            title={t('results:cards.visualAcuity')}
             icon="📖"
             color="sky"
+            t={t}
             status={(() => {
               const hasAny = results.visualAcuity?.left || results.visualAcuity?.right
               if (!hasAny) return 'pending'
@@ -908,25 +1011,27 @@ export default function HealthSnapshot() {
               return worstLevel >= 8 && !hasAsymmetry ? 'complete' : 'warning'
             })()}
           >
-            <VisualAcuityResult data={results.visualAcuity} />
+            <VisualAcuityResult data={results.visualAcuity} t={t} />
           </ResultCard>
 
           <ResultCard
-            title="Color Vision"
+            title={t('results:cards.colorVision')}
             icon="🎨"
             color="emerald"
+            t={t}
             status={results.colorVision ? 
               (results.colorVision.status === 'normal' ? 'complete' : 'warning') : 
               'pending'
             }
           >
-            <ColorVisionResult data={results.colorVision} />
+            <ColorVisionResult data={results.colorVision} t={t} />
           </ResultCard>
 
           <ResultCard
-            title="Contrast Sensitivity"
+            title={t('results:cards.contrastSensitivity')}
             icon="🔆"
             color="amber"
+            t={t}
             status={(() => {
               const hasAny = results.contrastSensitivity?.left || results.contrastSensitivity?.right
               if (!hasAny) return 'pending'
@@ -938,13 +1043,14 @@ export default function HealthSnapshot() {
               return worstLogCS >= 0.9 && !hasAsymmetry ? 'complete' : 'warning'
             })()}
           >
-            <ContrastSensitivityResult data={results.contrastSensitivity} />
+            <ContrastSensitivityResult data={results.contrastSensitivity} t={t} />
           </ResultCard>
 
           <ResultCard
-            title="Amsler Grid"
+            title={t('results:cards.amslerGrid')}
             icon="#"
             color="purple"
+            t={t}
             status={(() => {
               const hasAny = results.amslerGrid?.left || results.amslerGrid?.right
               if (!hasAny) return 'pending'
@@ -952,16 +1058,34 @@ export default function HealthSnapshot() {
               return anyIssues ? 'warning' : 'complete'
             })()}
           >
-            <AmslerGridResult data={results.amslerGrid} />
+            <AmslerGridResult data={results.amslerGrid} t={t} />
           </ResultCard>
 
           <ResultCard
-            title="AI Eye Analysis"
+            title={t('results:cards.astigmatism')}
+            icon="⊕"
+            color="teal"
+            t={t}
+            status={(() => {
+              const hasAny = results.astigmatism?.left || results.astigmatism?.right
+              if (!hasAny) return 'pending'
+              const anyAstigmatism = 
+                (results.astigmatism?.left && !results.astigmatism.left.allLinesEqual) || 
+                (results.astigmatism?.right && !results.astigmatism.right.allLinesEqual)
+              return anyAstigmatism ? 'warning' : 'complete'
+            })()}
+          >
+            <AstigmatismResult data={results.astigmatism} t={t} />
+          </ResultCard>
+
+          <ResultCard
+            title={t('results:cards.eyePhoto')}
             icon="📸"
             color="violet"
+            t={t}
             status={results.eyePhoto ? 'complete' : 'pending'}
           >
-            <EyePhotoResult data={results.eyePhoto} />
+            <EyePhotoResult data={results.eyePhoto} t={t} />
           </ResultCard>
         </div>
 
@@ -969,10 +1093,10 @@ export default function HealthSnapshot() {
         {unlockedAchievementIds.length > 0 && (
           <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">
             <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
-              <span>🏆</span> Your Achievements
+              <span>🏆</span> {t('results:achievements.title')}
               {hasNewAchievements && (
                 <span className="text-xs font-medium text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full animate-pulse">
-                  NEW
+                  {t('status.new')}
                 </span>
               )}
             </h3>
@@ -990,7 +1114,7 @@ export default function HealthSnapshot() {
 
         {/* Recommendation */}
         <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">
-          <h3 className="font-semibold text-slate-800 mb-2">📋 Recommendation</h3>
+          <h3 className="font-semibold text-slate-800 mb-2">📋 {t('results:recommendations.title')}</h3>
           <p className="text-slate-600">{getRecommendation()}</p>
         </div>
 
@@ -1011,7 +1135,11 @@ export default function HealthSnapshot() {
           const amslerRight = results.amslerGrid?.right
           const hasAmslerConcern = amslerLeft?.hasIssues || amslerRight?.hasIssues
           
-          const showFindDoctor = hasVAConcern || hasColorConcern || hasCSConcern || hasAmslerConcern
+          const astigLeft = results.astigmatism?.left
+          const astigRight = results.astigmatism?.right
+          const hasAstigConcern = (astigLeft && !astigLeft.allLinesEqual) || (astigRight && !astigRight.allLinesEqual)
+          
+          const showFindDoctor = hasVAConcern || hasColorConcern || hasCSConcern || hasAmslerConcern || hasAstigConcern
           
           return showFindDoctor ? (
             <div className="mb-6">
@@ -1023,9 +1151,7 @@ export default function HealthSnapshot() {
         {/* Disclaimer */}
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
           <p className="text-sm text-amber-800">
-            <strong>Important:</strong> This is a screening tool for educational purposes only. 
-            It is NOT a medical diagnosis. Please consult an eye care professional for 
-            accurate assessment and any health concerns.
+            <strong>{t('disclaimer.title')}:</strong> {t('disclaimer.text')}
           </p>
         </div>
 
@@ -1035,20 +1161,20 @@ export default function HealthSnapshot() {
             onClick={handleShare}
             className="w-full py-4 bg-sky-500 text-white font-semibold rounded-xl hover:bg-sky-600 transition-colors flex items-center justify-center gap-2"
           >
-            <span>📤</span> Share Results
+            <span>📤</span> {t('results:actions.shareResults')}
           </button>
           
           <button
             onClick={handleDownloadPDF}
             className="w-full py-4 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
           >
-            <span>📄</span> Download PDF Report
+            <span>📄</span> {t('results:actions.downloadPDF')}
           </button>
 
           <button
             onClick={() => {
               saveToHistory()
-              alert('Session saved to history!')
+              alert(t('results:actions.saveToHistory'))
             }}
             disabled={!(results.visualAcuity?.left || results.visualAcuity?.right) && 
                       !results.colorVision && 
@@ -1056,37 +1182,37 @@ export default function HealthSnapshot() {
                       !(results.amslerGrid?.left || results.amslerGrid?.right)}
             className="w-full py-4 bg-emerald-500 text-white font-semibold rounded-xl hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <span>📊</span> Save to History
+            <span>📊</span> {t('results:actions.saveToHistory')}
           </button>
           
           <Link
             to="/"
             className="block w-full py-4 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors text-center"
           >
-            Back to Home
+            {t('nav.backToHome')}
           </Link>
 
           <button
             onClick={() => {
-              if (confirm('Are you sure you want to clear all results?')) {
+              if (confirm(t('results:actions.clearResults') + '?')) {
                 clearResults()
               }
             }}
             className="w-full py-3 text-red-500 font-medium hover:text-red-600 transition-colors text-center"
           >
-            Clear All Results
+            {t('results:actions.clearResults')}
           </button>
 
           {history.length > 0 && (
             <button
               onClick={() => {
-                if (confirm('Are you sure you want to clear all session history?')) {
+                if (confirm(t('results:history.clearHistory') + '?')) {
                   clearHistory()
                 }
               }}
               className="w-full py-3 text-slate-400 font-medium hover:text-slate-500 transition-colors text-center"
             >
-              Clear History ({history.length} sessions)
+              {t('results:history.clearHistory')} ({history.length})
             </button>
           )}
         </div>

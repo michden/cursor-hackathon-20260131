@@ -3,6 +3,22 @@
     "title": "VisionCheck AI",
     "subtitle": "Mobile Eye Health Pre-Screening"
   },
+  "chat": {
+    "title": "AI Assistant",
+    "welcomeTitle": "VisionCheck AI Assistant",
+    "welcomeMessage": "Ask me about your test results, eye health, or general vision questions.",
+    "placeholder": "Ask about your eye health...",
+    "placeholderNoKey": "Enter API key above to chat",
+    "apiKeyLabel": "OpenAI API Key",
+    "apiKeyHint": "Your key is only used locally and never stored on any server.",
+    "show": "Show",
+    "hide": "Hide",
+    "save": "Save",
+    "clearChat": "Clear chat",
+    "closeChat": "Close chat",
+    "sendMessage": "Send message",
+    "disclaimer": "AI responses are for educational purposes only, not medical advice."
+  },
   "nav": {
     "back": "Back",
     "backToHome": "Back to Home",
@@ -21,21 +37,30 @@
     "retry": "Try Again",
     "retake": "Retake",
     "getStarted": "Get Started",
-    "viewResults": "View Results",
+    "viewResults": "View All Results",
     "viewAllResults": "View All Results",
     "save": "Save",
     "clear": "Clear",
     "close": "Close",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "exit": "Exit",
+    "testOtherEye": "Test {{eye}}",
+    "retestEye": "Retest an Eye",
+    "backToEyeSelection": "Back to Eye Selection"
+  },
+  "note": "Note",
+  "results": {
+    "whatThisMeans": "What does this mean?"
   },
   "eye": {
-    "left": "Left Eye",
-    "right": "Right Eye",
+    "left": "Left",
+    "right": "Right",
     "leftShort": "L",
     "rightShort": "R",
     "selectPrompt": "Which eye would you like to test?",
     "coverTip": "Cover your other eye with your hand or an eye patch for accurate results.",
-    "testing": "Testing your {{eye}} eye"
+    "testing": "Testing your {{eye}} eye",
+    "eyeComplete": "Eye Complete!"
   },
   "status": {
     "complete": "Complete",

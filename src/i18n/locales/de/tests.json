@@ -115,6 +115,46 @@
       "concernsDescription": "Bitte erwägen Sie eine umfassende Untersuchung bei einem Augenarzt."
     }
   },
+  "astigmatism": {
+    "title": "Astigmatismus-Screening",
+    "subtitle": "Test Ihres {{eye}} Auges",
+    "instructions": {
+      "title": "Anleitung:",
+      "step1": "Bedecken Sie Ihr {{otherEye}} Auge mit der Hand",
+      "step2": "Fokussieren Sie auf den roten Punkt in der Mitte",
+      "step3": "Betrachten Sie alle Linien, die nach außen strahlen",
+      "step4": "Tippen Sie auf Linien, die dunkler oder kräftiger erscheinen",
+      "note": "Wenn alle Linien gleich dunkel aussehen, wählen Sie 'Alle Linien gleich'"
+    },
+    "focusPrompt": "Fokussieren Sie auf den mittleren Punkt",
+    "question": "Erscheinen einige Linien dunkler als andere?",
+    "allEqual": "Alle Linien erscheinen gleich",
+    "selectDarker": "Tippen Sie auf die dunkleren Linien oder wählen Sie unten alle gleich",
+    "linesSelected": "{{count}} Linie(n) ausgewählt",
+    "confirm": "Auswahl bestätigen",
+    "results": {
+      "title": "Test abgeschlossen!",
+      "noAstigmatism": "Kein Astigmatismus festgestellt",
+      "noAstigmatismDesc": "Alle Linien erschienen gleich klar.",
+      "possibleAstigmatism": "Möglicher Astigmatismus festgestellt",
+      "possibleAstigmatismDesc": "Einige Linien erschienen dunkler, was auf eine ungleichmäßige Hornhautkrümmung hindeutet.",
+      "axis": "Geschätzte Achse: {{degrees}}°",
+      "severity": {
+        "none": "Keine Anzeichen",
+        "mild": "Leichte Anzeichen",
+        "moderate": "Mäßige Anzeichen",
+        "significant": "Deutliche Anzeichen"
+      }
+    },
+    "explanation": {
+      "normal": "Ihre Antworten zeigen, dass alle Linien auf dem Zifferblatt gleich klar erschienen, was auf eine regelmäßige Hornhautkrümmung hindeutet. Dies ist ein gutes Zeichen für das Astigmatismus-Screening.",
+      "detected": "Sie haben berichtet, dass einige Linien dunkler oder kräftiger erschienen. Dies kann auf einen Astigmatismus hindeuten, bei dem die Hornhaut eine unregelmäßige Krümmung hat. Die Achse zeigt die ungefähre Richtung der Unregelmäßigkeit an."
+    },
+    "recommendation": {
+      "normal": "✓ Fahren Sie mit regelmäßigen jährlichen Augenuntersuchungen fort",
+      "detected": "⚠️ Empfehlung: Vereinbaren Sie einen Termin bei einem Augenarzt für eine umfassende Untersuchung"
+    }
+  },
   "eyePhoto": {
     "title": "Augenfoto-Analyse",
     "subtitle": "Analysieren Sie Ihr Augenfoto mit KI",
