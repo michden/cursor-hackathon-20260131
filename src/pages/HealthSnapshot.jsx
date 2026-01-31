@@ -193,6 +193,8 @@ function extractSummary(analysis) {
 }
 
 function EyePhotoResult({ data }) {
+  const [showFullAnalysis, setShowFullAnalysis] = useState(false)
+
   if (!data) {
     return (
       <p className="text-sm text-slate-500">
@@ -203,36 +205,112 @@ function EyePhotoResult({ data }) {
 
   const summary = extractSummary(data.analysis)
 
+  const handleCardClick = () => {
+    setShowFullAnalysis(true)
+  }
+
   return (
-    <div className="space-y-3">
-      {data.imageData && (
-        <div className="flex justify-center">
-          <img
-            src={data.imageData}
-            alt="Analyzed eye"
-            className="w-16 h-16 object-cover rounded-full border-2 border-violet-200"
-          />
+    <>
+      <div 
+        className="space-y-3 cursor-pointer hover:bg-violet-100/50 -m-2 p-2 rounded-lg transition-colors" 
+        onClick={handleCardClick}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCardClick(); } }}
+        role="button"
+        tabIndex={0}
+        aria-label="View full AI eye analysis"
+      >
+        {data.imageData && (
+          <div className="flex justify-center">
+            <img
+              src={data.imageData}
+              alt="Analyzed eye"
+              className="w-16 h-16 object-cover rounded-full border-2 border-violet-200"
+            />
+          </div>
+        )}
+        
+        {/* Status indicator */}
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+          <span className="text-sm font-medium text-emerald-600">Analysis Complete</span>
+        </div>
+        
+        {/* Summary text */}
+        {summary && (
+          <p className="text-sm text-slate-600">
+            {summary}{summary.length >= 150 ? '...' : ''}
+          </p>
+        )}
+        
+        {/* View details hint */}
+        <p className="text-xs text-violet-600 flex items-center gap-1">
+          <span>Tap to view full observations</span>
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </p>
+      </div>
+
+      {/* Full Analysis Modal */}
+      {showFullAnalysis && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowFullAnalysis(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-hidden shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="bg-violet-50 p-4 border-b border-violet-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">📸</span>
+                <h3 className="font-semibold text-slate-800">AI Eye Analysis</h3>
+              </div>
+              <button
+                onClick={() => setShowFullAnalysis(false)}
+                className="w-8 h-8 rounded-full bg-violet-100 hover:bg-violet-200 flex items-center justify-center transition-colors"
+                aria-label="Close"
+              >
+                <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            {/* Modal Body */}
+            <div className="p-4 overflow-y-auto max-h-[60vh]">
+              {data.imageData && (
+                <div className="flex justify-center mb-4">
+                  <img
+                    src={data.imageData}
+                    alt="Analyzed eye"
+                    className="w-24 h-24 object-cover rounded-full border-4 border-violet-200"
+                  />
+                </div>
+              )}
+              
+              {/* Full analysis text with preserved formatting */}
+              <div className="prose prose-sm prose-slate max-w-none">
+                <div className="whitespace-pre-wrap text-slate-700 text-sm leading-relaxed">
+                  {data.analysis}
+                </div>
+              </div>
+            </div>
+            
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-slate-100 bg-slate-50">
+              <button
+                onClick={() => setShowFullAnalysis(false)}
+                className="w-full py-3 bg-violet-500 text-white font-medium rounded-xl hover:bg-violet-600 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
-      
-      {/* Status indicator */}
-      <div className="flex items-center gap-2">
-        <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-        <span className="text-sm font-medium text-emerald-600">Analysis Complete</span>
-      </div>
-      
-      {/* Summary text */}
-      {summary && (
-        <p className="text-sm text-slate-600">
-          {summary}{summary.length >= 150 ? '...' : ''}
-        </p>
-      )}
-      
-      {/* View details hint */}
-      <p className="text-xs text-violet-600">
-        Tap to view full observations and recommendations
-      </p>
-    </div>
+    </>
   )
 }
 
