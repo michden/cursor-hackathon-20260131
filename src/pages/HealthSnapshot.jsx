@@ -296,6 +296,14 @@ export default function HealthSnapshot() {
         recommendations.push('Schedule an eye exam for macular evaluation')
       }
     }
+
+    if (results.contrastSensitivity) {
+      if (results.contrastSensitivity.logCS < 0.6) {
+        recommendations.push('Get a professional evaluation for contrast sensitivity')
+      } else if (results.contrastSensitivity.logCS < 0.9) {
+        recommendations.push('Discuss contrast sensitivity with your eye doctor')
+      }
+    }
     
     if (recommendations.length === 0) {
       if (hasAnyResults()) {
