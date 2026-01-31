@@ -21,6 +21,10 @@ const getDefaultResults = () => ({
     left: null,
     right: null
   },
+  astigmatism: {
+    left: null,
+    right: null
+  },
   eyePhoto: null,
   completedAt: null
 })
@@ -69,6 +73,11 @@ const migrateResults = (saved) => {
     saved.amslerGrid = defaults.amslerGrid
   } else if (!saved.amslerGrid) {
     saved.amslerGrid = defaults.amslerGrid
+  }
+  
+  // If astigmatism doesn't exist, add it
+  if (!saved.astigmatism) {
+    saved.astigmatism = defaults.astigmatism
   }
   
   return saved
@@ -208,6 +217,18 @@ export function TestResultsProvider({ children }) {
     }))
   }
 
+  // Update astigmatism for a specific eye
+  const updateAstigmatism = (eye, data) => {
+    setResults(prev => ({
+      ...prev,
+      astigmatism: {
+        ...prev.astigmatism,
+        [eye]: data
+      },
+      completedAt: new Date().toISOString()
+    }))
+  }
+
   const clearResults = () => {
     setResults(getDefaultResults())
     try {
@@ -221,7 +242,8 @@ export function TestResultsProvider({ children }) {
     const hasVisualAcuity = results.visualAcuity?.left || results.visualAcuity?.right
     const hasContrastSensitivity = results.contrastSensitivity?.left || results.contrastSensitivity?.right
     const hasAmslerGrid = results.amslerGrid?.left || results.amslerGrid?.right
-    return hasVisualAcuity || results.colorVision || hasContrastSensitivity || hasAmslerGrid || results.eyePhoto
+    const hasAstigmatism = results.astigmatism?.left || results.astigmatism?.right
+    return hasVisualAcuity || results.colorVision || hasContrastSensitivity || hasAmslerGrid || hasAstigmatism || results.eyePhoto
   }
 
   // Save current session to history
@@ -229,8 +251,9 @@ export function TestResultsProvider({ children }) {
     const hasVisualAcuity = results.visualAcuity?.left || results.visualAcuity?.right
     const hasContrastSensitivity = results.contrastSensitivity?.left || results.contrastSensitivity?.right
     const hasAmslerGrid = results.amslerGrid?.left || results.amslerGrid?.right
+    const hasAstigmatism = results.astigmatism?.left || results.astigmatism?.right
     
-    if (!hasVisualAcuity && !results.colorVision && !hasContrastSensitivity && !hasAmslerGrid) return
+    if (!hasVisualAcuity && !results.colorVision && !hasContrastSensitivity && !hasAmslerGrid && !hasAstigmatism) return
 
     // Helper to get summary for an eye
     const getEyeSummary = (eyeData, fields) => {
@@ -261,6 +284,10 @@ export function TestResultsProvider({ children }) {
       amslerGrid: hasAmslerGrid ? {
         left: getEyeSummary(results.amslerGrid.left, ['hasIssues', 'status']),
         right: getEyeSummary(results.amslerGrid.right, ['hasIssues', 'status'])
+      } : null,
+      astigmatism: hasAstigmatism ? {
+        left: getEyeSummary(results.astigmatism.left, ['allLinesEqual', 'severity', 'estimatedAxis']),
+        right: getEyeSummary(results.astigmatism.right, ['allLinesEqual', 'severity', 'estimatedAxis'])
       } : null
     }
 
@@ -330,10 +357,11 @@ export function TestResultsProvider({ children }) {
     const hasVisualAcuity = currentResults.visualAcuity?.left || currentResults.visualAcuity?.right
     const hasContrastSensitivity = currentResults.contrastSensitivity?.left || currentResults.contrastSensitivity?.right
     const hasAmslerGrid = currentResults.amslerGrid?.left || currentResults.amslerGrid?.right
+    const hasAstigmatism = currentResults.astigmatism?.left || currentResults.astigmatism?.right
     const hasColorVision = currentResults.colorVision
     
     // First test achievement
-    if (!achievements['first-test'] && (hasVisualAcuity || hasColorVision || hasContrastSensitivity || hasAmslerGrid)) {
+    if (!achievements['first-test'] && (hasVisualAcuity || hasColorVision || hasContrastSensitivity || hasAmslerGrid || hasAstigmatism)) {
       if (unlockAchievement('first-test')) {
         newlyUnlocked.push('first-test')
       }
@@ -357,8 +385,8 @@ export function TestResultsProvider({ children }) {
       }
     }
     
-    // All tests completed
-    if (!achievements['all-tests'] && hasVisualAcuity && hasColorVision && hasContrastSensitivity && hasAmslerGrid) {
+    // All tests completed (now includes astigmatism - 5 tests total)
+    if (!achievements['all-tests'] && hasVisualAcuity && hasColorVision && hasContrastSensitivity && hasAmslerGrid && hasAstigmatism) {
       if (unlockAchievement('all-tests')) {
         newlyUnlocked.push('all-tests')
       }
@@ -396,6 +424,7 @@ export function TestResultsProvider({ children }) {
       updateColorVision,
       updateContrastSensitivity,
       updateAmslerGrid,
+      updateAstigmatism,
       updateEyePhoto,
       clearResults,
       hasAnyResults,

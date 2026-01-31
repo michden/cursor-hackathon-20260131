@@ -431,6 +431,70 @@ function AmslerGridResult({ data }) {
   )
 }
 
+function AstigmatismResult({ data }) {
+  const hasLeft = data?.left
+  const hasRight = data?.right
+  const hasAny = hasLeft || hasRight
+
+  if (!hasAny) {
+    return (
+      <p className="text-sm text-slate-500">
+        Complete the astigmatism test to see results.
+      </p>
+    )
+  }
+
+  const getEyeStatus = (eyeData) => {
+    if (!eyeData) return null
+    return eyeData.hasAstigmatism ? 'Possible' : 'Normal'
+  }
+
+  const getEyeColor = (eyeData) => {
+    if (!eyeData) return 'slate'
+    return eyeData.hasAstigmatism ? 'amber' : 'teal'
+  }
+
+  const anyAstigmatism = (hasLeft && data.left.hasAstigmatism) || (hasRight && data.right.hasAstigmatism)
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-4">
+        {/* Left Eye */}
+        <div className="text-center p-3 bg-white rounded-lg border">
+          <div className="text-xs text-slate-500 mb-1">Left Eye</div>
+          <div className={`text-xl font-bold text-${getEyeColor(data.left)}-600`}>
+            {hasLeft ? getEyeStatus(data.left) : '—'}
+          </div>
+          {hasLeft && data.left.hasAstigmatism && data.left.estimatedAxis != null && (
+            <div className="text-xs text-slate-500 mt-1">
+              Axis: {data.left.estimatedAxis}°
+            </div>
+          )}
+        </div>
+        
+        {/* Right Eye */}
+        <div className="text-center p-3 bg-white rounded-lg border">
+          <div className="text-xs text-slate-500 mb-1">Right Eye</div>
+          <div className={`text-xl font-bold text-${getEyeColor(data.right)}-600`}>
+            {hasRight ? getEyeStatus(data.right) : '—'}
+          </div>
+          {hasRight && data.right.hasAstigmatism && data.right.estimatedAxis != null && (
+            <div className="text-xs text-slate-500 mt-1">
+              Axis: {data.right.estimatedAxis}°
+            </div>
+          )}
+        </div>
+      </div>
+
+      {anyAstigmatism ? (
+        <p className="text-sm text-amber-600">⚠️ Consider professional evaluation</p>
+      ) : (
+        <p className="text-sm text-emerald-600">✓ No astigmatism detected in tested eyes</p>
+      )}
+    </div>
+  )
+}
+
 function HistoryChart({ history }) {
   if (history.length < 2) return null
 
@@ -559,12 +623,13 @@ export default function HealthSnapshot() {
     const hasContrastSensitivity = results.contrastSensitivity?.left || results.contrastSensitivity?.right
     const hasAmslerGrid = results.amslerGrid?.left || results.amslerGrid?.right
     
-    const tests = [hasVisualAcuity, results.colorVision, hasContrastSensitivity, hasAmslerGrid, results.eyePhoto]
+    const hasAstigmatism = results.astigmatism?.left || results.astigmatism?.right
+    const tests = [hasVisualAcuity, results.colorVision, hasContrastSensitivity, hasAmslerGrid, hasAstigmatism, results.eyePhoto]
     const completed = tests.filter(Boolean).length
     
     if (completed === 0) return { status: 'none', message: 'No tests completed' }
-    if (completed === 5) return { status: 'complete', message: 'All tests complete' }
-    return { status: 'partial', message: `${completed}/5 tests complete` }
+    if (completed === 6) return { status: 'complete', message: 'All tests complete' }
+    return { status: 'partial', message: `${completed}/6 tests complete` }
   }, [results])
 
   const getRecommendation = useCallback(() => {
@@ -953,6 +1018,20 @@ export default function HealthSnapshot() {
             })()}
           >
             <AmslerGridResult data={results.amslerGrid} />
+          </ResultCard>
+
+          <ResultCard
+            title="Astigmatism"
+            icon="⊕"
+            color="sky"
+            status={(() => {
+              const hasAny = results.astigmatism?.left || results.astigmatism?.right
+              if (!hasAny) return 'pending'
+              const anyAstigmatism = results.astigmatism?.left?.hasAstigmatism || results.astigmatism?.right?.hasAstigmatism
+              return anyAstigmatism ? 'warning' : 'complete'
+            })()}
+          >
+            <AstigmatismResult data={results.astigmatism} />
           </ResultCard>
 
           <ResultCard

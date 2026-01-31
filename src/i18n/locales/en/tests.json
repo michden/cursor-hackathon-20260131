@@ -115,6 +115,46 @@
       "concernsDescription": "Please consider consulting an eye care professional for a comprehensive exam."
     }
   },
+  "astigmatism": {
+    "title": "Astigmatism Screening",
+    "subtitle": "Testing your {{eye}} eye",
+    "instructions": {
+      "title": "Instructions:",
+      "step1": "Cover your {{otherEye}} eye with your hand",
+      "step2": "Focus on the red dot in the center of the dial",
+      "step3": "Look at all the lines radiating outward",
+      "step4": "Tap any lines that appear darker or bolder than others",
+      "note": "If all lines look equally dark, select 'All lines equal'"
+    },
+    "focusPrompt": "Focus on the center dot",
+    "question": "Do any lines appear darker than others?",
+    "allEqual": "All lines appear equal",
+    "selectDarker": "Tap the darker lines, or select all equal below",
+    "linesSelected": "{{count}} line(s) selected",
+    "confirm": "Confirm Selection",
+    "results": {
+      "title": "Test Complete!",
+      "noAstigmatism": "No astigmatism detected",
+      "noAstigmatismDesc": "All lines appeared equally clear.",
+      "possibleAstigmatism": "Possible astigmatism detected",
+      "possibleAstigmatismDesc": "Some lines appeared darker, suggesting uneven corneal curvature.",
+      "axis": "Estimated axis: {{degrees}}°",
+      "severity": {
+        "none": "No indication",
+        "mild": "Mild indication",
+        "moderate": "Moderate indication",
+        "significant": "Significant indication"
+      }
+    },
+    "explanation": {
+      "normal": "Your responses indicate that all lines on the clock dial appeared equally clear, which suggests your cornea has a regular curvature. This is a good sign for astigmatism screening.",
+      "detected": "You reported that some lines appeared darker or bolder than others. This can indicate astigmatism, where the cornea has an irregular curvature. The axis indicates the approximate direction of the irregularity."
+    },
+    "recommendation": {
+      "normal": "Continue with regular annual eye exams",
+      "detected": "Recommendation: Schedule an appointment with an eye care professional for a comprehensive evaluation"
+    }
+  },
   "eyePhoto": {
     "title": "Eye Photo Analysis",
     "subtitle": "Analyze your eye photo with AI",

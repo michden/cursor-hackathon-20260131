@@ -11,6 +11,7 @@
     "colorVision": "Color Vision",
     "contrastSensitivity": "Contrast Sensitivity",
     "amslerGrid": "Amsler Grid",
+    "astigmatism": "Astigmatism",
     "eyePhoto": "Eye Photo Analysis"
   },
   "eyeLabels": {

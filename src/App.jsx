@@ -16,6 +16,7 @@ import EyePhotoAnalysis from './pages/EyePhotoAnalysis'
 import HealthSnapshot from './pages/HealthSnapshot'
 import ContrastSensitivityTest from './pages/ContrastSensitivityTest'
 import AmslerGridTest from './pages/AmslerGridTest'
+import AstigmatismTest from './pages/AstigmatismTest'
 
 function App() {
   const [showOnboarding, setShowOnboarding] = useState(false)
@@ -54,6 +55,7 @@ function App() {
                     <Route path="/eye-photo" element={<EyePhotoAnalysis />} />
                     <Route path="/contrast-sensitivity" element={<ContrastSensitivityTest />} />
                     <Route path="/amsler-grid" element={<AmslerGridTest />} />
+                    <Route path="/astigmatism" element={<AstigmatismTest />} />
                     <Route path="/results" element={<HealthSnapshot />} />
                   </Routes>
                   <ChatFAB />

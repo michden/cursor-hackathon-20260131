@@ -26,16 +26,23 @@
     "save": "Save",
     "clear": "Clear",
     "close": "Close",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "testOtherEye": "Test {{eye}}",
+    "retestEye": "Retest an Eye"
+  },
+  "note": "Note",
+  "results": {
+    "whatThisMeans": "What does this mean?"
   },
   "eye": {
-    "left": "Left Eye",
-    "right": "Right Eye",
+    "left": "Left",
+    "right": "Right",
     "leftShort": "L",
     "rightShort": "R",
     "selectPrompt": "Which eye would you like to test?",
     "coverTip": "Cover your other eye with your hand or an eye patch for accurate results.",
-    "testing": "Testing your {{eye}} eye"
+    "testing": "Testing your {{eye}} eye",
+    "eyeComplete": "Eye Complete!"
   },
   "status": {
     "complete": "Complete",

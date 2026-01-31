@@ -26,16 +26,23 @@
     "save": "Speichern",
     "clear": "Löschen",
     "close": "Schließen",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "testOtherEye": "{{eye}} testen",
+    "retestEye": "Auge erneut testen"
+  },
+  "note": "Hinweis",
+  "results": {
+    "whatThisMeans": "Was bedeutet das?"
   },
   "eye": {
-    "left": "Linkes Auge",
-    "right": "Rechtes Auge",
+    "left": "Links",
+    "right": "Rechts",
     "leftShort": "L",
     "rightShort": "R",
     "selectPrompt": "Welches Auge möchten Sie testen?",
     "coverTip": "Bedecken Sie Ihr anderes Auge mit der Hand oder einer Augenklappe für genaue Ergebnisse.",
-    "testing": "Test Ihres {{eye}} Auges"
+    "testing": "Test Ihres {{eye}} Auges",
+    "eyeComplete": "Auge abgeschlossen!"
   },
   "status": {
     "complete": "Abgeschlossen",
