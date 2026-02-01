@@ -131,7 +131,3 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment options including N
 - Results are approximate and should not replace professional eye care
 - Always consult a qualified eye care professional for accurate assessment
 - Do not make medical decisions based on this app's results
-
-## License
-
-MIT
