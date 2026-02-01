@@ -19,14 +19,14 @@ vi.mock('react-router-dom', async () => {
 })
 
 // Mock HTMLMediaElement methods using spyOn so vi.restoreAllMocks() can restore them
-beforeEach(() => {
+beforeEach(async () => {
   vi.spyOn(window.HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined)
   vi.spyOn(window.HTMLMediaElement.prototype, 'pause').mockImplementation(() => {})
   vi.spyOn(window.HTMLMediaElement.prototype, 'load').mockImplementation(() => {})
   
   localStorage.clear()
   mockNavigate.mockClear()
-  i18n.changeLanguage('en')
+  await i18n.changeLanguage('en')
   
   // Mock timers for test control
   vi.useFakeTimers({ shouldAdvanceTime: true })
@@ -290,7 +290,7 @@ describe('PeripheralVisionTest', () => {
 
 describe('PeripheralVisionTest translations', () => {
   it('displays translated content in English', async () => {
-    i18n.changeLanguage('en')
+    await i18n.changeLanguage('en')
     renderWithProviders(<PeripheralVisionTest />)
     
     await waitFor(() => {
@@ -299,7 +299,7 @@ describe('PeripheralVisionTest translations', () => {
   })
 
   it('displays translated content in German', async () => {
-    i18n.changeLanguage('de')
+    await i18n.changeLanguage('de')
     renderWithProviders(<PeripheralVisionTest />)
     
     await waitFor(() => {
