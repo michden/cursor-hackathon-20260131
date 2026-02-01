@@ -1,64 +1,139 @@
 # Deployment Guide
 
-This guide covers the deployment requirements for VisionCheck AI, including security headers, HTTPS enforcement, and API server configuration.
+This guide covers deployment options for VisionCheck AI, including the recommended Vercel setup and alternative configurations.
 
 ## Table of Contents
 
-1. [Architecture Overview](#architecture-overview)
-2. [Frontend Deployment](#frontend-deployment)
-3. [API Server Deployment](#api-server-deployment)
-4. [Security Headers](#security-headers)
-5. [HTTPS Enforcement](#https-enforcement)
-6. [Environment Variables](#environment-variables)
+1. [Quick Start (Vercel)](#quick-start-vercel)
+2. [Architecture Overview](#architecture-overview)
+3. [Vercel Deployment](#vercel-deployment)
+4. [Alternative Deployments](#alternative-deployments)
+5. [Security Headers](#security-headers)
+6. [HTTPS Enforcement](#https-enforcement)
+7. [Environment Variables](#environment-variables)
 
 ---
 
-## Architecture Overview
+## Quick Start (Vercel)
 
-VisionCheck AI consists of two components:
-
-1. **Frontend (React SPA)** - Static files served by any web server or CDN
-2. **API Server (Node.js/Express)** - Proxies requests to OpenAI API
-
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Browser   │────▶│  Frontend   │     │   OpenAI    │
-│             │     │   (Vite)    │     │     API     │
-└─────────────┘     └─────────────┘     └─────────────┘
-       │                                       ▲
-       │            ┌─────────────┐            │
-       └───────────▶│ API Server  │────────────┘
-                    │  (Express)  │
-                    └─────────────┘
-```
-
----
-
-## Frontend Deployment
-
-### Build the Application
-
-```bash
-npm run build
-```
-
-This creates a `dist/` folder with static files.
-
-### Deployment Options
-
-#### Vercel
+The fastest way to deploy VisionCheck AI:
 
 ```bash
 # Install Vercel CLI
 npm i -g vercel
 
-# Deploy
+# Deploy (first time will prompt for project setup)
 vercel
+
+# Set your OpenAI API key
+vercel env add OPENAI_API_KEY
 ```
 
-Create `vercel.json` for security headers (see [Security Headers](#security-headers)).
+That's it! Vercel will automatically:
+- Build the React frontend
+- Deploy the serverless API functions from `/api`
+- Configure security headers from `vercel.json`
 
-#### Netlify
+---
+
+## Architecture Overview
+
+VisionCheck AI uses Vercel's unified deployment model:
+
+```
+┌─────────────┐     ┌─────────────────────────────────┐
+│   Browser   │────▶│           Vercel                │
+│             │     │  ┌─────────────────────────────┐│
+└─────────────┘     │  │  Static Files (React SPA)   ││
+                    │  └─────────────────────────────┘│
+                    │  ┌─────────────────────────────┐│     ┌─────────────┐
+                    │  │  Serverless Functions       ││────▶│   OpenAI    │
+                    │  │  /api/chat, /api/analyze    ││     │     API     │
+                    │  └─────────────────────────────┘│     └─────────────┘
+                    └─────────────────────────────────┘
+```
+
+**Components:**
+- **Frontend**: React SPA built with Vite, served as static files
+- **API**: Serverless functions in `/api` directory that proxy requests to OpenAI
+
+---
+
+## Vercel Deployment
+
+### Prerequisites
+
+1. A [Vercel account](https://vercel.com/signup)
+2. An [OpenAI API key](https://platform.openai.com/api-keys)
+
+### Deploy via CLI
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Login to Vercel
+vercel login
+
+# Deploy to preview
+vercel
+
+# Deploy to production
+vercel --prod
+```
+
+### Deploy via GitHub
+
+1. Push your code to GitHub
+2. Import the repository in [Vercel Dashboard](https://vercel.com/new)
+3. Vercel auto-detects the Vite framework
+4. Add your environment variable before deploying
+
+### Add OpenAI API Key
+
+**Via CLI:**
+```bash
+vercel env add OPENAI_API_KEY
+# Enter your key when prompted
+# Select environments: Production, Preview, Development
+```
+
+**Via Dashboard:**
+1. Go to your project in [Vercel Dashboard](https://vercel.com/dashboard)
+2. Navigate to **Settings** → **Environment Variables**
+3. Add `OPENAI_API_KEY` with your API key
+4. Select environments and save
+
+### Local Development
+
+For local development, the Vite dev server proxies API requests to a local Express server:
+
+```bash
+# Terminal 1: Start the local API server
+cd server
+npm install
+cp .env.example .env  # Add your OPENAI_API_KEY
+npm run dev
+
+# Terminal 2: Start the frontend
+npm run dev
+```
+
+Or use Vercel CLI for local development with serverless functions:
+
+```bash
+vercel dev
+```
+
+---
+
+## Alternative Deployments
+
+For platforms other than Vercel, you'll need to deploy the Express API server separately.
+
+### Netlify (Frontend) + Separate API
+
+Netlify can host the frontend, but you'll need to deploy the API server elsewhere (Railway, Render, Fly.io, etc.).
 
 Create `netlify.toml`:
 
@@ -73,10 +148,15 @@ Create `netlify.toml`:
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://api.openai.com; font-src 'self'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://your-api-server.com; font-src 'self'"
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://your-api-server.com/api/:splat"
+  status = 200
 ```
 
-#### Custom Server (Nginx)
+### Custom Server (Nginx + Express API)
 
 ```nginx
 server {
@@ -107,7 +187,7 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
-    # API proxy
+    # API proxy to Express server
     location /api/ {
         proxy_pass http://localhost:3001/api/;
         proxy_http_version 1.1;
@@ -119,64 +199,37 @@ server {
 }
 ```
 
----
+### Express API Server (for non-Vercel deployments)
 
-## API Server Deployment
-
-### Install Dependencies
+The `server/` directory contains a standalone Express server for platforms that don't support serverless functions.
 
 ```bash
 cd server
 npm install
-```
-
-### Configure Environment
-
-```bash
-cp .env.example .env
-# Edit .env and add your OpenAI API key
-```
-
-### Run the Server
-
-```bash
-# Development
-npm run dev
-
-# Production
+cp .env.example .env  # Add your OPENAI_API_KEY
 npm start
 ```
 
-### Process Manager (PM2)
+#### Process Manager (PM2)
 
 ```bash
-# Install PM2
 npm i -g pm2
-
-# Start server
 pm2 start server/index.js --name visioncheck-api
-
-# Auto-start on reboot
 pm2 startup
 pm2 save
 ```
 
-### Docker Deployment
+#### Docker
 
 Create `server/Dockerfile`:
 
 ```dockerfile
 FROM node:20-alpine
-
 WORKDIR /app
-
 COPY package*.json ./
 RUN npm ci --only=production
-
 COPY . .
-
 EXPOSE 3001
-
 CMD ["node", "index.js"]
 ```
 
@@ -184,7 +237,7 @@ Build and run:
 
 ```bash
 docker build -t visioncheck-api ./server
-docker run -d -p 3001:3001 --env-file server/.env visioncheck-api
+docker run -d -p 3001:3001 -e OPENAI_API_KEY=your_key visioncheck-api
 ```
 
 ---
@@ -219,10 +272,11 @@ form-action 'self';
 
 ### Vercel Configuration
 
-Create `vercel.json`:
+The `vercel.json` file in the project root configures security headers and routing:
 
 ```json
 {
+  "framework": "vite",
   "headers": [
     {
       "source": "/(.*)",
@@ -230,15 +284,14 @@ Create `vercel.json`:
         { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://api.openai.com; font-src 'self'" }
+        { "key": "Content-Security-Policy", "value": "..." }
       ]
     }
-  ],
-  "rewrites": [
-    { "source": "/api/:path*", "destination": "https://your-api-server.com/api/:path*" }
   ]
 }
 ```
+
+API routes in `/api` are automatically deployed as serverless functions.
 
 ---
 
@@ -272,27 +325,28 @@ sudo certbot renew --dry-run
 
 ## Environment Variables
 
-### Frontend (Vite)
-
-No environment variables required. All API calls go through the proxy.
-
-### API Server
-
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `OPENAI_API_KEY` | Yes | Your OpenAI API key |
-| `PORT` | No | Server port (default: 3001) |
+| `OPENAI_API_KEY` | Yes | Your OpenAI API key from [OpenAI Platform](https://platform.openai.com/api-keys) |
+| `PORT` | No | Express server port (default: 3001, only for non-Vercel deployments) |
+
+### Setting Variables by Platform
+
+| Platform | Method |
+|----------|--------|
+| **Vercel** | Dashboard → Settings → Environment Variables, or `vercel env add` |
+| **Netlify** | Dashboard → Site settings → Environment variables |
+| **Railway** | Dashboard → Variables |
+| **Docker** | `-e OPENAI_API_KEY=your_key` or `--env-file` |
+| **Local** | Create `.env` file from `.env.example` |
 
 ### Production Checklist
 
 - [ ] HTTPS enabled and enforced
 - [ ] Security headers configured
-- [ ] OPENAI_API_KEY set on API server
-- [ ] API server running and accessible
-- [ ] Frontend build deployed
-- [ ] API proxy configured (if using separate domains)
-- [ ] CORS configured if needed
-- [ ] Rate limiting configured (recommended)
+- [ ] `OPENAI_API_KEY` environment variable set
+- [ ] API endpoints accessible (`/api/health` returns `{"status":"ok","apiKeyConfigured":true}`)
+- [ ] Rate limiting configured (recommended for production)
 - [ ] Error monitoring set up (Sentry, etc.)
 
 ---
@@ -301,6 +355,12 @@ No environment variables required. All API calls go through the proxy.
 
 ### API returns "OpenAI API key not configured"
 
+**Vercel:**
+1. Check Settings → Environment Variables in your Vercel dashboard
+2. Ensure `OPENAI_API_KEY` is set for the correct environment (Production/Preview)
+3. Redeploy after adding the variable
+
+**Local/Express:**
 1. Check that `server/.env` exists and contains `OPENAI_API_KEY`
 2. Restart the API server after adding the key
 3. Verify with: `curl http://localhost:3001/api/health`
@@ -311,7 +371,7 @@ No environment variables required. All API calls go through the proxy.
 2. Check browser permissions
 3. Test in incognito mode
 
-### CORS errors
+### CORS errors (non-Vercel deployments)
 
 If frontend and API are on different domains:
 
@@ -322,6 +382,10 @@ app.use(cors({
   credentials: true
 }))
 ```
+
+### Vercel function timeout
+
+For long-running requests, you may need to upgrade to a Pro plan or optimize the request. The default timeout is 10 seconds on the Hobby plan.
 
 ---
 
