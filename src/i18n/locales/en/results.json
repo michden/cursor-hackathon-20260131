@@ -119,7 +119,11 @@
     "eyeHealth": "Eye Health Screening",
     "eyeHealthDescription": "Screening for macular and peripheral vision issues",
     "aiAnalysis": "AI Analysis",
-    "aiAnalysisDescription": "AI-powered analysis of your eye photo"
+    "aiAnalysisDescription": "AI-powered analysis of your eye photo",
+    "summaryRecommendations": "Summary & Recommendations",
+    "summaryRecommendationsDescription": "Overall assessment based on your test results",
+    "yourActions": "Your Actions",
+    "yourActionsDescription": "Share, save, or manage your results"
   },
   "findDoctor": {
     "title": "Find Eye Doctors Near You",

@@ -1075,14 +1075,14 @@ export default function HealthSnapshot() {
         
         <!-- Section: Vision Clarity -->
         ${hasVisionClarity ? `
-          <div style="margin-bottom: 25px;">
+          <div style="margin-bottom: 25px; page-break-inside: avoid; break-inside: avoid;">
             <h2 style="color: #0f172a; font-size: 18px; margin: 0 0 5px 0; border-bottom: 2px solid #0ea5e9; padding-bottom: 5px;">
               👓 Vision Clarity
             </h2>
             <p style="color: #64748b; font-size: 12px; margin: 0 0 15px 0;">How clearly you see at various distances and contrast levels</p>
             
             ${(vaLeft || vaRight) ? `
-              <div style="background: #f0f9ff; border-radius: 12px; padding: 20px; margin-bottom: 15px;">
+              <div style="background: #f0f9ff; border-radius: 12px; padding: 20px; margin-bottom: 15px; page-break-inside: avoid; break-inside: avoid;">
                 <h3 style="margin: 0 0 10px 0;">📖 Visual Acuity</h3>
                 <div style="display: flex; gap: 20px;">
                   <div style="flex: 1; text-align: center;">
@@ -1102,7 +1102,7 @@ export default function HealthSnapshot() {
             ` : ''}
             
             ${(csLeft || csRight) ? `
-              <div style="background: #fffbeb; border-radius: 12px; padding: 20px;">
+              <div style="background: #fffbeb; border-radius: 12px; padding: 20px; page-break-inside: avoid; break-inside: avoid;">
                 <h3 style="margin: 0 0 10px 0;">🔆 Contrast Sensitivity</h3>
                 <div style="display: flex; gap: 20px;">
                   <div style="flex: 1; text-align: center;">
@@ -1125,14 +1125,14 @@ export default function HealthSnapshot() {
         
         <!-- Section: Color & Shape Perception -->
         ${hasColorShape ? `
-          <div style="margin-bottom: 25px;">
+          <div style="margin-bottom: 25px; page-break-inside: avoid; break-inside: avoid;">
             <h2 style="color: #0f172a; font-size: 18px; margin: 0 0 5px 0; border-bottom: 2px solid #10b981; padding-bottom: 5px;">
               🎨 Color & Shape Perception
             </h2>
             <p style="color: #64748b; font-size: 12px; margin: 0 0 15px 0;">How well you perceive colors and detect astigmatism</p>
             
             ${results.colorVision ? `
-              <div style="background: #f0fdf4; border-radius: 12px; padding: 20px; margin-bottom: 15px;">
+              <div style="background: #f0fdf4; border-radius: 12px; padding: 20px; margin-bottom: 15px; page-break-inside: avoid; break-inside: avoid;">
                 <h3 style="margin: 0 0 10px 0;">🎨 Color Vision</h3>
                 <p style="font-size: 32px; font-weight: bold; color: #10b981; margin: 0;">
                   ${results.colorVision.correctCount}/${results.colorVision.totalPlates}
@@ -1144,7 +1144,7 @@ export default function HealthSnapshot() {
             ` : ''}
             
             ${(astigLeft || astigRight) ? `
-              <div style="background: #f0fdfa; border-radius: 12px; padding: 20px;">
+              <div style="background: #f0fdfa; border-radius: 12px; padding: 20px; page-break-inside: avoid; break-inside: avoid;">
                 <h3 style="margin: 0 0 10px 0;">⊕ Astigmatism</h3>
                 <div style="display: flex; gap: 20px;">
                   <div style="flex: 1; text-align: center;">
@@ -1167,14 +1167,14 @@ export default function HealthSnapshot() {
         
         <!-- Section: Eye Health Screening -->
         ${hasEyeHealth ? `
-          <div style="margin-bottom: 25px;">
+          <div style="margin-bottom: 25px; page-break-inside: avoid; break-inside: avoid;">
             <h2 style="color: #0f172a; font-size: 18px; margin: 0 0 5px 0; border-bottom: 2px solid #a855f7; padding-bottom: 5px;">
               🏥 Eye Health Screening
             </h2>
             <p style="color: #64748b; font-size: 12px; margin: 0 0 15px 0;">Screening for macular and peripheral vision issues</p>
             
             ${(amslerLeft || amslerRight) ? `
-              <div style="background: #faf5ff; border-radius: 12px; padding: 20px; margin-bottom: 15px;">
+              <div style="background: #faf5ff; border-radius: 12px; padding: 20px; margin-bottom: 15px; page-break-inside: avoid; break-inside: avoid;">
                 <h3 style="margin: 0 0 10px 0;"># Amsler Grid</h3>
                 <div style="display: flex; gap: 20px;">
                   <div style="flex: 1; text-align: center;">
@@ -1194,7 +1194,7 @@ export default function HealthSnapshot() {
             ` : ''}
             
             ${(pvLeft || pvRight) ? `
-              <div style="background: #fdf4ff; border-radius: 12px; padding: 20px;">
+              <div style="background: #fdf4ff; border-radius: 12px; padding: 20px; page-break-inside: avoid; break-inside: avoid;">
                 <h3 style="margin: 0 0 10px 0;">👁️‍🗨️ Peripheral Vision</h3>
                 <div style="display: flex; gap: 20px;">
                   <div style="flex: 1; text-align: center;">
@@ -1217,13 +1217,13 @@ export default function HealthSnapshot() {
         
         <!-- Section: AI Analysis -->
         ${hasAIAnalysis ? `
-          <div style="margin-bottom: 25px;">
+          <div style="margin-bottom: 25px; page-break-inside: avoid; break-inside: avoid;">
             <h2 style="color: #0f172a; font-size: 18px; margin: 0 0 5px 0; border-bottom: 2px solid #8b5cf6; padding-bottom: 5px;">
               🤖 AI Analysis
             </h2>
             <p style="color: #64748b; font-size: 12px; margin: 0 0 15px 0;">AI-powered analysis of your eye photo</p>
             
-            <div style="background: #faf5ff; border-radius: 12px; padding: 20px;">
+            <div style="background: #faf5ff; border-radius: 12px; padding: 20px; page-break-inside: avoid; break-inside: avoid;">
               <h3 style="margin: 0 0 10px 0;">📸 AI Eye Analysis</h3>
               <p style="color: #64748b; white-space: pre-wrap; font-size: 14px;">
                 ${stripMarkdown(typeof results.eyePhoto.analysis === 'string' 
@@ -1237,7 +1237,45 @@ export default function HealthSnapshot() {
           </div>
         ` : ''}
         
-        <div style="background: #fffbeb; border: 1px solid #fcd34d; border-radius: 12px; padding: 20px; margin-top: 30px; break-inside: avoid;">
+        <!-- Section: Achievements -->
+        ${unlockedAchievementIds.length > 0 ? `
+          <div style="margin-bottom: 25px; page-break-inside: avoid; break-inside: avoid;">
+            <h2 style="color: #0f172a; font-size: 18px; margin: 0 0 5px 0; border-bottom: 2px solid #f59e0b; padding-bottom: 5px;">
+              🏆 Your Achievements
+            </h2>
+            <p style="color: #64748b; font-size: 12px; margin: 0 0 15px 0;">Badges earned during your eye health journey</p>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+              ${unlockedAchievementIds.map(id => {
+                const achievement = ACHIEVEMENTS[id]
+                if (!achievement) return ''
+                return `
+                  <div style="background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 10px 15px; display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 20px;">${achievement.icon}</span>
+                    <span style="font-size: 14px; font-weight: 500; color: #92400e;">${t(achievement.titleKey)}</span>
+                  </div>
+                `
+              }).join('')}
+            </div>
+          </div>
+        ` : ''}
+        
+        <!-- Section: Summary & Recommendations -->
+        <div style="margin-bottom: 25px; page-break-inside: avoid; break-inside: avoid;">
+          <h2 style="color: #0f172a; font-size: 18px; margin: 0 0 5px 0; border-bottom: 2px solid #0ea5e9; padding-bottom: 5px;">
+            📋 Summary & Recommendations
+          </h2>
+          <p style="color: #64748b; font-size: 12px; margin: 0 0 15px 0;">Overall assessment based on your test results</p>
+          
+          <div style="background: #f0f9ff; border-radius: 12px; padding: 20px; page-break-inside: avoid; break-inside: avoid;">
+            <p style="color: #0f172a; font-size: 14px; margin: 0; line-height: 1.6;">
+              ${getRecommendation()}
+            </p>
+          </div>
+        </div>
+        
+        <!-- Disclaimer - Always at the bottom -->
+        <div style="background: #fffbeb; border: 1px solid #fcd34d; border-radius: 12px; padding: 20px; margin-top: 30px; page-break-inside: avoid; break-inside: avoid;">
           <p style="color: #92400e; font-size: 12px; margin: 0;">
             <strong>Disclaimer:</strong> This is a screening tool for educational purposes only.
             It is NOT a medical diagnosis. Please consult an eye care professional for accurate assessment.
@@ -1259,7 +1297,7 @@ export default function HealthSnapshot() {
     }
     
     await html2pdf().set(opt).from(element).save()
-  }, [results, i18n.language])
+  }, [results, i18n.language, unlockedAchievementIds, getRecommendation, t])
 
   const overallStatus = getOverallStatus()
 
@@ -1486,17 +1524,20 @@ export default function HealthSnapshot() {
           </section>
         </div>
 
-        {/* Achievements Section */}
+        {/* Section: Achievements */}
         {unlockedAchievementIds.length > 0 && (
-          <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 mb-6">
-            <h3 className="font-semibold text-slate-800 dark:text-slate-100 mb-3 flex items-center gap-2">
+          <section aria-labelledby="achievements-heading" className="mb-6">
+            <h2 id="achievements-heading" className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2 flex items-center gap-2">
               <span>🏆</span> {t('results:achievements.title')}
               {hasNewAchievements && (
                 <span className="text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/50 px-2 py-0.5 rounded-full animate-pulse">
                   {t('status.new')}
                 </span>
               )}
-            </h3>
+            </h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
+              Badges earned during your eye health journey
+            </p>
             <div className="space-y-2">
               {unlockedAchievementIds.map(id => (
                 <AchievementBadge 
@@ -1506,120 +1547,131 @@ export default function HealthSnapshot() {
                 />
               ))}
             </div>
-          </div>
+          </section>
         )}
 
-        {/* Recommendation */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 mb-6">
-          <h3 className="font-semibold text-slate-800 dark:text-slate-100 mb-2">📋 {t('results:recommendations.title')}</h3>
-          <p className="text-slate-600 dark:text-slate-300">{getRecommendation()}</p>
-        </div>
+        {/* Section: Summary & Recommendations */}
+        <section aria-labelledby="summary-heading" className="mb-6">
+          <h2 id="summary-heading" className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2 flex items-center gap-2">
+            <span>📋</span> {t('results:sections.summaryRecommendations')}
+          </h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
+            {t('results:sections.summaryRecommendationsDescription')}
+          </p>
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4">
+            <p className="text-slate-600 dark:text-slate-300">{getRecommendation()}</p>
+          </div>
+        </section>
 
-        {/* Find Eye Doctor Button - shown when concerning results detected */}
-        {(() => {
-          // Check for concerning results that warrant professional evaluation
-          const vaLeft = results.visualAcuity?.left
-          const vaRight = results.visualAcuity?.right
-          const hasVAConcern = (vaLeft && vaLeft.level < 8) || (vaRight && vaRight.level < 8)
-          
-          const hasColorConcern = results.colorVision && results.colorVision.status !== 'normal'
-          
-          const csLeft = results.contrastSensitivity?.left
-          const csRight = results.contrastSensitivity?.right
-          const hasCSConcern = (csLeft && csLeft.logCS < 0.9) || (csRight && csRight.logCS < 0.9)
-          
-          const amslerLeft = results.amslerGrid?.left
-          const amslerRight = results.amslerGrid?.right
-          const hasAmslerConcern = amslerLeft?.hasIssues || amslerRight?.hasIssues
-          
-          const astigLeft = results.astigmatism?.left
-          const astigRight = results.astigmatism?.right
-          const hasAstigConcern = (astigLeft && !astigLeft.allLinesEqual) || (astigRight && !astigRight.allLinesEqual)
-          
-          const pvLeft = results.peripheralVision?.left
-          const pvRight = results.peripheralVision?.right
-          const isNormal = (eyeData) => eyeData?.severity === 'excellent' || eyeData?.severity === 'normal'
-          const hasPVConcern = (pvLeft && !isNormal(pvLeft)) || (pvRight && !isNormal(pvRight))
-          
-          const showFindDoctor = hasVAConcern || hasColorConcern || hasCSConcern || hasAmslerConcern || hasAstigConcern || hasPVConcern
-          
-          return showFindDoctor ? (
-            <div className="mb-6">
-              <FindDoctorButton />
-            </div>
-          ) : null
-        })()}
+        {/* Section: Your Actions */}
+        <section aria-labelledby="actions-heading" className="mb-6">
+          <h2 id="actions-heading" className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2 flex items-center gap-2">
+            <span>⚡</span> {t('results:sections.yourActions')}
+          </h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
+            {t('results:sections.yourActionsDescription')}
+          </p>
+          <div className="space-y-3">
+            <button
+              onClick={handleShare}
+              className="w-full py-4 bg-sky-500 text-white font-semibold rounded-xl hover:bg-sky-600 transition-colors flex items-center justify-center gap-2"
+            >
+              <span>📤</span> {t('results:actions.shareResults')}
+            </button>
+            
+            <button
+              onClick={handleDownloadPDF}
+              className="w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2"
+            >
+              <span>📄</span> {t('results:actions.downloadPDF')}
+            </button>
 
-        {/* Disclaimer */}
-        <div className="bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-6">
+            <button
+              onClick={() => {
+                saveToHistory()
+                alert(t('results:actions.saveToHistory'))
+              }}
+              disabled={!(results.visualAcuity?.left || results.visualAcuity?.right) && 
+                        !results.colorVision && 
+                        !(results.contrastSensitivity?.left || results.contrastSensitivity?.right) && 
+                        !(results.amslerGrid?.left || results.amslerGrid?.right) &&
+                        !(results.astigmatism?.left || results.astigmatism?.right) &&
+                        !(results.peripheralVision?.left || results.peripheralVision?.right) &&
+                        !results.eyePhoto}
+              className="w-full py-4 bg-emerald-500 text-white font-semibold rounded-xl hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span>📊</span> {t('results:actions.saveToHistory')}
+            </button>
+
+            {/* Find Eye Doctor Button - shown when concerning results detected */}
+            {(() => {
+              // Check for concerning results that warrant professional evaluation
+              const vaLeft = results.visualAcuity?.left
+              const vaRight = results.visualAcuity?.right
+              const hasVAConcern = (vaLeft && vaLeft.level < 8) || (vaRight && vaRight.level < 8)
+              
+              const hasColorConcern = results.colorVision && results.colorVision.status !== 'normal'
+              
+              const csLeft = results.contrastSensitivity?.left
+              const csRight = results.contrastSensitivity?.right
+              const hasCSConcern = (csLeft && csLeft.logCS < 0.9) || (csRight && csRight.logCS < 0.9)
+              
+              const amslerLeft = results.amslerGrid?.left
+              const amslerRight = results.amslerGrid?.right
+              const hasAmslerConcern = amslerLeft?.hasIssues || amslerRight?.hasIssues
+              
+              const astigLeft = results.astigmatism?.left
+              const astigRight = results.astigmatism?.right
+              const hasAstigConcern = (astigLeft && !astigLeft.allLinesEqual) || (astigRight && !astigRight.allLinesEqual)
+              
+              const pvLeft = results.peripheralVision?.left
+              const pvRight = results.peripheralVision?.right
+              const isNormal = (eyeData) => eyeData?.severity === 'excellent' || eyeData?.severity === 'normal'
+              const hasPVConcern = (pvLeft && !isNormal(pvLeft)) || (pvRight && !isNormal(pvRight))
+              
+              const showFindDoctor = hasVAConcern || hasColorConcern || hasCSConcern || hasAmslerConcern || hasAstigConcern || hasPVConcern
+              
+              return showFindDoctor ? <FindDoctorButton /> : null
+            })()}
+            
+            <Link
+              to="/"
+              className="block w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-center"
+            >
+              {t('nav.backToHome')}
+            </Link>
+
+            <button
+              onClick={() => {
+                if (confirm(t('results:actions.clearResults') + '?')) {
+                  clearResults()
+                }
+              }}
+              className="w-full py-3 text-red-500 dark:text-red-400 font-medium hover:text-red-600 dark:hover:text-red-300 transition-colors text-center"
+            >
+              {t('results:actions.clearResults')}
+            </button>
+
+            {history.length > 0 && (
+              <button
+                onClick={() => {
+                  if (confirm(t('results:history.clearHistory') + '?')) {
+                    clearHistory()
+                  }
+                }}
+                className="w-full py-3 text-slate-400 dark:text-slate-500 font-medium hover:text-slate-500 dark:hover:text-slate-400 transition-colors text-center"
+              >
+                {t('results:history.clearHistory')} ({history.length})
+              </button>
+            )}
+          </div>
+        </section>
+
+        {/* Disclaimer - Always at the bottom */}
+        <div className="bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
           <p className="text-sm text-amber-800 dark:text-amber-200">
             <strong>{t('disclaimer.title')}:</strong> {t('disclaimer.text')}
           </p>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="space-y-3">
-          <button
-            onClick={handleShare}
-            className="w-full py-4 bg-sky-500 text-white font-semibold rounded-xl hover:bg-sky-600 transition-colors flex items-center justify-center gap-2"
-          >
-            <span>📤</span> {t('results:actions.shareResults')}
-          </button>
-          
-          <button
-            onClick={handleDownloadPDF}
-            className="w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2"
-          >
-            <span>📄</span> {t('results:actions.downloadPDF')}
-          </button>
-
-          <button
-            onClick={() => {
-              saveToHistory()
-              alert(t('results:actions.saveToHistory'))
-            }}
-            disabled={!(results.visualAcuity?.left || results.visualAcuity?.right) && 
-                      !results.colorVision && 
-                      !(results.contrastSensitivity?.left || results.contrastSensitivity?.right) && 
-                      !(results.amslerGrid?.left || results.amslerGrid?.right) &&
-                      !(results.astigmatism?.left || results.astigmatism?.right) &&
-                      !(results.peripheralVision?.left || results.peripheralVision?.right) &&
-                      !results.eyePhoto}
-            className="w-full py-4 bg-emerald-500 text-white font-semibold rounded-xl hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <span>📊</span> {t('results:actions.saveToHistory')}
-          </button>
-          
-          <Link
-            to="/"
-            className="block w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-center"
-          >
-            {t('nav.backToHome')}
-          </Link>
-
-          <button
-            onClick={() => {
-              if (confirm(t('results:actions.clearResults') + '?')) {
-                clearResults()
-              }
-            }}
-            className="w-full py-3 text-red-500 dark:text-red-400 font-medium hover:text-red-600 dark:hover:text-red-300 transition-colors text-center"
-          >
-            {t('results:actions.clearResults')}
-          </button>
-
-          {history.length > 0 && (
-            <button
-              onClick={() => {
-                if (confirm(t('results:history.clearHistory') + '?')) {
-                  clearHistory()
-                }
-              }}
-              className="w-full py-3 text-slate-400 dark:text-slate-500 font-medium hover:text-slate-500 dark:hover:text-slate-400 transition-colors text-center"
-            >
-              {t('results:history.clearHistory')} ({history.length})
-            </button>
-          )}
         </div>
       </div>
     </div>

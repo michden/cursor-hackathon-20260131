@@ -119,7 +119,11 @@
     "eyeHealth": "Augengesundheits-Screening",
     "eyeHealthDescription": "Screening auf Makula- und periphere Sehprobleme",
     "aiAnalysis": "KI-Analyse",
-    "aiAnalysisDescription": "KI-gestützte Analyse Ihres Augenfotos"
+    "aiAnalysisDescription": "KI-gestützte Analyse Ihres Augenfotos",
+    "summaryRecommendations": "Zusammenfassung & Empfehlungen",
+    "summaryRecommendationsDescription": "Gesamtbewertung basierend auf Ihren Testergebnissen",
+    "yourActions": "Ihre Aktionen",
+    "yourActionsDescription": "Teilen, speichern oder verwalten Sie Ihre Ergebnisse"
   },
   "findDoctor": {
     "title": "Augenärzte in Ihrer Nähe finden",
