@@ -60,11 +60,14 @@
   },
   "actions": {
     "retestEye": "Retest an Eye",
+    "share": "Share",
+    "pdf": "PDF",
     "shareResults": "Share Results",
     "downloadPDF": "Download PDF Report",
     "saveToHistory": "Save to History",
     "clearResults": "Clear All Results",
-    "findDoctor": "Find Eye Doctors Near Me"
+    "findDoctor": "Find Eye Doctors Near Me",
+    "manageData": "Manage Data"
   },
   "recommendations": {
     "title": "Recommendations",

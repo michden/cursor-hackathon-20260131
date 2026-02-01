@@ -60,11 +60,14 @@
   },
   "actions": {
     "retestEye": "Ein Auge erneut testen",
+    "share": "Teilen",
+    "pdf": "PDF",
     "shareResults": "Ergebnisse teilen",
     "downloadPDF": "PDF-Bericht herunterladen",
     "saveToHistory": "Im Verlauf speichern",
     "clearResults": "Alle Ergebnisse löschen",
-    "findDoctor": "Augenärzte in der Nähe finden"
+    "findDoctor": "Augenärzte in der Nähe finden",
+    "manageData": "Daten verwalten"
   },
   "recommendations": {
     "title": "Empfehlungen",

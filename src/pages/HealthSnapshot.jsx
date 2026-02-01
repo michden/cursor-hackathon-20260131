@@ -839,6 +839,7 @@ export default function HealthSnapshot() {
   } = useTestResults()
   const reportRef = useRef(null)
   const [showCelebration, setShowCelebration] = useState(false)
+  const [showManageData, setShowManageData] = useState(false)
   
   // Get unlocked achievements
   const unlockedAchievementIds = getUnlockedAchievements()
@@ -1606,69 +1607,79 @@ export default function HealthSnapshot() {
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
             {t('results:sections.yourActionsDescription')}
           </p>
-          <div className="space-y-3">
+          
+          {/* Primary Actions - 2-column grid */}
+          <div className="grid grid-cols-2 gap-3 mb-3">
             <button
               onClick={handleShare}
-              className="w-full py-4 bg-sky-500 text-white font-semibold rounded-xl hover:bg-sky-600 transition-colors flex items-center justify-center gap-2"
+              className="py-3 bg-sky-500 text-white font-semibold rounded-xl hover:bg-sky-600 transition-colors flex items-center justify-center gap-2"
             >
-              <span>📤</span> {t('results:actions.shareResults')}
+              <span>📤</span> {t('results:actions.share')}
             </button>
             
             <button
               onClick={handleDownloadPDF}
-              className="w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2"
+              className="py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2"
             >
-              <span>📄</span> {t('results:actions.downloadPDF')}
+              <span>📄</span> {t('results:actions.pdf')}
             </button>
+          </div>
 
-            <button
-              onClick={() => {
-                saveToHistory()
-                alert(t('results:actions.saveToHistory'))
-              }}
-              disabled={!(results.visualAcuity?.left || results.visualAcuity?.right) && 
-                        !results.colorVision && 
-                        !(results.contrastSensitivity?.left || results.contrastSensitivity?.right) && 
-                        !(results.amslerGrid?.left || results.amslerGrid?.right) &&
-                        !(results.astigmatism?.left || results.astigmatism?.right) &&
-                        !(results.peripheralVision?.left || results.peripheralVision?.right) &&
-                        !results.eyePhoto}
-              className="w-full py-4 bg-emerald-500 text-white font-semibold rounded-xl hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span>📊</span> {t('results:actions.saveToHistory')}
-            </button>
-            
-            <Link
-              to="/"
-              className="block w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-center"
-            >
-              {t('nav.backToHome')}
-            </Link>
+          {/* Save to History - full width */}
+          <button
+            onClick={() => {
+              saveToHistory()
+              alert(t('results:actions.saveToHistory'))
+            }}
+            disabled={!(results.visualAcuity?.left || results.visualAcuity?.right) && 
+                      !results.colorVision && 
+                      !(results.contrastSensitivity?.left || results.contrastSensitivity?.right) && 
+                      !(results.amslerGrid?.left || results.amslerGrid?.right) &&
+                      !(results.astigmatism?.left || results.astigmatism?.right) &&
+                      !(results.peripheralVision?.left || results.peripheralVision?.right) &&
+                      !results.eyePhoto}
+            className="w-full py-3 mb-3 bg-emerald-500 text-white font-semibold rounded-xl hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span>📊</span> {t('results:actions.saveToHistory')}
+          </button>
 
-            <button
-              onClick={() => {
-                if (confirm(t('results:actions.clearResults') + '?')) {
-                  clearResults()
-                }
-              }}
-              className="w-full py-3 text-red-500 dark:text-red-400 font-medium hover:text-red-600 dark:hover:text-red-300 transition-colors text-center"
-            >
-              {t('results:actions.clearResults')}
-            </button>
-
-            {history.length > 0 && (
+          {/* Manage Data - Collapsible */}
+          <button
+            onClick={() => setShowManageData(!showManageData)}
+            className="w-full py-2 text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-slate-600 dark:hover:text-slate-300 transition-colors flex items-center justify-center gap-2"
+            aria-expanded={showManageData}
+            aria-controls="manage-data-panel"
+          >
+            {t('results:actions.manageData')} {showManageData ? '▲' : '▼'}
+          </button>
+          
+          {showManageData && (
+            <div id="manage-data-panel" className="mt-2 space-y-2 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
               <button
                 onClick={() => {
-                  if (confirm(t('results:history.clearHistory') + '?')) {
-                    clearHistory()
+                  if (confirm(t('results:actions.clearResults') + '?')) {
+                    clearResults()
                   }
                 }}
-                className="w-full py-3 text-slate-400 dark:text-slate-500 font-medium hover:text-slate-500 dark:hover:text-slate-400 transition-colors text-center"
+                className="w-full py-2 text-red-500 dark:text-red-400 text-sm font-medium hover:text-red-600 dark:hover:text-red-300 transition-colors text-center"
               >
-                {t('results:history.clearHistory')} ({history.length})
+                {t('results:actions.clearResults')}
               </button>
-            )}
-          </div>
+
+              {history.length > 0 && (
+                <button
+                  onClick={() => {
+                    if (confirm(t('results:history.clearHistory') + '?')) {
+                      clearHistory()
+                    }
+                  }}
+                  className="w-full py-2 text-slate-400 dark:text-slate-500 text-sm font-medium hover:text-slate-500 dark:hover:text-slate-400 transition-colors text-center"
+                >
+                  {t('results:history.clearHistory')} ({history.length})
+                </button>
+              )}
+            </div>
+          )}
         </section>
 
         {/* Disclaimer - Always at the bottom */}
