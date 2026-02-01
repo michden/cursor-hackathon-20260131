@@ -156,7 +156,7 @@
     }
   },
   "peripheralVision": {
-    "title": "Peripheres Sehtest",
+    "title": "Peripherer Sehtest",
     "subtitle": "Test Ihres {{eye}} Auges",
     "instructions": {
       "title": "Anleitung:",
