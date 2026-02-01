@@ -111,6 +111,16 @@
     "stable": "Your {{test}} has remained stable",
     "declined": "Your {{test}} may have changed - consider retesting"
   },
+  "sections": {
+    "visionClarity": "Vision Clarity",
+    "visionClarityDescription": "How clearly you see at various distances and contrast levels",
+    "colorAndShape": "Color & Shape Perception",
+    "colorAndShapeDescription": "How well you perceive colors and detect astigmatism",
+    "eyeHealth": "Eye Health Screening",
+    "eyeHealthDescription": "Screening for macular and peripheral vision issues",
+    "aiAnalysis": "AI Analysis",
+    "aiAnalysisDescription": "AI-powered analysis of your eye photo"
+  },
   "findDoctor": {
     "title": "Find Eye Doctors Near You",
     "description": "We'll use your location to show nearby eye care professionals on Google Maps.",

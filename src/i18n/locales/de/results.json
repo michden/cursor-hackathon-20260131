@@ -111,6 +111,16 @@
     "stable": "Ihre {{test}} ist stabil geblieben",
     "declined": "Ihre {{test}} könnte sich verändert haben - erwägen Sie einen erneuten Test"
   },
+  "sections": {
+    "visionClarity": "Sehklarheit",
+    "visionClarityDescription": "Wie klar Sie in verschiedenen Entfernungen und Kontraststufen sehen",
+    "colorAndShape": "Farb- & Formwahrnehmung",
+    "colorAndShapeDescription": "Wie gut Sie Farben wahrnehmen und Astigmatismus erkennen",
+    "eyeHealth": "Augengesundheits-Screening",
+    "eyeHealthDescription": "Screening auf Makula- und periphere Sehprobleme",
+    "aiAnalysis": "KI-Analyse",
+    "aiAnalysisDescription": "KI-gestützte Analyse Ihres Augenfotos"
+  },
   "findDoctor": {
     "title": "Augenärzte in Ihrer Nähe finden",
     "description": "Wir verwenden Ihren Standort, um Augenärzte in Ihrer Nähe auf Google Maps anzuzeigen.",
