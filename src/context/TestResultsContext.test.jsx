@@ -108,7 +108,7 @@ describe('TestResultsContext', () => {
     )
 
     act(() => {
-      contextRef.updateEyePhoto({ status: 'analyzed', findings: [] })
+      contextRef.updateEyePhoto({ status: 'analyzed', analysis: 'Test analysis', analyzedAt: '2024-01-01T00:00:00.000Z' })
     })
 
     expect(screen.getByTestId('has-results')).toHaveTextContent('yes')
@@ -396,8 +396,8 @@ describe('TestResultsContext', () => {
     act(() => {
       contextRef.updateEyePhoto({ 
         status: 'analyzed', 
-        findings: ['mild redness'],
-        confidence: 0.85,
+        analysis: 'The eye appears healthy with no visible abnormalities.',
+        analyzedAt: '2024-01-15T10:30:00.000Z',
         imageData: 'base64-image-data-should-be-excluded'
       })
     })
@@ -409,8 +409,8 @@ describe('TestResultsContext', () => {
     expect(screen.getByTestId('history-count')).toHaveTextContent('1')
     expect(contextRef.history[0].eyePhoto).toEqual({
       status: 'analyzed',
-      findings: ['mild redness'],
-      confidence: 0.85
+      analysis: 'The eye appears healthy with no visible abnormalities.',
+      analyzedAt: '2024-01-15T10:30:00.000Z'
     })
     // Verify imageData is excluded
     expect(contextRef.history[0].eyePhoto.imageData).toBeUndefined()
@@ -429,8 +429,8 @@ describe('TestResultsContext', () => {
       contextRef.updateVisualAcuity('left', { snellen: '20/20', level: 8 })
       contextRef.updateEyePhoto({ 
         status: 'analyzed', 
-        findings: [],
-        confidence: 0.92
+        analysis: 'No significant findings.',
+        analyzedAt: '2024-01-15T11:00:00.000Z'
       })
     })
 
@@ -442,8 +442,8 @@ describe('TestResultsContext', () => {
     expect(contextRef.history[0].visualAcuity.left).toBeDefined()
     expect(contextRef.history[0].eyePhoto).toEqual({
       status: 'analyzed',
-      findings: [],
-      confidence: 0.92
+      analysis: 'No significant findings.',
+      analyzedAt: '2024-01-15T11:00:00.000Z'
     })
   })
 })

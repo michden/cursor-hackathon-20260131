@@ -330,8 +330,8 @@ export function TestResultsProvider({ children }) {
       } : null,
       eyePhoto: hasEyePhoto ? {
         status: results.eyePhoto.status,
-        findings: results.eyePhoto.findings,
-        confidence: results.eyePhoto.confidence
+        analysis: results.eyePhoto.analysis,
+        analyzedAt: results.eyePhoto.analyzedAt
         // imageData is intentionally excluded to reduce storage size
       } : null
     }
