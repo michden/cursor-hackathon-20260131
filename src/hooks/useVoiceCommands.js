@@ -73,7 +73,16 @@ export function useVoiceCommands({ onCommand, enabled = true, language = 'en-US'
       if (event.error !== 'no-speech') {
         console.error('Speech recognition error:', event.error)
       }
-      // Auto-restart on certain errors if still supposed to be listening
+      
+      // Fatal errors that stop recognition and shouldn't auto-restart
+      const fatalErrors = ['not-allowed', 'audio-capture', 'service-not-allowed']
+      if (fatalErrors.includes(event.error)) {
+        shouldListenRef.current = false
+        setIsListening(false)
+        return
+      }
+      
+      // Recoverable errors - stop listening state but allow onend to restart if shouldListenRef is true
       if (event.error === 'aborted' || event.error === 'network') {
         setIsListening(false)
       }

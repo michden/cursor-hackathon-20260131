@@ -365,5 +365,112 @@ describe('useVoiceCommands', () => {
       expect(consoleSpy).not.toHaveBeenCalled()
       consoleSpy.mockRestore()
     })
+
+    it('should set isListening to false on not-allowed error (permission denied)', () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const onCommand = vi.fn()
+
+      const { result } = renderHook(() =>
+        useVoiceCommands({ onCommand, enabled: true })
+      )
+
+      const instance = mockInstances[0]
+
+      // Start listening first
+      act(() => {
+        result.current.startListening()
+      })
+
+      expect(result.current.isListening).toBe(true)
+
+      // Simulate permission denied error
+      act(() => {
+        instance.onerror({ error: 'not-allowed' })
+      })
+
+      expect(result.current.isListening).toBe(false)
+      consoleSpy.mockRestore()
+    })
+
+    it('should set isListening to false on audio-capture error', () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const onCommand = vi.fn()
+
+      const { result } = renderHook(() =>
+        useVoiceCommands({ onCommand, enabled: true })
+      )
+
+      const instance = mockInstances[0]
+
+      act(() => {
+        result.current.startListening()
+      })
+
+      expect(result.current.isListening).toBe(true)
+
+      act(() => {
+        instance.onerror({ error: 'audio-capture' })
+      })
+
+      expect(result.current.isListening).toBe(false)
+      consoleSpy.mockRestore()
+    })
+
+    it('should set isListening to false on service-not-allowed error', () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const onCommand = vi.fn()
+
+      const { result } = renderHook(() =>
+        useVoiceCommands({ onCommand, enabled: true })
+      )
+
+      const instance = mockInstances[0]
+
+      act(() => {
+        result.current.startListening()
+      })
+
+      expect(result.current.isListening).toBe(true)
+
+      act(() => {
+        instance.onerror({ error: 'service-not-allowed' })
+      })
+
+      expect(result.current.isListening).toBe(false)
+      consoleSpy.mockRestore()
+    })
+
+    it('should not auto-restart after fatal errors', () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const onCommand = vi.fn()
+
+      const { result } = renderHook(() =>
+        useVoiceCommands({ onCommand, enabled: true })
+      )
+
+      const instance = mockInstances[0]
+      const startSpy = vi.spyOn(instance, 'start')
+
+      act(() => {
+        result.current.startListening()
+      })
+
+      // Clear the call from startListening
+      startSpy.mockClear()
+
+      // Simulate permission denied error
+      act(() => {
+        instance.onerror({ error: 'not-allowed' })
+      })
+
+      // Simulate onend being called after error
+      act(() => {
+        instance.onend()
+      })
+
+      // Should NOT have tried to restart
+      expect(startSpy).not.toHaveBeenCalled()
+      consoleSpy.mockRestore()
+    })
   })
 })
