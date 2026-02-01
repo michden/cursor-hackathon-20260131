@@ -48,7 +48,7 @@ describe('AchievementBadge', () => {
       render(<AchievementBadge achievementId="all-tests" />)
       
       expect(screen.getByText('Complete Checkup')).toBeInTheDocument()
-      expect(screen.getByText('Completed all four tests')).toBeInTheDocument()
+      expect(screen.getByText('Completed all six screening tests')).toBeInTheDocument()
       expect(screen.getByText('🏆')).toBeInTheDocument()
     })
 
