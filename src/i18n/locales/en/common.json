@@ -89,7 +89,8 @@
   "language": {
     "select": "Select language",
     "en": "English",
-    "de": "Deutsch"
+    "de": "Deutsch",
+    "es": "Español"
   },
   "errors": {
     "generic": "Something went wrong",

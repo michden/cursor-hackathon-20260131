@@ -1,0 +1,82 @@
+{
+  "title": "Su Resumen de Salud Ocular",
+  "subtitle": "Resumen de sus resultados de evaluación",
+  "noResults": {
+    "title": "Sin Resultados Aún",
+    "description": "Complete al menos una prueba para ver sus resultados aquí.",
+    "startTesting": "Iniciar Pruebas"
+  },
+  "cards": {
+    "visualAcuity": "Agudeza Visual",
+    "colorVision": "Visión de Colores",
+    "contrastSensitivity": "Sensibilidad al Contraste",
+    "amslerGrid": "Rejilla de Amsler",
+    "eyePhoto": "Análisis de Foto del Ojo"
+  },
+  "eyeLabels": {
+    "leftEye": "Ojo Izquierdo",
+    "rightEye": "Ojo Derecho",
+    "bothEyes": "Ambos Ojos"
+  },
+  "status": {
+    "tested": "Evaluado",
+    "notTested": "No evaluado",
+    "normal": "Normal",
+    "concerns": "Se detectaron anomalías"
+  },
+  "actions": {
+    "retestEye": "Reevaluar un Ojo",
+    "shareResults": "Compartir Resultados",
+    "downloadPDF": "Descargar Informe PDF",
+    "saveToHistory": "Guardar en Historial",
+    "clearResults": "Borrar Todos los Resultados",
+    "findDoctor": "Encontrar Oftalmólogos Cerca de Mí"
+  },
+  "recommendations": {
+    "title": "Recomendaciones",
+    "allNormal": "Todos sus resultados de prueba parecen normales. Continúe con el monitoreo regular de su salud ocular.",
+    "seeDoctor": "Según sus resultados, le recomendamos consultar a un profesional de la salud visual.",
+    "followUp": "Algunos resultados pueden requerir evaluación profesional."
+  },
+  "history": {
+    "title": "Historial de Pruebas",
+    "noHistory": "No hay sesiones de prueba anteriores guardadas.",
+    "session": "Sesión",
+    "clearHistory": "Borrar Historial"
+  },
+  "achievements": {
+    "title": "Sus Logros",
+    "firstTest": {
+      "title": "Primera Prueba",
+      "description": "Completó su primera prueba ocular"
+    },
+    "perfectAcuity": {
+      "title": "Ojo de Águila",
+      "description": "Logró visión 20/20 o mejor"
+    },
+    "colorPerfect": {
+      "title": "Maestro del Color",
+      "description": "Puntuación perfecta en la prueba de visión de colores"
+    },
+    "allTests": {
+      "title": "Evaluación Completa",
+      "description": "Completó todas las pruebas disponibles"
+    },
+    "streak3": {
+      "title": "Constante",
+      "description": "Realizó pruebas 3 días seguidos"
+    }
+  },
+  "comparison": {
+    "improved": "Su {{test}} ha mejorado desde la última vez",
+    "stable": "Su {{test}} se ha mantenido estable",
+    "declined": "Su {{test}} puede haber cambiado - considere reevaluar"
+  },
+  "findDoctor": {
+    "title": "Encontrar un Oftalmólogo",
+    "searching": "Buscando médicos cercanos...",
+    "permissionNeeded": "Se necesita permiso de ubicación",
+    "openMaps": "Abrir en Mapas",
+    "searchQuery": "oftalmólogo oculista cerca de mí"
+  }
+}

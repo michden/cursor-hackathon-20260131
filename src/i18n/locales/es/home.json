@@ -1,0 +1,33 @@
+{
+  "lastTested": "Última prueba: {{date}}",
+  "tests": {
+    "visualAcuity": {
+      "title": "Prueba de Agudeza Visual",
+      "description": "Evalúe qué tan claramente puede ver a distancia"
+    },
+    "colorVision": {
+      "title": "Prueba de Visión de Colores",
+      "description": "Detecte deficiencias en la visión de colores"
+    },
+    "contrastSensitivity": {
+      "title": "Sensibilidad al Contraste",
+      "description": "Prueba de letras Pelli-Robson"
+    },
+    "amslerGrid": {
+      "title": "Rejilla de Amsler",
+      "description": "Evaluación de degeneración macular"
+    },
+    "eyePhoto": {
+      "title": "Análisis de Foto del Ojo",
+      "description": "Análisis con IA de su foto ocular"
+    },
+    "viewResults": {
+      "title": "Ver Resultados",
+      "description": "Vea su resumen de salud ocular"
+    }
+  },
+  "footer": {
+    "builtFor": "Desarrollado solo con fines educativos",
+    "version": "VisionCheck AI v1.0 | No destinado para diagnóstico médico"
+  }
+}

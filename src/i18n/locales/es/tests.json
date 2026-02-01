@@ -1,0 +1,169 @@
+{
+  "visualAcuity": {
+    "title": "Prueba de Agudeza Visual",
+    "instructions": {
+      "title": "Instrucciones:",
+      "step1": "Cubra su ojo {{otherEye}} con la mano",
+      "step2": "Observe la letra \"E\" en la pantalla",
+      "step3": "Toque el botón de flecha que indica hacia dónde apunta la E",
+      "step4": "La E se hará más pequeña a medida que avance",
+      "note": "Mantenga su dispositivo a la distancia del brazo (~40cm) para obtener resultados precisos"
+    },
+    "question": "¿Hacia qué dirección apunta la E?",
+    "results": {
+      "title": "¡Prueba Completada!",
+      "yourScore": "Su Puntuación",
+      "snellenScore": "Puntuación Snellen",
+      "whatThisMeans": "¿Qué significa esto?",
+      "referenceScale": "Escala de Referencia:",
+      "better": "Mejor",
+      "normal": "Normal",
+      "lower": "Menor"
+    },
+    "explanations": {
+      "20/10": { "label": "Visión excepcional", "description": "Mejor que el promedio: puede ver a 6 metros lo que la mayoría ve a 3 metros" },
+      "20/13": { "label": "Visión excelente", "description": "Agudeza visual significativamente superior al promedio" },
+      "20/16": { "label": "Visión muy buena", "description": "Nitidez superior al promedio" },
+      "20/20": { "label": "Visión normal", "description": "Agudeza visual estándar, sin preocupaciones" },
+      "20/25": { "label": "Casi normal", "description": "Ligeramente por debajo del promedio pero generalmente aceptable" },
+      "20/32": { "label": "Reducción leve", "description": "Podría beneficiarse de lentes correctivos" },
+      "20/40": { "label": "Reducción moderada", "description": "Se recomiendan lentes correctivos" },
+      "20/50": { "label": "Por debajo del promedio", "description": "Considere un examen ocular" },
+      "20/70": { "label": "Visión deficiente", "description": "Se recomienda un examen ocular" },
+      "20/100": { "label": "Baja visión", "description": "Por favor consulte a un profesional de la salud visual" },
+      "20/200": { "label": "Visión muy baja", "description": "Por favor consulte a un profesional de la salud visual pronto" }
+    }
+  },
+  "colorVision": {
+    "title": "Prueba de Visión de Colores",
+    "subtitle": "Detección de deficiencias en la visión de colores",
+    "instructions": {
+      "title": "Instrucciones:",
+      "step1": "Observe el patrón de círculos de colores",
+      "step2": "Escriba el número que ve oculto en los puntos",
+      "step3": "Si no puede ver un número, escriba \"0\" o déjelo en blanco",
+      "step4": "Complete todas las láminas para obtener su resultado",
+      "note": "Asegúrese de que el brillo de su pantalla esté al máximo"
+    },
+    "question": "¿Qué número ve?",
+    "inputPlaceholder": "Ingrese el número",
+    "plateOf": "Lámina {{current}} de {{total}}",
+    "results": {
+      "title": "¡Prueba Completada!",
+      "score": "{{correct}} de {{total}} correctas",
+      "status": {
+        "normal": "Visión de colores normal",
+        "mild": "Dificultad leve en visión de colores",
+        "moderate": "Dificultad moderada en visión de colores",
+        "significant": "Dificultad significativa en visión de colores"
+      }
+    }
+  },
+  "contrastSensitivity": {
+    "title": "Prueba de Sensibilidad al Contraste",
+    "subtitle": "Evaluando su ojo {{eye}}",
+    "instructions": {
+      "title": "Instrucciones:",
+      "step1": "Cubra su ojo {{otherEye}} con la mano",
+      "step2": "Observe la letra que aparece en pantalla",
+      "step3": "Escriba la letra que ve usando el teclado",
+      "step4": "Las letras se desvanecerán a medida que avance para evaluar la sensibilidad",
+      "note": "Asegúrese de que el brillo de su pantalla sea constante"
+    },
+    "question": "¿Qué letra ve?",
+    "inputPlaceholder": "Ingrese la letra",
+    "levelUp": "¡Subió de nivel! La letra ahora es más tenue.",
+    "results": {
+      "title": "¡Prueba Completada!",
+      "logCS": "Log CS",
+      "interpretations": {
+        "excellent": { "label": "Excelente", "description": "Sensibilidad al contraste superior al promedio" },
+        "normal": { "label": "Normal", "description": "Sensibilidad al contraste típica" },
+        "mild": { "label": "Levemente reducida", "description": "Ligeramente por debajo de lo normal" },
+        "moderate": { "label": "Moderadamente reducida", "description": "Puede afectar las actividades diarias" },
+        "significant": { "label": "Significativamente reducida", "description": "Por favor consulte a un profesional de la salud visual" }
+      }
+    }
+  },
+  "amslerGrid": {
+    "title": "Prueba de Rejilla de Amsler",
+    "subtitle": "Evaluando su ojo {{eye}}",
+    "instructions": {
+      "title": "Instrucciones:",
+      "step1": "Cubra su ojo {{otherEye}} con la mano",
+      "step2": "Enfoque en el punto rojo en el centro de la rejilla",
+      "step3": "Mantenga el enfoque en el punto mientras responde las preguntas",
+      "step4": "Responda honestamente sobre lo que ve",
+      "note": "Mantenga su dispositivo a distancia de lectura (~30cm)"
+    },
+    "focusPrompt": "Enfoque en el punto rojo en el centro",
+    "questions": {
+      "allLines": "¿Todas las líneas son rectas?",
+      "missingAreas": "¿Hay áreas faltantes o borrosas?",
+      "wavyLines": "¿Alguna línea parece ondulada o distorsionada?",
+      "darkSpots": "¿Ve puntos oscuros o huecos?"
+    },
+    "answers": {
+      "yes": "Sí",
+      "no": "No"
+    },
+    "results": {
+      "title": "¡Prueba Completada!",
+      "normal": "No se detectaron distorsiones visuales",
+      "normalDescription": "Su visión central parece saludable para este ojo.",
+      "concerns": "Se detectaron algunas anomalías visuales",
+      "concernsDescription": "Por favor considere consultar a un profesional de la salud visual para un examen completo."
+    }
+  },
+  "eyePhoto": {
+    "title": "Análisis de Foto del Ojo",
+    "subtitle": "Analice su foto ocular con IA",
+    "instructions": {
+      "title": "Para mejores resultados:",
+      "step1": "Use buena iluminación - mire hacia una ventana o fuente de luz",
+      "step2": "Mantenga su ojo bien abierto",
+      "step3": "Mire directamente a la cámara",
+      "step4": "Manténgase firme y toque para capturar"
+    },
+    "actions": {
+      "takePhoto": "Tomar Foto",
+      "uploadPhoto": "Subir Foto",
+      "retakePhoto": "Tomar Otra Foto",
+      "analyzeWithAI": "Analizar con IA"
+    },
+    "status": {
+      "analyzing": "Analizando su foto...",
+      "complete": "Análisis Completado"
+    },
+    "apiKeyPrompt": "Ingrese su clave API de OpenAI para analizar",
+    "disclaimer": "El análisis con IA es solo para fines educativos y no puede diagnosticar condiciones."
+  },
+  "onboarding": {
+    "steps": {
+      "welcome": {
+        "title": "Bienvenido a VisionCheck AI",
+        "description": "Una forma rápida de evaluar su salud ocular desde su teléfono."
+      },
+      "visualAcuity": {
+        "title": "Prueba de Agudeza Visual",
+        "description": "Evalúe qué tan claramente puede ver en diferentes tamaños usando la tabla de la E."
+      },
+      "colorVision": {
+        "title": "Prueba de Visión de Colores",
+        "description": "Detecte daltonismo usando láminas estilo Ishihara."
+      },
+      "contrastSensitivity": {
+        "title": "Sensibilidad al Contraste",
+        "description": "Evalúe su capacidad para distinguir letras tenues del fondo."
+      },
+      "amslerGrid": {
+        "title": "Prueba de Rejilla de Amsler",
+        "description": "Detecte degeneración macular verificando distorsiones visuales."
+      },
+      "disclaimer": {
+        "title": "Nota Importante",
+        "description": "Esta aplicación es solo para evaluación, no un diagnóstico médico. Siempre consulte a un profesional de la salud visual."
+      }
+    }
+  }
+}
