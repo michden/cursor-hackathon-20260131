@@ -113,7 +113,7 @@ function PeripheralTestArea({ onDotDetected, isActive, onTestComplete }) {
         setCurrentDotIndex(prev => prev + 1)
       }
     }, TEST_CONFIG.responseWindow)
-  }, [currentDotIndex, results, onTestComplete, dotVisible])
+  }, [currentDotIndex, results, onTestComplete])
 
   // Start the test
   useEffect(() => {
