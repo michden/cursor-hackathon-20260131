@@ -6,6 +6,7 @@ import PeripheralVisionTest from './PeripheralVisionTest'
 import { TestResultsProvider } from '../context/TestResultsContext'
 import { TTSSettingsProvider } from '../context/TTSSettingsContext'
 import { LanguageProvider } from '../context/LanguageContext'
+import { ConsentProvider } from '../context/ConsentContext'
 import i18n from '../i18n'
 
 // Mock the navigate function
@@ -25,6 +26,7 @@ beforeEach(async () => {
   vi.spyOn(window.HTMLMediaElement.prototype, 'load').mockImplementation(() => {})
   
   localStorage.clear()
+  localStorage.setItem('visioncheck-consent', JSON.stringify({ hasConsented: true, consentGiven: true }))
   mockNavigate.mockClear()
   await i18n.changeLanguage('en')
   
@@ -43,9 +45,11 @@ function renderWithProviders(ui) {
       <I18nextProvider i18n={i18n}>
         <LanguageProvider>
           <TTSSettingsProvider>
-            <TestResultsProvider>
-              {ui}
-            </TestResultsProvider>
+            <ConsentProvider>
+              <TestResultsProvider>
+                {ui}
+              </TestResultsProvider>
+            </ConsentProvider>
           </TTSSettingsProvider>
         </LanguageProvider>
       </I18nextProvider>

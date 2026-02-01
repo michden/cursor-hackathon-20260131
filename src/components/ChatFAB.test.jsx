@@ -5,20 +5,24 @@ import { MemoryRouter } from 'react-router-dom'
 import ChatFAB from './ChatFAB'
 import { ChatProvider, useChat } from '../context/ChatContext'
 import { TestResultsProvider } from '../context/TestResultsContext'
+import { ConsentProvider } from '../context/ConsentContext'
 
 // Mock the sendChatMessage API
 vi.mock('../api/openai', () => ({
-  sendChatMessage: vi.fn()
+  sendChatMessage: vi.fn(),
+  checkApiHealth: vi.fn().mockResolvedValue({ status: 'ok', apiKeyConfigured: true })
 }))
 
 function renderWithProviders(ui, { route = '/' } = {}) {
   return render(
     <MemoryRouter initialEntries={[route]}>
-      <TestResultsProvider>
-        <ChatProvider>
-          {ui}
-        </ChatProvider>
-      </TestResultsProvider>
+      <ConsentProvider>
+        <TestResultsProvider>
+          <ChatProvider>
+            {ui}
+          </ChatProvider>
+        </TestResultsProvider>
+      </ConsentProvider>
     </MemoryRouter>
   )
 }
@@ -39,6 +43,7 @@ describe('ChatFAB', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     localStorage.clear()
+    localStorage.setItem('visioncheck-consent', JSON.stringify({ hasConsented: true, consentGiven: true }))
   })
 
   afterEach(() => {

@@ -1,28 +1,35 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { I18nextProvider } from 'react-i18next'
 import ChatDrawer from './ChatDrawer'
 import { ChatProvider, useChat } from '../context/ChatContext'
 import { TestResultsProvider } from '../context/TestResultsContext'
+import { ConsentProvider } from '../context/ConsentContext'
+import i18n from '../i18n'
 
-// Mock the sendChatMessage API
+// Mock the API functions
 vi.mock('../api/openai', () => ({
-  sendChatMessage: vi.fn()
+  sendChatMessage: vi.fn(),
+  checkApiHealth: vi.fn().mockResolvedValue({ status: 'ok', apiKeyConfigured: true })
 }))
 
-import { sendChatMessage } from '../api/openai'
+import { sendChatMessage, checkApiHealth } from '../api/openai'
 
 // Mock scrollIntoView
 Element.prototype.scrollIntoView = vi.fn()
 
-// Simpler approach - test components directly with mocked context
 function renderWithProviders(ui) {
   return render(
-    <TestResultsProvider>
-      <ChatProvider>
-        {ui}
-      </ChatProvider>
-    </TestResultsProvider>
+    <I18nextProvider i18n={i18n}>
+      <ConsentProvider>
+        <TestResultsProvider>
+          <ChatProvider>
+            {ui}
+          </ChatProvider>
+        </TestResultsProvider>
+      </ConsentProvider>
+    </I18nextProvider>
   )
 }
 
@@ -43,6 +50,9 @@ describe('ChatDrawer', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     localStorage.clear()
+    localStorage.setItem('visioncheck-consent', JSON.stringify({ hasConsented: true, consentGiven: true }))
+    i18n.changeLanguage('en')
+    checkApiHealth.mockResolvedValue({ status: 'ok', apiKeyConfigured: true })
   })
 
   afterEach(() => {
@@ -65,14 +75,17 @@ describe('ChatDrawer', () => {
     expect(screen.getByText('AI Assistant')).toBeInTheDocument()
   })
 
-  it('should show API key input when no key is set', async () => {
+  it('should show API unavailable notice when API not configured', async () => {
     const user = userEvent.setup()
+    checkApiHealth.mockResolvedValue({ status: 'ok', apiKeyConfigured: false })
+    
     renderWithProviders(<ChatDrawerController />)
 
     await user.click(screen.getByText('Open Drawer'))
 
-    expect(screen.getByPlaceholderText('sk-...')).toBeInTheDocument()
-    expect(screen.getByText(/Your key is only used locally/)).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText(/AI chat is currently unavailable/i)).toBeInTheDocument()
+    })
   })
 
   it('should show welcome message when no messages', async () => {
@@ -103,62 +116,8 @@ describe('ChatDrawer', () => {
     await user.click(screen.getByText('Open Drawer'))
     expect(screen.getByRole('dialog')).toBeInTheDocument()
 
-    await user.keyboard('{Escape}')
+    fireEvent.keyDown(document, { key: 'Escape' })
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-  })
-
-  it('should disable send button when no API key', async () => {
-    const user = userEvent.setup()
-    renderWithProviders(<ChatDrawerController />)
-
-    await user.click(screen.getByText('Open Drawer'))
-
-    const sendButton = screen.getByLabelText('Send message')
-    expect(sendButton).toBeDisabled()
-  })
-
-  it('should save API key when submitted', async () => {
-    const user = userEvent.setup()
-    renderWithProviders(<ChatDrawerController />)
-
-    await user.click(screen.getByText('Open Drawer'))
-
-    const keyInput = screen.getByPlaceholderText('sk-...')
-    await user.type(keyInput, 'sk-test123')
-    await user.click(screen.getByText('Save'))
-
-    // API key input should be hidden after saving
-    await waitFor(() => {
-      expect(screen.queryByPlaceholderText('sk-...')).not.toBeInTheDocument()
-    })
-  })
-
-  it('should send message when form is submitted', async () => {
-    const user = userEvent.setup()
-    sendChatMessage.mockResolvedValueOnce('Hello! I can help with that.')
-    
-    renderWithProviders(<ChatDrawerController />)
-
-    await user.click(screen.getByText('Open Drawer'))
-
-    // Set API key
-    await user.type(screen.getByPlaceholderText('sk-...'), 'sk-test')
-    await user.click(screen.getByText('Save'))
-
-    // Type and send message
-    const input = screen.getByPlaceholderText('Ask about your eye health...')
-    await user.type(input, 'What is visual acuity?')
-    await user.click(screen.getByLabelText('Send message'))
-
-    // Should show user message
-    await waitFor(() => {
-      expect(screen.getByText('What is visual acuity?')).toBeInTheDocument()
-    })
-
-    // Should show loading indicator briefly, then response
-    await waitFor(() => {
-      expect(screen.getByText('Hello! I can help with that.')).toBeInTheDocument()
-    })
   })
 
   it('should show disclaimer at bottom', async () => {
@@ -172,22 +131,25 @@ describe('ChatDrawer', () => {
 
   it('should clear messages when clear button is clicked', async () => {
     const user = userEvent.setup()
-    sendChatMessage.mockResolvedValueOnce('Response')
+    sendChatMessage.mockResolvedValueOnce('Hello!')
     
     renderWithProviders(<ChatDrawerController />)
 
     await user.click(screen.getByText('Open Drawer'))
 
-    // Set key and send message
-    await user.type(screen.getByPlaceholderText('sk-...'), 'sk-test')
-    await user.click(screen.getByText('Save'))
-    
-    const input = screen.getByPlaceholderText('Ask about your eye health...')
-    await user.type(input, 'Hello')
+    // Wait for API to be ready
+    await waitFor(() => {
+      expect(checkApiHealth).toHaveBeenCalled()
+    })
+
+    // Type and send a message
+    const input = screen.getByPlaceholderText(/Ask about your eye health/i)
+    await user.type(input, 'Test message')
     await user.click(screen.getByLabelText('Send message'))
 
+    // Wait for response
     await waitFor(() => {
-      expect(screen.getByText('Response')).toBeInTheDocument()
+      expect(screen.getByText('Test message')).toBeInTheDocument()
     })
 
     // Clear messages

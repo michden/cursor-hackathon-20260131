@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { I18nextProvider } from 'react-i18next'
 import HealthSnapshot from './HealthSnapshot'
 import { TestResultsProvider } from '../context/TestResultsContext'
+import { ConsentProvider } from '../context/ConsentContext'
 import i18n from '../i18n'
 
 // Mock html2pdf to avoid issues in test environment
@@ -16,6 +17,7 @@ vi.mock('html2pdf.js', () => ({
 // Clear localStorage before each test
 beforeEach(() => {
   localStorage.clear()
+  localStorage.setItem('visioncheck-consent', JSON.stringify({ hasConsented: true, consentGiven: true }))
   i18n.changeLanguage('en')
 })
 
@@ -23,9 +25,11 @@ function renderWithProviders(ui) {
   return render(
     <I18nextProvider i18n={i18n}>
       <MemoryRouter>
-        <TestResultsProvider>
-          {ui}
-        </TestResultsProvider>
+        <ConsentProvider>
+          <TestResultsProvider>
+            {ui}
+          </TestResultsProvider>
+        </ConsentProvider>
       </MemoryRouter>
     </I18nextProvider>
   )

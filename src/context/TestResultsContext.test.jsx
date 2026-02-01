@@ -1,11 +1,23 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, act } from '@testing-library/react'
 import { TestResultsProvider, useTestResults } from './TestResultsContext'
+import { ConsentProvider } from './ConsentContext'
 
 // Clear localStorage before each test to prevent state bleeding
 beforeEach(() => {
   localStorage.clear()
+  // Set up consent by default so tests can run with persistence enabled
+  localStorage.setItem('visioncheck-consent', JSON.stringify({ hasConsented: true, consentGiven: true }))
 })
+
+// Helper to render with all required providers
+function renderWithProviders(ui) {
+  return render(
+    <ConsentProvider>
+      {ui}
+    </ConsentProvider>
+  )
+}
 
 // Test component that exposes context values (updated for per-eye structure)
 function TestConsumer({ onMount }) {
@@ -35,7 +47,7 @@ function TestConsumer({ onMount }) {
 
 describe('TestResultsContext', () => {
   it('provides initial empty state', () => {
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer />
       </TestResultsProvider>
@@ -50,7 +62,7 @@ describe('TestResultsContext', () => {
   it('updates visual acuity results for left eye', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
@@ -67,7 +79,7 @@ describe('TestResultsContext', () => {
   it('updates visual acuity results for right eye', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
@@ -84,7 +96,7 @@ describe('TestResultsContext', () => {
   it('updates color vision results', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
@@ -101,7 +113,7 @@ describe('TestResultsContext', () => {
   it('updates eye photo results', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
@@ -118,7 +130,7 @@ describe('TestResultsContext', () => {
   it('clears all results', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
@@ -154,7 +166,7 @@ describe('TestResultsContext', () => {
   it('updates contrast sensitivity results for left eye', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
@@ -171,7 +183,7 @@ describe('TestResultsContext', () => {
   it('saves contrast sensitivity only session to history', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
@@ -197,7 +209,7 @@ describe('TestResultsContext', () => {
   it('includes contrast sensitivity data in history session', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
@@ -224,7 +236,7 @@ describe('TestResultsContext', () => {
   it('does not save to history when no results exist', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
@@ -240,7 +252,7 @@ describe('TestResultsContext', () => {
   it('updates Amsler grid results for left eye', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
@@ -261,7 +273,7 @@ describe('TestResultsContext', () => {
   it('updates Amsler grid with concerns for right eye', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
@@ -282,7 +294,7 @@ describe('TestResultsContext', () => {
   it('saves Amsler grid only session to history', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
@@ -311,7 +323,7 @@ describe('TestResultsContext', () => {
   it('includes Amsler grid data in history session with other tests', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
@@ -341,7 +353,7 @@ describe('TestResultsContext', () => {
   it('clears Amsler grid results', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
@@ -368,7 +380,7 @@ describe('TestResultsContext', () => {
   it('updates both eyes independently', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
@@ -386,7 +398,7 @@ describe('TestResultsContext', () => {
   it('saves eye-photo-only session to history', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
@@ -419,7 +431,7 @@ describe('TestResultsContext', () => {
   it('includes eye photo data in history session with other tests', () => {
     let contextRef
     
-    render(
+    renderWithProviders(
       <TestResultsProvider>
         <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
       </TestResultsProvider>
