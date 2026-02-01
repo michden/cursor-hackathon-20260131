@@ -1561,6 +1561,41 @@ export default function HealthSnapshot() {
           <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4">
             <p className="text-slate-600 dark:text-slate-300">{getRecommendation()}</p>
           </div>
+          
+          {/* Find Eye Doctor Button - shown when concerning results detected */}
+          {(() => {
+            // Check for concerning results that warrant professional evaluation
+            const vaLeft = results.visualAcuity?.left
+            const vaRight = results.visualAcuity?.right
+            const hasVAConcern = (vaLeft && vaLeft.level < 8) || (vaRight && vaRight.level < 8)
+            
+            const hasColorConcern = results.colorVision && results.colorVision.status !== 'normal'
+            
+            const csLeft = results.contrastSensitivity?.left
+            const csRight = results.contrastSensitivity?.right
+            const hasCSConcern = (csLeft && csLeft.logCS < 0.9) || (csRight && csRight.logCS < 0.9)
+            
+            const amslerLeft = results.amslerGrid?.left
+            const amslerRight = results.amslerGrid?.right
+            const hasAmslerConcern = amslerLeft?.hasIssues || amslerRight?.hasIssues
+            
+            const astigLeft = results.astigmatism?.left
+            const astigRight = results.astigmatism?.right
+            const hasAstigConcern = (astigLeft && !astigLeft.allLinesEqual) || (astigRight && !astigRight.allLinesEqual)
+            
+            const pvLeft = results.peripheralVision?.left
+            const pvRight = results.peripheralVision?.right
+            const isNormal = (eyeData) => eyeData?.severity === 'excellent' || eyeData?.severity === 'normal'
+            const hasPVConcern = (pvLeft && !isNormal(pvLeft)) || (pvRight && !isNormal(pvRight))
+            
+            const showFindDoctor = hasVAConcern || hasColorConcern || hasCSConcern || hasAmslerConcern || hasAstigConcern || hasPVConcern
+            
+            return showFindDoctor ? (
+              <div className="mt-4">
+                <FindDoctorButton />
+              </div>
+            ) : null
+          })()}
         </section>
 
         {/* Section: Your Actions */}
@@ -1602,37 +1637,6 @@ export default function HealthSnapshot() {
             >
               <span>📊</span> {t('results:actions.saveToHistory')}
             </button>
-
-            {/* Find Eye Doctor Button - shown when concerning results detected */}
-            {(() => {
-              // Check for concerning results that warrant professional evaluation
-              const vaLeft = results.visualAcuity?.left
-              const vaRight = results.visualAcuity?.right
-              const hasVAConcern = (vaLeft && vaLeft.level < 8) || (vaRight && vaRight.level < 8)
-              
-              const hasColorConcern = results.colorVision && results.colorVision.status !== 'normal'
-              
-              const csLeft = results.contrastSensitivity?.left
-              const csRight = results.contrastSensitivity?.right
-              const hasCSConcern = (csLeft && csLeft.logCS < 0.9) || (csRight && csRight.logCS < 0.9)
-              
-              const amslerLeft = results.amslerGrid?.left
-              const amslerRight = results.amslerGrid?.right
-              const hasAmslerConcern = amslerLeft?.hasIssues || amslerRight?.hasIssues
-              
-              const astigLeft = results.astigmatism?.left
-              const astigRight = results.astigmatism?.right
-              const hasAstigConcern = (astigLeft && !astigLeft.allLinesEqual) || (astigRight && !astigRight.allLinesEqual)
-              
-              const pvLeft = results.peripheralVision?.left
-              const pvRight = results.peripheralVision?.right
-              const isNormal = (eyeData) => eyeData?.severity === 'excellent' || eyeData?.severity === 'normal'
-              const hasPVConcern = (pvLeft && !isNormal(pvLeft)) || (pvRight && !isNormal(pvRight))
-              
-              const showFindDoctor = hasVAConcern || hasColorConcern || hasCSConcern || hasAmslerConcern || hasAstigConcern || hasPVConcern
-              
-              return showFindDoctor ? <FindDoctorButton /> : null
-            })()}
             
             <Link
               to="/"
