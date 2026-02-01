@@ -431,7 +431,7 @@ export function TestResultsProvider({ children }) {
       }
     }
     
-    // All tests completed (now includes astigmatism and peripheral vision - 6 tests total)
+    // All core vision tests completed (now includes astigmatism and peripheral vision - 6 tests total; eyePhoto is not required)
     if (!achievements['all-tests'] && hasVisualAcuity && hasColorVision && hasContrastSensitivity && hasAmslerGrid && hasAstigmatism && hasPeripheralVision) {
       if (unlockAchievement('all-tests')) {
         newlyUnlocked.push('all-tests')
