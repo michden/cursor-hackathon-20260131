@@ -4,8 +4,11 @@ import { Link } from 'react-router-dom'
 /**
  * Privacy Policy page component.
  * Displays the app's privacy policy with i18n support.
+ * 
+ * Note: File renamed from PrivacyPolicy.jsx to LegalInfo.jsx to avoid
+ * being blocked by ad blockers that filter URLs containing "privacy".
  */
-export default function PrivacyPolicy() {
+export default function LegalInfo() {
   const { t } = useTranslation('legal')
   const lastUpdated = new Date().toLocaleDateString()
 

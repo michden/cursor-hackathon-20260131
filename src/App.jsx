@@ -21,7 +21,7 @@ import ContrastSensitivityTest from './pages/ContrastSensitivityTest'
 import AmslerGridTest from './pages/AmslerGridTest'
 import AstigmatismTest from './pages/AstigmatismTest'
 import PeripheralVisionTest from './pages/PeripheralVisionTest'
-import PrivacyPolicy from './pages/PrivacyPolicy'
+import LegalInfo from './pages/LegalInfo'
 import TermsOfService from './pages/TermsOfService'
 import DataSettings from './pages/DataSettings'
 
@@ -78,7 +78,7 @@ function App() {
                         <Route path="/astigmatism" element={<AstigmatismTest />} />
                         <Route path="/peripheral-vision" element={<PeripheralVisionTest />} />
                         <Route path="/results" element={<HealthSnapshot />} />
-                        <Route path="/privacy" element={<PrivacyPolicy />} />
+                        <Route path="/privacy" element={<LegalInfo />} />
                         <Route path="/terms" element={<TermsOfService />} />
                         <Route path="/settings/data" element={<DataSettings />} />
                       </Routes>
