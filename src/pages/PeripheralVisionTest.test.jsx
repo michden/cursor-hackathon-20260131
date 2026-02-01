@@ -257,7 +257,7 @@ describe('PeripheralVisionTest translations', () => {
     renderWithProviders(<PeripheralVisionTest />)
     
     await waitFor(() => {
-      expect(screen.getByText('Peripheres Sehtest')).toBeInTheDocument()
+      expect(screen.getByText('Peripherer Sehtest')).toBeInTheDocument()
     })
   })
 })

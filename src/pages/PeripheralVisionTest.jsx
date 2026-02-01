@@ -73,6 +73,7 @@ function PeripheralTestArea({ onDotDetected, isActive, onTestComplete }) {
   const dotTimeoutRef = useRef(null)
   const nextDotTimeoutRef = useRef(null)
   const dotAppearTimeRef = useRef(null)
+  const detectedRef = useRef(false)
 
   // Clean up timeouts on unmount
   useEffect(() => {
@@ -93,12 +94,14 @@ function PeripheralTestArea({ onDotDetected, isActive, onTestComplete }) {
     const position = getRandomPeripheralPosition(rect.width, rect.height)
     
     setDotPosition(position)
+    detectedRef.current = false
     setDotVisible(true)
     dotAppearTimeRef.current = Date.now()
 
     // Hide dot after duration (missed if not clicked)
     dotTimeoutRef.current = setTimeout(() => {
-      if (dotVisible) {
+      // Check the ref instead of stale dotVisible state
+      if (!detectedRef.current) {
         // Dot was missed
         setResults(prev => [...prev, { 
           dotIndex: currentDotIndex,
@@ -133,6 +136,9 @@ function PeripheralTestArea({ onDotDetected, isActive, onTestComplete }) {
     if (!dotVisible || !isActive) return
 
     const reactionTime = Date.now() - dotAppearTimeRef.current
+    
+    // Mark as detected via ref to prevent stale closure issues
+    detectedRef.current = true
     
     // Clear the timeout since we detected the dot
     if (dotTimeoutRef.current) {
