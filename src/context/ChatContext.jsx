@@ -1,10 +1,12 @@
 import { createContext, useContext, useState, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { sendChatMessage } from '../api/openai'
 import { useTestResults } from './TestResultsContext'
 
 const ChatContext = createContext(null)
 
 export function ChatProvider({ children }) {
+  const { i18n } = useTranslation()
   const [messages, setMessages] = useState([])
   const [isOpen, setIsOpen] = useState(false)
   const [apiKey, setApiKey] = useState('')
@@ -50,7 +52,7 @@ export function ChatProvider({ children }) {
     setIsLoading(true)
 
     try {
-      const response = await sendChatMessage(newMessages, results, apiKey)
+      const response = await sendChatMessage(newMessages, results, apiKey, i18n.language)
       const assistantMessage = { role: 'assistant', content: response }
       setMessages(prev => [...prev, assistantMessage])
     } catch (err) {
@@ -61,7 +63,7 @@ export function ChatProvider({ children }) {
     } finally {
       setIsLoading(false)
     }
-  }, [messages, apiKey, results])
+  }, [messages, apiKey, results, i18n.language])
 
   const value = {
     messages,

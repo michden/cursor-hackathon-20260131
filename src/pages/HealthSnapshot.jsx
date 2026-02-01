@@ -2,24 +2,45 @@ import { useRef, useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import html2pdf from 'html2pdf.js'
 import ReactMarkdown from 'react-markdown'
+import { useTranslation } from 'react-i18next'
 import { useTestResults } from '../context/TestResultsContext'
 import AchievementBadge, { ACHIEVEMENTS } from '../components/AchievementBadge'
 import Celebration from '../components/Celebration'
 import FindDoctorButton from '../components/FindDoctorButton'
 
-function ResultCard({ title, icon, status, children, color = 'sky' }) {
+/**
+ * Render a styled result card containing an icon, title, status pill, and arbitrary content.
+ *
+ * @param {{title: string, icon: import('react').ReactNode, status: 'complete'|'pending'|'warning', children?: import('react').ReactNode, color?: 'sky'|'emerald'|'violet'|'amber'|'purple'|'teal'|'fuchsia', t: (key: string) => string}} props - Component props.
+ * @param {string} props.title - Visible card title.
+ * @param {React.ReactNode} props.icon - Icon displayed to the left of the title.
+ * @param {'complete'|'pending'|'warning'} props.status - Status key used to derive the status label and its styling.
+ * @param {React.ReactNode} [props.children] - Card body content.
+ * @param {'sky'|'emerald'|'violet'|'amber'|'purple'|'teal'|'fuchsia'} [props.color='sky'] - Color theme for the card background/border.
+ * @param {(key: string) => string} props.t - Translation function used to localize the status text.
+ * @returns {JSX.Element} The rendered result card element.
+ */
+function ResultCard({ title, icon, status, children, color = 'sky', t }) {
   const colorClasses = {
     sky: 'bg-sky-50 border-sky-200',
     emerald: 'bg-emerald-50 border-emerald-200',
     violet: 'bg-violet-50 border-violet-200',
     amber: 'bg-amber-50 border-amber-200',
     purple: 'bg-purple-50 border-purple-200',
+    teal: 'bg-teal-50 border-teal-200',
+    fuchsia: 'bg-fuchsia-50 border-fuchsia-200',
   }
 
   const statusColors = {
     complete: 'text-emerald-600 bg-emerald-100',
     pending: 'text-slate-500 bg-slate-100',
     warning: 'text-amber-600 bg-amber-100',
+  }
+
+  const statusText = {
+    complete: t('status.complete'),
+    pending: t('status.notDone'),
+    warning: t('status.review'),
   }
 
   return (
@@ -30,7 +51,7 @@ function ResultCard({ title, icon, status, children, color = 'sky' }) {
           <h3 className="font-semibold text-slate-800">{title}</h3>
         </div>
         <span className={`text-xs font-medium px-2 py-1 rounded-full ${statusColors[status]}`}>
-          {status === 'complete' ? 'Complete' : status === 'warning' ? 'Review' : 'Not Done'}
+          {statusText[status]}
         </span>
       </div>
       {children}
@@ -38,7 +59,22 @@ function ResultCard({ title, icon, status, children, color = 'sky' }) {
   )
 }
 
-function VisualAcuityResult({ data }) {
+/**
+ * Render visual acuity results for left and right eyes, showing Snellen values, level info, and an asymmetry warning when applicable.
+ *
+ * @param {Object} data - Results container for visual acuity.
+ * @param {Object} [data.left] - Left eye result, if available.
+ * @param {string} data.left.snellen - Snellen notation for the left eye (e.g., "20/20").
+ * @param {number} data.left.level - Numeric acuity level for the left eye.
+ * @param {number} data.left.maxLevel - Maximum possible level for the left eye test.
+ * @param {Object} [data.right] - Right eye result, if available.
+ * @param {string} data.right.snellen - Snellen notation for the right eye.
+ * @param {number} data.right.level - Numeric acuity level for the right eye.
+ * @param {number} data.right.maxLevel - Maximum possible level for the right eye test.
+ *
+ * @returns {JSX.Element} A React element that displays per-eye Snellen and level information when present; if neither eye has results, renders a localized no-results message. If both eyes are present and their level difference is 2 or greater, includes a follow-up/asymmetry warning.
+ */
+function VisualAcuityResult({ data, t }) {
   const hasLeft = data?.left
   const hasRight = data?.right
   const hasAny = hasLeft || hasRight
@@ -46,16 +82,16 @@ function VisualAcuityResult({ data }) {
   if (!hasAny) {
     return (
       <p className="text-sm text-slate-500">
-        Complete the visual acuity test to see results.
+        {t('results:noResults.description')}
       </p>
     )
   }
 
   const getStatusMessage = (level) => {
     if (!level && level !== 0) return null
-    if (level >= 8) return { text: '✓ Normal', color: 'emerald' }
-    if (level >= 5) return { text: 'Consider exam', color: 'amber' }
-    return { text: 'Recommend eval', color: 'red' }
+    if (level >= 8) return { text: `✓ ${t('results:status.normal')}`, color: 'emerald' }
+    if (level >= 5) return { text: t('results:recommendations.followUp'), color: 'amber' }
+    return { text: t('results:recommendations.seeDoctor'), color: 'red' }
   }
 
   // Check for asymmetry
@@ -66,7 +102,7 @@ function VisualAcuityResult({ data }) {
       <div className="grid grid-cols-2 gap-4">
         {/* Left Eye */}
         <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">Left Eye</div>
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.leftEye')}</div>
           <div className="text-2xl font-bold text-sky-600">
             {hasLeft ? data.left.snellen : '—'}
           </div>
@@ -79,7 +115,7 @@ function VisualAcuityResult({ data }) {
         
         {/* Right Eye */}
         <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">Right Eye</div>
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.rightEye')}</div>
           <div className="text-2xl font-bold text-sky-600">
             {hasRight ? data.right.snellen : '—'}
           </div>
@@ -91,33 +127,27 @@ function VisualAcuityResult({ data }) {
         </div>
       </div>
 
-      {/* Status messages */}
-      {hasLeft && getStatusMessage(data.left.level) && (
-        <p className={`text-sm text-${getStatusMessage(data.left.level).color}-600`}>
-          Left: {getStatusMessage(data.left.level).text}
-        </p>
-      )}
-      {hasRight && getStatusMessage(data.right.level) && (
-        <p className={`text-sm text-${getStatusMessage(data.right.level).color}-600`}>
-          Right: {getStatusMessage(data.right.level).text}
-        </p>
-      )}
-
       {/* Asymmetry warning */}
       {hasAsymmetry && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
-          ⚠️ Notable difference between eyes detected. Consider a professional evaluation.
+          ⚠️ {t('results:recommendations.followUp')}
         </div>
       )}
     </div>
   )
 }
 
-function ColorVisionResult({ data }) {
+/**
+ * Render color vision test results including the score and a localized status line.
+ *
+ * @param {{correctCount: number, totalPlates: number, status: 'normal' | 'mild_difficulty' | 'possible_deficiency'} | null | undefined} data - The color vision result data; when falsy a localized "no results" description is displayed.
+ * @returns {JSX.Element} A React element showing the correct/total plate score and a colored status message reflecting the test outcome.
+ */
+function ColorVisionResult({ data, t }) {
   if (!data) {
     return (
       <p className="text-sm text-slate-500">
-        Complete the color vision test to see results.
+        {t('results:noResults.description')}
       </p>
     )
   }
@@ -128,25 +158,28 @@ function ColorVisionResult({ data }) {
         <span className="text-3xl font-bold text-emerald-600">
           {data.correctCount}/{data.totalPlates}
         </span>
-        <span className="text-sm text-slate-500">plates correct</span>
+        <span className="text-sm text-slate-500">{t('tests:colorVision.results.score', { correct: '', total: '' }).replace('/', '').trim()}</span>
       </div>
-      <p className="text-sm text-slate-600">
-        Red-green plates: {data.redGreenCorrect}/{data.redGreenTotal}
-      </p>
       {data.status === 'normal' && (
-        <p className="text-sm text-emerald-600">✓ Normal color vision likely</p>
+        <p className="text-sm text-emerald-600">✓ {t('tests:colorVision.results.status.normal')}</p>
       )}
       {data.status === 'mild_difficulty' && (
-        <p className="text-sm text-amber-600">Mild difficulty detected</p>
+        <p className="text-sm text-amber-600">{t('tests:colorVision.results.status.mild')}</p>
       )}
       {data.status === 'possible_deficiency' && (
-        <p className="text-sm text-red-600">Possible color vision deficiency</p>
+        <p className="text-sm text-red-600">{t('tests:colorVision.results.status.significant')}</p>
       )}
     </div>
   )
 }
 
-// Helper to strip markdown formatting for plain text display
+/**
+ * Convert a Markdown string to plain text by removing common formatting and collapsing whitespace.
+ *
+ * Removes bold and italic markers, header hashes, list markers, and collapses multiple newlines into single spaces.
+ * @param {string} text - The Markdown input.
+ * @returns {string} Plain-text string with Markdown formatting removed.
+ */
 function stripMarkdown(text) {
   if (!text) return ''
   return text
@@ -159,7 +192,14 @@ function stripMarkdown(text) {
     .trim()
 }
 
-// Extract summary or recommendations from AI analysis, skipping disclaimers
+/**
+ * Extract a concise human-readable summary or recommendation from an AI analysis text while ignoring boilerplate disclaimers.
+ *
+ * Attempts to locate a "Summary" or "Recommendation(s)" section, then common reassuring recommendation phrases, and finally falls back to the first meaningful non-disclaimer line. Result is stripped of simple Markdown and truncated to 150 characters when applicable.
+ *
+ * @param {string} analysis - AI-generated analysis text to extract a summary from.
+ * @returns {string|null} The extracted summary or recommendation (trimmed and up to 150 characters), or `null` if no suitable content is found.
+ */
 function extractSummary(analysis) {
   if (!analysis) return null
   
@@ -193,18 +233,30 @@ function extractSummary(analysis) {
   return null
 }
 
-function EyePhotoResult({ data }) {
+/**
+ * Show a compact eye-photo result card with a brief extracted summary and an accessible modal displaying the full analysis and image.
+ * @param {{analysis?: string, imageData?: string}|null} data - Eye photo result data; null renders a "no results" description.
+ * @param {function} t - Translation function for localized strings.
+ * @returns {JSX.Element} A React element containing the eye photo card and, when opened, a modal with the full analysis and image.
+ */
+function EyePhotoResult({ data, t }) {
+  const { i18n } = useTranslation()
   const [showFullAnalysis, setShowFullAnalysis] = useState(false)
 
   if (!data) {
     return (
       <p className="text-sm text-slate-500">
-        Complete the eye photo analysis to see results.
+        {t('results:noResults.description')}
       </p>
     )
   }
 
-  const summary = extractSummary(data.analysis)
+  // Handle both legacy (string) and new (object with language keys) analysis format
+  const analysisText = typeof data.analysis === 'string' 
+    ? data.analysis 
+    : (data.analysis?.[i18n.language] || data.analysis?.en || '')
+
+  const summary = extractSummary(analysisText)
 
   const handleCardClick = () => {
     setShowFullAnalysis(true)
@@ -218,13 +270,13 @@ function EyePhotoResult({ data }) {
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCardClick(); } }}
         role="button"
         tabIndex={0}
-        aria-label="View full AI eye analysis"
+        aria-label={t('results:cards.eyePhoto')}
       >
         {data.imageData && (
           <div className="flex justify-center">
             <img
               src={data.imageData}
-              alt="Analyzed eye"
+              alt={t('results:cards.eyePhoto')}
               className="w-16 h-16 object-cover rounded-full border-2 border-violet-200"
             />
           </div>
@@ -233,7 +285,7 @@ function EyePhotoResult({ data }) {
         {/* Status indicator */}
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-          <span className="text-sm font-medium text-emerald-600">Analysis Complete</span>
+          <span className="text-sm font-medium text-emerald-600">{t('tests:eyePhoto.status.complete')}</span>
         </div>
         
         {/* Summary text */}
@@ -245,7 +297,7 @@ function EyePhotoResult({ data }) {
         
         {/* View details hint */}
         <p className="text-xs text-violet-600 flex items-center gap-1">
-          <span>Tap to view full observations</span>
+          <span>{t('actions.viewResults')}</span>
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
@@ -266,12 +318,12 @@ function EyePhotoResult({ data }) {
             <div className="bg-violet-50 p-4 border-b border-violet-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-2xl">📸</span>
-                <h3 className="font-semibold text-slate-800">AI Eye Analysis</h3>
+                <h3 className="font-semibold text-slate-800">{t('results:cards.eyePhoto')}</h3>
               </div>
               <button
                 onClick={() => setShowFullAnalysis(false)}
                 className="w-8 h-8 rounded-full bg-violet-100 hover:bg-violet-200 flex items-center justify-center transition-colors"
-                aria-label="Close"
+                aria-label={t('actions.close')}
               >
                 <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -285,7 +337,7 @@ function EyePhotoResult({ data }) {
                 <div className="flex justify-center mb-4">
                   <img
                     src={data.imageData}
-                    alt="Analyzed eye"
+                    alt={t('results:cards.eyePhoto')}
                     className="w-24 h-24 object-cover rounded-full border-4 border-violet-200"
                   />
                 </div>
@@ -293,7 +345,7 @@ function EyePhotoResult({ data }) {
               
               {/* Full analysis text with markdown rendering */}
               <div className="text-slate-700 text-sm leading-relaxed space-y-3 [&>h2]:text-base [&>h2]:font-semibold [&>h2]:mt-4 [&>h2]:mb-2 [&>h3]:text-sm [&>h3]:font-semibold [&>h3]:mt-3 [&>h3]:mb-1 [&>p]:mb-2 [&>ul]:list-disc [&>ul]:pl-4 [&>ul]:space-y-1 [&>ol]:list-decimal [&>ol]:pl-4 [&>ol]:space-y-1 [&>hr]:my-3 [&>hr]:border-slate-200">
-                <ReactMarkdown>{data.analysis}</ReactMarkdown>
+                <ReactMarkdown>{analysisText}</ReactMarkdown>
               </div>
             </div>
             
@@ -303,7 +355,7 @@ function EyePhotoResult({ data }) {
                 onClick={() => setShowFullAnalysis(false)}
                 className="w-full py-3 bg-violet-500 text-white font-medium rounded-xl hover:bg-violet-600 transition-colors"
               >
-                Close
+                {t('actions.close')}
               </button>
             </div>
           </div>
@@ -313,7 +365,19 @@ function EyePhotoResult({ data }) {
   )
 }
 
-function ContrastSensitivityResult({ data }) {
+/**
+ * Render contrast sensitivity results for left and right eyes.
+ *
+ * Displays each eye's log contrast sensitivity (logCS) value and a localized interpretation
+ * label (excellent/normal/mild/moderate/significant). If both eyes are present and the
+ * logCS difference is 0.3 or greater, shows a follow-up/asymmetry warning.
+ *
+ * @param {Object} props
+ * @param {{left?: {logCS: number}, right?: {logCS: number}}} props.data - Result data with optional `left` and `right` objects containing `logCS` numeric values.
+ * @param {Function} props.t - Translation function for localized strings.
+ * @returns {JSX.Element} A rendered block showing per-eye logCS, interpretation text, and an optional asymmetry warning.
+ */
+function ContrastSensitivityResult({ data, t }) {
   const hasLeft = data?.left
   const hasRight = data?.right
   const hasAny = hasLeft || hasRight
@@ -321,17 +385,17 @@ function ContrastSensitivityResult({ data }) {
   if (!hasAny) {
     return (
       <p className="text-sm text-slate-500">
-        Complete the contrast sensitivity test to see results.
+        {t('results:noResults.description')}
       </p>
     )
   }
 
   const getInterpretation = (logCS) => {
-    if (logCS >= 1.2) return { text: 'Excellent', color: 'emerald' }
-    if (logCS >= 0.9) return { text: 'Good', color: 'emerald' }
-    if (logCS >= 0.6) return { text: 'Mild reduction', color: 'amber' }
-    if (logCS >= 0.3) return { text: 'Moderate', color: 'amber' }
-    return { text: 'Reduced', color: 'red' }
+    if (logCS >= 1.2) return { text: t('tests:contrastSensitivity.results.interpretations.excellent.label'), color: 'emerald' }
+    if (logCS >= 0.9) return { text: t('tests:contrastSensitivity.results.interpretations.normal.label'), color: 'emerald' }
+    if (logCS >= 0.6) return { text: t('tests:contrastSensitivity.results.interpretations.mild.label'), color: 'amber' }
+    if (logCS >= 0.3) return { text: t('tests:contrastSensitivity.results.interpretations.moderate.label'), color: 'amber' }
+    return { text: t('tests:contrastSensitivity.results.interpretations.significant.label'), color: 'red' }
   }
 
   // Check for asymmetry
@@ -342,7 +406,7 @@ function ContrastSensitivityResult({ data }) {
       <div className="grid grid-cols-2 gap-4">
         {/* Left Eye */}
         <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">Left Eye</div>
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.leftEye')}</div>
           <div className="text-2xl font-bold text-amber-600">
             {hasLeft ? data.left.logCS.toFixed(2) : '—'}
           </div>
@@ -355,7 +419,7 @@ function ContrastSensitivityResult({ data }) {
         
         {/* Right Eye */}
         <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">Right Eye</div>
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.rightEye')}</div>
           <div className="text-2xl font-bold text-amber-600">
             {hasRight ? data.right.logCS.toFixed(2) : '—'}
           </div>
@@ -370,14 +434,27 @@ function ContrastSensitivityResult({ data }) {
       {/* Asymmetry warning */}
       {hasAsymmetry && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
-          ⚠️ Notable difference between eyes detected. Consider a professional evaluation.
+          ⚠️ {t('results:recommendations.followUp')}
         </div>
       )}
     </div>
   )
 }
 
-function AmslerGridResult({ data }) {
+/**
+ * Render Amsler Grid results for left and right eyes.
+ *
+ * Displays per-eye status ("Concerns" or "Normal") using localized labels and colors based on each eye's `hasIssues` flag.
+ * If any eye reports issues, a localized "see doctor" recommendation is shown; otherwise a localized normal confirmation is shown.
+ * If neither left nor right data is present, renders the translated no-results description.
+ *
+ * @param {Object} data - Result object containing optional `left` and `right` eye entries.
+ * @param {{ hasIssues?: boolean }} [data.left] - Left eye result (presence indicates a result).
+ * @param {{ hasIssues?: boolean }} [data.right] - Right eye result (presence indicates a result).
+ * @param {Function} t - Translation function used for localized strings.
+ * @returns {JSX.Element} A React element that displays the Amsler Grid per-eye statuses and a recommendation line.
+ */
+function AmslerGridResult({ data, t }) {
   const hasLeft = data?.left
   const hasRight = data?.right
   const hasAny = hasLeft || hasRight
@@ -385,14 +462,14 @@ function AmslerGridResult({ data }) {
   if (!hasAny) {
     return (
       <p className="text-sm text-slate-500">
-        Complete the Amsler grid test to see results.
+        {t('results:noResults.description')}
       </p>
     )
   }
 
   const getEyeStatus = (eyeData) => {
     if (!eyeData) return null
-    return eyeData.hasIssues ? 'Concerns' : 'Normal'
+    return eyeData.hasIssues ? t('results:status.concerns') : t('results:status.normal')
   }
 
   const getEyeColor = (eyeData) => {
@@ -407,7 +484,7 @@ function AmslerGridResult({ data }) {
       <div className="grid grid-cols-2 gap-4">
         {/* Left Eye */}
         <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">Left Eye</div>
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.leftEye')}</div>
           <div className={`text-xl font-bold text-${getEyeColor(data.left)}-600`}>
             {hasLeft ? getEyeStatus(data.left) : '—'}
           </div>
@@ -415,7 +492,7 @@ function AmslerGridResult({ data }) {
         
         {/* Right Eye */}
         <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">Right Eye</div>
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.rightEye')}</div>
           <div className={`text-xl font-bold text-${getEyeColor(data.right)}-600`}>
             {hasRight ? getEyeStatus(data.right) : '—'}
           </div>
@@ -423,15 +500,22 @@ function AmslerGridResult({ data }) {
       </div>
 
       {anyIssues ? (
-        <p className="text-sm text-amber-600">⚠️ Recommend professional evaluation</p>
+        <p className="text-sm text-amber-600">⚠️ {t('results:recommendations.seeDoctor')}</p>
       ) : (
-        <p className="text-sm text-emerald-600">✓ No distortions detected in tested eyes</p>
+        <p className="text-sm text-emerald-600">✓ {t('tests:amslerGrid.results.normal')}</p>
       )}
     </div>
   )
 }
 
-function AstigmatismResult({ data }) {
+/**
+ * Render astigmatism results for left and right eyes, including status icons, severity/axis details, asymmetry warning, and recommendations.
+ *
+ * @param {{ left?: { allLinesEqual: boolean, severity?: string, estimatedAxis?: number | null }, right?: { allLinesEqual: boolean, severity?: string, estimatedAxis?: number | null }}} data - Astigmatism result data for each eye; missing eye keys indicate no result for that eye.
+ * @param {Function} t - Translation function (i18n) used to localize labels and messages.
+ * @returns {JSX.Element} A React element showing per-eye astigmatism summaries, any asymmetry warning, and a recommendation line (see doctor or no astigmatism).
+ */
+function AstigmatismResult({ data, t }) {
   const hasLeft = data?.left
   const hasRight = data?.right
   const hasAny = hasLeft || hasRight
@@ -439,63 +523,190 @@ function AstigmatismResult({ data }) {
   if (!hasAny) {
     return (
       <p className="text-sm text-slate-500">
-        Complete the astigmatism test to see results.
+        {t('results:noResults.description')}
       </p>
     )
   }
 
   const getEyeStatus = (eyeData) => {
     if (!eyeData) return null
-    return eyeData.hasAstigmatism ? 'Possible' : 'Normal'
+    return eyeData.allLinesEqual 
+      ? t('results:astigmatism.noAstigmatism') 
+      : t('results:astigmatism.possibleAstigmatism')
   }
 
   const getEyeColor = (eyeData) => {
     if (!eyeData) return 'slate'
-    return eyeData.hasAstigmatism ? 'amber' : 'teal'
+    return eyeData.allLinesEqual ? 'teal' : 'amber'
   }
 
-  const anyAstigmatism = (hasLeft && data.left.hasAstigmatism) || (hasRight && data.right.hasAstigmatism)
+  const anyAstigmatism = (hasLeft && !data.left.allLinesEqual) || (hasRight && !data.right.allLinesEqual)
+
+  // Check for asymmetry between eyes
+  const hasAsymmetry = hasLeft && hasRight && 
+    data.left.allLinesEqual !== data.right.allLinesEqual
 
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-4">
         {/* Left Eye */}
         <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">Left Eye</div>
-          <div className={`text-xl font-bold text-${getEyeColor(data.left)}-600`}>
-            {hasLeft ? getEyeStatus(data.left) : '—'}
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.leftEye')}</div>
+          <div className={`text-lg font-bold text-${getEyeColor(data.left)}-600`}>
+            {hasLeft ? (data.left.allLinesEqual ? '✓' : '⚠️') : '—'}
           </div>
-          {hasLeft && data.left.hasAstigmatism && data.left.estimatedAxis != null && (
-            <div className="text-xs text-slate-500 mt-1">
-              Axis: {data.left.estimatedAxis}°
+          {hasLeft && (
+            <div className="text-xs text-slate-600 mt-1">
+              {data.left.allLinesEqual 
+                ? t('results:astigmatism.allLinesEqual')
+                : t(`results:astigmatism.severity.${data.left.severity ?? 'none'}`)}
+            </div>
+          )}
+          {hasLeft && !data.left.allLinesEqual && data.left.estimatedAxis !== null && (
+            <div className="text-xs text-slate-500 mt-0.5">
+              {t('results:astigmatism.axis', { degrees: data.left.estimatedAxis })}
             </div>
           )}
         </div>
         
         {/* Right Eye */}
         <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">Right Eye</div>
-          <div className={`text-xl font-bold text-${getEyeColor(data.right)}-600`}>
-            {hasRight ? getEyeStatus(data.right) : '—'}
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.rightEye')}</div>
+          <div className={`text-lg font-bold text-${getEyeColor(data.right)}-600`}>
+            {hasRight ? (data.right.allLinesEqual ? '✓' : '⚠️') : '—'}
           </div>
-          {hasRight && data.right.hasAstigmatism && data.right.estimatedAxis != null && (
-            <div className="text-xs text-slate-500 mt-1">
-              Axis: {data.right.estimatedAxis}°
+          {hasRight && (
+            <div className="text-xs text-slate-600 mt-1">
+              {data.right.allLinesEqual 
+                ? t('results:astigmatism.allLinesEqual')
+                : t(`results:astigmatism.severity.${data.right.severity ?? 'none'}`)}
+            </div>
+          )}
+          {hasRight && !data.right.allLinesEqual && data.right.estimatedAxis !== null && (
+            <div className="text-xs text-slate-500 mt-0.5">
+              {t('results:astigmatism.axis', { degrees: data.right.estimatedAxis })}
             </div>
           )}
         </div>
       </div>
 
+      {/* Asymmetry warning */}
+      {hasAsymmetry && (
+        <p className="text-sm text-orange-600">⚠️ {t('results:recommendations.followUp')}</p>
+      )}
+
       {anyAstigmatism ? (
-        <p className="text-sm text-amber-600">⚠️ Consider professional evaluation</p>
+        <p className="text-sm text-amber-600">⚠️ {t('results:recommendations.seeDoctor')}</p>
       ) : (
-        <p className="text-sm text-emerald-600">✓ No astigmatism detected in tested eyes</p>
+        <p className="text-sm text-emerald-600">✓ {t('tests:astigmatism.results.noAstigmatism')}</p>
       )}
     </div>
   )
 }
 
-function HistoryChart({ history }) {
+/**
+ * Render the peripheral vision result UI showing left and right eye summaries and an overall recommendation.
+ *
+ * Displays detection rate, average reaction time, and a localized severity label for each eye when present.
+ * If an eye is missing, a placeholder is shown. Eye colors and the final recommendation text reflect whether
+ * any measured severity indicates concern.
+ *
+ * @param {Object} props.data - Peripheral vision measurements.
+ * @param {Object} [props.data.left] - Left eye result (optional).
+ * @param {number} props.data.left.detectionRate - Detection rate as a percentage (e.g., 85).
+ * @param {number|string} [props.data.left.avgReactionTime] - Average reaction time in milliseconds.
+ * @param {string} props.data.left.severity - Severity key used for localization (e.g., 'excellent', 'normal', 'mild', 'significant').
+ * @param {Object} [props.data.right] - Right eye result (optional) with the same shape as `left`.
+ * @returns {JSX.Element} A React element presenting the peripheral vision results and a localized recommendation.
+ */
+function PeripheralVisionResult({ data, t }) {
+  const hasLeft = data?.left
+  const hasRight = data?.right
+  const hasAny = hasLeft || hasRight
+
+  if (!hasAny) {
+    return (
+      <p className="text-sm text-slate-500">
+        {t('results:noResults.description')}
+      </p>
+    )
+  }
+
+  const isNormal = (eyeData) => {
+    if (!eyeData) return true
+    return eyeData.severity === 'excellent' || eyeData.severity === 'normal'
+  }
+
+  const getEyeColor = (eyeData) => {
+    if (!eyeData) return 'slate'
+    return isNormal(eyeData) ? 'fuchsia' : 'amber'
+  }
+
+  const anyConcerns = (hasLeft && !isNormal(data.left)) || (hasRight && !isNormal(data.right))
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-4">
+        {/* Left Eye */}
+        <div className="text-center p-3 bg-white rounded-lg border">
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.leftEye')}</div>
+          <div className={`text-2xl font-bold text-${getEyeColor(data.left)}-600`}>
+            {hasLeft ? `${data.left.detectionRate}%` : '—'}
+          </div>
+          {hasLeft && (
+            <div className="text-xs text-slate-500 mt-1">
+              {data.left.avgReactionTime != null ? `${data.left.avgReactionTime}ms` : '—'}
+            </div>
+          )}
+          {hasLeft && data.left.severity && (
+            <div className={`text-xs mt-1 text-${getEyeColor(data.left)}-600`}>
+              {t(`results:peripheralVision.severity.${data.left.severity}`)}
+            </div>
+          )}
+        </div>
+        
+        {/* Right Eye */}
+        <div className="text-center p-3 bg-white rounded-lg border">
+          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.rightEye')}</div>
+          <div className={`text-2xl font-bold text-${getEyeColor(data.right)}-600`}>
+            {hasRight ? `${data.right.detectionRate}%` : '—'}
+          </div>
+          {hasRight && (
+            <div className="text-xs text-slate-500 mt-1">
+              {data.right.avgReactionTime != null ? `${data.right.avgReactionTime}ms` : '—'}
+            </div>
+          )}
+          {hasRight && data.right.severity && (
+            <div className={`text-xs mt-1 text-${getEyeColor(data.right)}-600`}>
+              {t(`results:peripheralVision.severity.${data.right.severity}`)}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {anyConcerns ? (
+        <p className="text-sm text-amber-600">⚠️ {t('results:recommendations.seeDoctor')}</p>
+      ) : (
+        <p className="text-sm text-emerald-600">✓ {t('results:peripheralVision.normal')}</p>
+      )}
+    </div>
+  )
+}
+
+/**
+ * Render a compact visual-acuity history chart for recent sessions.
+ *
+ * Displays up to five past sessions that include visual acuity data as a small
+ * bar-style chart with date labels and a localized trend message (improved/changed/stable).
+ *
+ * @param {Object[]} history - Array of session objects, each expected to include `id`, `date`, and `visualAcuity`.
+ *   visualAcuity may be in the old format (`{ level, snellen }`) or the new format
+ *   (`{ left: { level, snellen }, right: { level, snellen } }`).
+ * @param {Function} t - Translation function (i18n `t`) used to localize strings.
+ * @param {Object} i18n - i18n instance providing locale information (uses `i18n.language`).
+ * @returns {JSX.Element|null} A chart element when there are two or more visual-acuity sessions, otherwise `null`.
+ */
+function HistoryChart({ history, t, i18n }) {
   if (history.length < 2) return null
 
   // Helper to get best level from per-eye data
@@ -543,17 +754,19 @@ function HistoryChart({ history }) {
   
   if (oldLevel != null && newLevel != null) {
     if (newLevel > oldLevel) {
-      trendText = `Your visual acuity improved from ${oldSnellen} to ${newSnellen}`
+      trendText = t('results:history.improved', { from: oldSnellen, to: newSnellen })
     } else if (newLevel < oldLevel) {
-      trendText = `Your visual acuity changed from ${oldSnellen} to ${newSnellen}`
+      trendText = t('results:history.changed', { from: oldSnellen, to: newSnellen })
     } else {
-      trendText = `Your visual acuity has remained stable at ${newSnellen}`
+      trendText = t('results:history.stable', { value: newSnellen })
     }
   }
 
+  const dateLocale = i18n.language === 'de' ? 'de-DE' : 'en-US'
+
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">
-      <h3 className="font-semibold text-slate-800 mb-3">Your Progress</h3>
+      <h3 className="font-semibold text-slate-800 mb-3">{t('results:history.progress')}</h3>
       <div className="flex items-end justify-between h-24 gap-2">
         {sessions.map((session) => (
           <div key={session.id} className="flex-1 flex flex-col items-center">
@@ -562,12 +775,12 @@ function HistoryChart({ history }) {
               style={{ height: `${(getBestLevel(session.visualAcuity) / 10) * 100}%` }}
             />
             <span className="text-xs text-slate-500 mt-1">
-              {new Date(session.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              {new Date(session.date).toLocaleDateString(dateLocale, { month: 'short', day: 'numeric' })}
             </span>
           </div>
         ))}
       </div>
-      <p className="text-xs text-slate-400 text-center mt-2">Visual acuity over time (best eye)</p>
+      <p className="text-xs text-slate-400 text-center mt-2">{t('results:history.acuityOverTime')}</p>
       {trendText && (
         <p className="text-sm text-sky-600 text-center mt-2 font-medium">{trendText}</p>
       )}
@@ -575,7 +788,15 @@ function HistoryChart({ history }) {
   )
 }
 
+/**
+ * Display an aggregated eye health report comprising test results, history, achievements, recommendations, and actions.
+ *
+ * Renders a localized results page that presents per-test summary cards, a history chart (when available), unlocked achievements, a recommendations panel, and action controls for sharing, PDF export, saving, and clearing results. Handles achievement unlocking/marking and constructs share/export content.
+ *
+ * @returns {JSX.Element} The React element for the HealthSnapshot results page.
+ */
 export default function HealthSnapshot() {
+  const { t, i18n } = useTranslation(['common', 'results', 'tests'])
   const { 
     results, 
     hasAnyResults, 
@@ -622,15 +843,18 @@ export default function HealthSnapshot() {
     const hasVisualAcuity = results.visualAcuity?.left || results.visualAcuity?.right
     const hasContrastSensitivity = results.contrastSensitivity?.left || results.contrastSensitivity?.right
     const hasAmslerGrid = results.amslerGrid?.left || results.amslerGrid?.right
-    
     const hasAstigmatism = results.astigmatism?.left || results.astigmatism?.right
-    const tests = [hasVisualAcuity, results.colorVision, hasContrastSensitivity, hasAmslerGrid, hasAstigmatism, results.eyePhoto]
+    const hasPeripheralVision = results.peripheralVision?.left || results.peripheralVision?.right
+    
+    // Count only the 6 core screening tests (eye photo is optional/supplementary)
+    // This aligns with the achievement logic for "all-tests" achievement
+    const tests = [hasVisualAcuity, results.colorVision, hasContrastSensitivity, hasAmslerGrid, hasAstigmatism, hasPeripheralVision]
     const completed = tests.filter(Boolean).length
     
-    if (completed === 0) return { status: 'none', message: 'No tests completed' }
-    if (completed === 6) return { status: 'complete', message: 'All tests complete' }
-    return { status: 'partial', message: `${completed}/6 tests complete` }
-  }, [results])
+    if (completed === 0) return { status: 'none', message: t('results:header.noTests') }
+    if (completed === 6) return { status: 'complete', message: t('results:header.allTests') }
+    return { status: 'partial', message: t('results:header.someTests', { count: completed }) }
+  }, [results, t])
 
   const getRecommendation = useCallback(() => {
     const recommendations = []
@@ -641,21 +865,21 @@ export default function HealthSnapshot() {
     if (vaLeft || vaRight) {
       const worstLevel = Math.min(vaLeft?.level ?? 10, vaRight?.level ?? 10)
       if (worstLevel < 5) {
-        recommendations.push('Schedule an eye exam for vision assessment')
+        recommendations.push(t('results:recommendations.seeDoctor'))
       } else if (worstLevel < 8) {
-        recommendations.push('Consider an eye checkup')
+        recommendations.push(t('results:recommendations.followUp'))
       }
       // Check asymmetry
       if (vaLeft && vaRight && Math.abs(vaLeft.level - vaRight.level) >= 2) {
-        recommendations.push('Notable vision difference between eyes - get evaluated')
+        recommendations.push(t('results:recommendations.followUp'))
       }
     }
     
     if (results.colorVision) {
       if (results.colorVision.status === 'possible_deficiency') {
-        recommendations.push('Get a professional color vision evaluation')
+        recommendations.push(t('results:recommendations.seeDoctor'))
       } else if (results.colorVision.status === 'mild_difficulty') {
-        recommendations.push('Discuss color vision with your eye doctor')
+        recommendations.push(t('results:recommendations.followUp'))
       }
     }
 
@@ -665,7 +889,7 @@ export default function HealthSnapshot() {
     if (amslerLeft || amslerRight) {
       const anyIssues = amslerLeft?.hasIssues || amslerRight?.hasIssues
       if (anyIssues) {
-        recommendations.push('Schedule an eye exam for macular evaluation')
+        recommendations.push(t('results:recommendations.seeDoctor'))
       }
     }
 
@@ -675,25 +899,52 @@ export default function HealthSnapshot() {
     if (csLeft || csRight) {
       const worstLogCS = Math.min(csLeft?.logCS ?? 1.5, csRight?.logCS ?? 1.5)
       if (worstLogCS < 0.6) {
-        recommendations.push('Get a professional evaluation for contrast sensitivity')
+        recommendations.push(t('results:recommendations.seeDoctor'))
       } else if (worstLogCS < 0.9) {
-        recommendations.push('Discuss contrast sensitivity with your eye doctor')
+        recommendations.push(t('results:recommendations.followUp'))
       }
       // Check asymmetry
       if (csLeft && csRight && Math.abs(csLeft.logCS - csRight.logCS) >= 0.3) {
-        recommendations.push('Notable contrast sensitivity difference between eyes - get evaluated')
+        recommendations.push(t('results:recommendations.followUp'))
+      }
+    }
+
+    // Astigmatism - check both eyes
+    const astigLeft = results.astigmatism?.left
+    const astigRight = results.astigmatism?.right
+    if (astigLeft || astigRight) {
+      const anyAstigmatism = (astigLeft && !astigLeft.allLinesEqual) || (astigRight && !astigRight.allLinesEqual)
+      if (anyAstigmatism) {
+        recommendations.push(t('results:recommendations.followUp'))
+      }
+      // Check asymmetry
+      if (astigLeft && astigRight && astigLeft.allLinesEqual !== astigRight.allLinesEqual) {
+        recommendations.push(t('results:recommendations.followUp'))
+      }
+    }
+
+    // Peripheral Vision - check both eyes
+    const pvLeft = results.peripheralVision?.left
+    const pvRight = results.peripheralVision?.right
+    if (pvLeft || pvRight) {
+      const isNormal = (eyeData) => eyeData?.severity === 'excellent' || eyeData?.severity === 'normal'
+      const anyConcerns = (pvLeft && !isNormal(pvLeft)) || (pvRight && !isNormal(pvRight))
+      if (anyConcerns) {
+        recommendations.push(t('results:recommendations.seeDoctor'))
       }
     }
     
     if (recommendations.length === 0) {
       if (hasAnyResults()) {
-        return 'Your screening results look good! Continue with regular eye care.'
+        return t('results:recommendations.allNormal')
       }
-      return 'Complete the tests to get personalized recommendations.'
+      return t('results:noResults.description')
     }
     
-    return recommendations.join('. ') + '.'
-  }, [results, hasAnyResults])
+    // Remove duplicates and join
+    const uniqueRecommendations = [...new Set(recommendations)]
+    return uniqueRecommendations.join(' ')
+  }, [results, hasAnyResults, t])
 
   const handleShare = useCallback(async () => {
     const shareData = {
@@ -860,7 +1111,10 @@ export default function HealthSnapshot() {
           <div style="background: #faf5ff; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
             <h3 style="margin: 0 0 10px 0;">📸 AI Eye Analysis</h3>
             <p style="color: #64748b; white-space: pre-wrap; font-size: 14px;">
-              ${results.eyePhoto.analysis?.substring(0, 500)}...
+              ${(typeof results.eyePhoto.analysis === 'string' 
+                ? results.eyePhoto.analysis 
+                : (results.eyePhoto.analysis?.[i18n.language] || results.eyePhoto.analysis?.en || '')
+              ).substring(0, 500)}...
             </p>
           </div>
         ` : ''}
@@ -887,7 +1141,7 @@ export default function HealthSnapshot() {
     }
     
     await html2pdf().set(opt).from(element).save()
-  }, [results])
+  }, [results, i18n.language])
 
   const overallStatus = getOverallStatus()
 
@@ -896,22 +1150,22 @@ export default function HealthSnapshot() {
       <div className="min-h-screen bg-white dark:bg-slate-900">
         <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center gap-4">
           <Link to="/" className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
-            ← Back
+            ← {t('nav.back')}
           </Link>
-          <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Health Snapshot</h1>
+          <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('results:title')}</h1>
         </header>
 
         <div className="p-6 text-center max-w-md mx-auto">
           <div className="text-6xl mb-4">📋</div>
-          <h2 className="text-xl font-semibold text-slate-800 mb-2">No Results Yet</h2>
+          <h2 className="text-xl font-semibold text-slate-800 mb-2">{t('results:noResults.title')}</h2>
           <p className="text-slate-500 mb-6">
-            Complete at least one test to see your eye health snapshot.
+            {t('results:noResults.description')}
           </p>
           <Link 
             to="/"
             className="inline-block px-6 py-3 bg-sky-500 text-white font-medium rounded-xl hover:bg-sky-600 transition-colors"
           >
-            Start Testing
+            {t('results:noResults.startTesting')}
           </Link>
         </div>
       </div>
@@ -925,9 +1179,9 @@ export default function HealthSnapshot() {
       
       <header className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-4 py-4 flex items-center gap-4 z-10">
         <Link to="/" className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
-          ← Back
+          ← {t('nav.back')}
         </Link>
-        <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Health Snapshot</h1>
+        <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('results:title')}</h1>
       </header>
 
       <div className="p-6 max-w-2xl mx-auto" ref={reportRef}>
@@ -937,31 +1191,32 @@ export default function HealthSnapshot() {
             <div className="text-4xl">👁️</div>
             <div>
               <h2 className="text-xl font-bold">VisionCheck AI</h2>
-              <p className="text-white/80 text-sm">Mobile Eye Health Pre-Screening</p>
+              <p className="text-white/80 text-sm">{t('app.subtitle')}</p>
             </div>
           </div>
           
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white/80 text-sm">Status</p>
+              <p className="text-white/80 text-sm">{t('results:header.status')}</p>
               <p className="font-semibold">{overallStatus.message}</p>
             </div>
             <div className="text-right">
-              <p className="text-white/80 text-sm">Date</p>
-              <p className="font-semibold">{new Date().toLocaleDateString()}</p>
+              <p className="text-white/80 text-sm">{t('results:header.date')}</p>
+              <p className="font-semibold">{new Date().toLocaleDateString(i18n.language === 'de' ? 'de-DE' : 'en-US')}</p>
             </div>
           </div>
         </div>
 
         {/* History Chart */}
-        <HistoryChart history={history} />
+        <HistoryChart history={history} t={t} i18n={i18n} />
 
         {/* Test Results */}
         <div className="space-y-4 mb-6">
           <ResultCard
-            title="Visual Acuity"
+            title={t('results:cards.visualAcuity')}
             icon="📖"
             color="sky"
+            t={t}
             status={(() => {
               const hasAny = results.visualAcuity?.left || results.visualAcuity?.right
               if (!hasAny) return 'pending'
@@ -973,25 +1228,27 @@ export default function HealthSnapshot() {
               return worstLevel >= 8 && !hasAsymmetry ? 'complete' : 'warning'
             })()}
           >
-            <VisualAcuityResult data={results.visualAcuity} />
+            <VisualAcuityResult data={results.visualAcuity} t={t} />
           </ResultCard>
 
           <ResultCard
-            title="Color Vision"
+            title={t('results:cards.colorVision')}
             icon="🎨"
             color="emerald"
+            t={t}
             status={results.colorVision ? 
               (results.colorVision.status === 'normal' ? 'complete' : 'warning') : 
               'pending'
             }
           >
-            <ColorVisionResult data={results.colorVision} />
+            <ColorVisionResult data={results.colorVision} t={t} />
           </ResultCard>
 
           <ResultCard
-            title="Contrast Sensitivity"
+            title={t('results:cards.contrastSensitivity')}
             icon="🔆"
             color="amber"
+            t={t}
             status={(() => {
               const hasAny = results.contrastSensitivity?.left || results.contrastSensitivity?.right
               if (!hasAny) return 'pending'
@@ -1003,13 +1260,14 @@ export default function HealthSnapshot() {
               return worstLogCS >= 0.9 && !hasAsymmetry ? 'complete' : 'warning'
             })()}
           >
-            <ContrastSensitivityResult data={results.contrastSensitivity} />
+            <ContrastSensitivityResult data={results.contrastSensitivity} t={t} />
           </ResultCard>
 
           <ResultCard
-            title="Amsler Grid"
+            title={t('results:cards.amslerGrid')}
             icon="#"
             color="purple"
+            t={t}
             status={(() => {
               const hasAny = results.amslerGrid?.left || results.amslerGrid?.right
               if (!hasAny) return 'pending'
@@ -1017,30 +1275,52 @@ export default function HealthSnapshot() {
               return anyIssues ? 'warning' : 'complete'
             })()}
           >
-            <AmslerGridResult data={results.amslerGrid} />
+            <AmslerGridResult data={results.amslerGrid} t={t} />
           </ResultCard>
 
           <ResultCard
-            title="Astigmatism"
+            title={t('results:cards.astigmatism')}
             icon="⊕"
-            color="sky"
+            color="teal"
+            t={t}
             status={(() => {
               const hasAny = results.astigmatism?.left || results.astigmatism?.right
               if (!hasAny) return 'pending'
-              const anyAstigmatism = results.astigmatism?.left?.hasAstigmatism || results.astigmatism?.right?.hasAstigmatism
+              const anyAstigmatism = 
+                (results.astigmatism?.left && !results.astigmatism.left.allLinesEqual) || 
+                (results.astigmatism?.right && !results.astigmatism.right.allLinesEqual)
               return anyAstigmatism ? 'warning' : 'complete'
             })()}
           >
-            <AstigmatismResult data={results.astigmatism} />
+            <AstigmatismResult data={results.astigmatism} t={t} />
           </ResultCard>
 
           <ResultCard
-            title="AI Eye Analysis"
+            title={t('results:cards.peripheralVision')}
+            icon="👁️‍🗨️"
+            color="fuchsia"
+            t={t}
+            status={(() => {
+              const hasAny = results.peripheralVision?.left || results.peripheralVision?.right
+              if (!hasAny) return 'pending'
+              const isNormal = (eyeData) => eyeData?.severity === 'excellent' || eyeData?.severity === 'normal'
+              const anyConcerns = 
+                (results.peripheralVision?.left && !isNormal(results.peripheralVision.left)) || 
+                (results.peripheralVision?.right && !isNormal(results.peripheralVision.right))
+              return anyConcerns ? 'warning' : 'complete'
+            })()}
+          >
+            <PeripheralVisionResult data={results.peripheralVision} t={t} />
+          </ResultCard>
+
+          <ResultCard
+            title={t('results:cards.eyePhoto')}
             icon="📸"
             color="violet"
+            t={t}
             status={results.eyePhoto ? 'complete' : 'pending'}
           >
-            <EyePhotoResult data={results.eyePhoto} />
+            <EyePhotoResult data={results.eyePhoto} t={t} />
           </ResultCard>
         </div>
 
@@ -1048,10 +1328,10 @@ export default function HealthSnapshot() {
         {unlockedAchievementIds.length > 0 && (
           <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">
             <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
-              <span>🏆</span> Your Achievements
+              <span>🏆</span> {t('results:achievements.title')}
               {hasNewAchievements && (
                 <span className="text-xs font-medium text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full animate-pulse">
-                  NEW
+                  {t('status.new')}
                 </span>
               )}
             </h3>
@@ -1069,7 +1349,7 @@ export default function HealthSnapshot() {
 
         {/* Recommendation */}
         <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">
-          <h3 className="font-semibold text-slate-800 mb-2">📋 Recommendation</h3>
+          <h3 className="font-semibold text-slate-800 mb-2">📋 {t('results:recommendations.title')}</h3>
           <p className="text-slate-600">{getRecommendation()}</p>
         </div>
 
@@ -1090,7 +1370,16 @@ export default function HealthSnapshot() {
           const amslerRight = results.amslerGrid?.right
           const hasAmslerConcern = amslerLeft?.hasIssues || amslerRight?.hasIssues
           
-          const showFindDoctor = hasVAConcern || hasColorConcern || hasCSConcern || hasAmslerConcern
+          const astigLeft = results.astigmatism?.left
+          const astigRight = results.astigmatism?.right
+          const hasAstigConcern = (astigLeft && !astigLeft.allLinesEqual) || (astigRight && !astigRight.allLinesEqual)
+          
+          const pvLeft = results.peripheralVision?.left
+          const pvRight = results.peripheralVision?.right
+          const isNormal = (eyeData) => eyeData?.severity === 'excellent' || eyeData?.severity === 'normal'
+          const hasPVConcern = (pvLeft && !isNormal(pvLeft)) || (pvRight && !isNormal(pvRight))
+          
+          const showFindDoctor = hasVAConcern || hasColorConcern || hasCSConcern || hasAmslerConcern || hasAstigConcern || hasPVConcern
           
           return showFindDoctor ? (
             <div className="mb-6">
@@ -1102,9 +1391,7 @@ export default function HealthSnapshot() {
         {/* Disclaimer */}
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
           <p className="text-sm text-amber-800">
-            <strong>Important:</strong> This is a screening tool for educational purposes only. 
-            It is NOT a medical diagnosis. Please consult an eye care professional for 
-            accurate assessment and any health concerns.
+            <strong>{t('disclaimer.title')}:</strong> {t('disclaimer.text')}
           </p>
         </div>
 
@@ -1114,58 +1401,61 @@ export default function HealthSnapshot() {
             onClick={handleShare}
             className="w-full py-4 bg-sky-500 text-white font-semibold rounded-xl hover:bg-sky-600 transition-colors flex items-center justify-center gap-2"
           >
-            <span>📤</span> Share Results
+            <span>📤</span> {t('results:actions.shareResults')}
           </button>
           
           <button
             onClick={handleDownloadPDF}
             className="w-full py-4 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
           >
-            <span>📄</span> Download PDF Report
+            <span>📄</span> {t('results:actions.downloadPDF')}
           </button>
 
           <button
             onClick={() => {
               saveToHistory()
-              alert('Session saved to history!')
+              alert(t('results:actions.saveToHistory'))
             }}
             disabled={!(results.visualAcuity?.left || results.visualAcuity?.right) && 
                       !results.colorVision && 
                       !(results.contrastSensitivity?.left || results.contrastSensitivity?.right) && 
-                      !(results.amslerGrid?.left || results.amslerGrid?.right)}
+                      !(results.amslerGrid?.left || results.amslerGrid?.right) &&
+                      !(results.astigmatism?.left || results.astigmatism?.right) &&
+                      !(results.peripheralVision?.left || results.peripheralVision?.right) &&
+                      !results.eyePhoto}
             className="w-full py-4 bg-emerald-500 text-white font-semibold rounded-xl hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <span>📊</span> Save to History
+            <span>📊</span> {t('results:actions.saveToHistory')}
           </button>
           
           <Link
             to="/"
             className="block w-full py-4 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors text-center"
           >
-            Back to Home
+            {t('nav.backToHome')}
           </Link>
 
           <button
             onClick={() => {
-              if (confirm('Are you sure you want to clear all results?')) {
+              if (confirm(t('results:actions.clearResults') + '?')) {
                 clearResults()
               }
             }}
             className="w-full py-3 text-red-500 font-medium hover:text-red-600 transition-colors text-center"
           >
-            Clear All Results
+            {t('results:actions.clearResults')}
           </button>
 
           {history.length > 0 && (
             <button
               onClick={() => {
-                if (confirm('Are you sure you want to clear all session history?')) {
+                if (confirm(t('results:history.clearHistory') + '?')) {
                   clearHistory()
                 }
               }}
               className="w-full py-3 text-slate-400 font-medium hover:text-slate-500 transition-colors text-center"
             >
-              Clear History ({history.length} sessions)
+              {t('results:history.clearHistory')} ({history.length})
             </button>
           )}
         </div>

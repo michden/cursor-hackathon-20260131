@@ -1,8 +1,9 @@
 import { useState, useRef, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
+import { useTranslation } from 'react-i18next'
 import { useTestResults } from '../context/TestResultsContext'
-import { analyzeEyePhoto } from '../api/openai'
+import { analyzeEyePhotoAllLanguages } from '../api/openai'
 import AudioInstructions from '../components/AudioInstructions'
 
 // Camera states
@@ -70,6 +71,7 @@ function ApiKeyInput({ apiKey, setApiKey }) {
 
 export default function EyePhotoAnalysis() {
   const navigate = useNavigate()
+  const { i18n } = useTranslation()
   const { updateEyePhoto } = useTestResults()
   
   const [phase, setPhase] = useState('instructions') // instructions, capture, analyzing, results
@@ -160,10 +162,11 @@ export default function EyePhotoAnalysis() {
     setError(null)
     
     try {
-      const result = await analyzeEyePhoto(capturedImage, apiKey)
-      setAnalysis(result)
+      // Analyze in both languages in parallel
+      const result = await analyzeEyePhotoAllLanguages(capturedImage, apiKey)
+      setAnalysis(result) // Stores { en: "...", de: "..." }
       
-      // Save to context
+      // Save to context with both language versions
       updateEyePhoto({
         imageData: capturedImage,
         analysis: result,
@@ -424,7 +427,11 @@ export default function EyePhotoAnalysis() {
           {/* Analysis results */}
           <div className="bg-slate-50 rounded-xl p-6 mb-6">
             <div className="text-slate-700 text-sm leading-relaxed space-y-3 [&>h2]:text-base [&>h2]:font-semibold [&>h2]:mt-4 [&>h2]:mb-2 [&>h3]:text-sm [&>h3]:font-semibold [&>h3]:mt-3 [&>h3]:mb-1 [&>p]:mb-2 [&>ul]:list-disc [&>ul]:pl-4 [&>ul]:space-y-1 [&>ol]:list-decimal [&>ol]:pl-4 [&>ol]:space-y-1 [&>hr]:my-3 [&>hr]:border-slate-200">
-              <ReactMarkdown>{analysis}</ReactMarkdown>
+              <ReactMarkdown>
+                {typeof analysis === 'string' 
+                  ? analysis 
+                  : (analysis[i18n.language] || analysis.en)}
+              </ReactMarkdown>
             </div>
           </div>
 

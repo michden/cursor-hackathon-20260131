@@ -151,8 +151,44 @@
       "detected": "Sie haben berichtet, dass einige Linien dunkler oder kräftiger erschienen. Dies kann auf einen Astigmatismus hindeuten, bei dem die Hornhaut eine unregelmäßige Krümmung hat. Die Achse zeigt die ungefähre Richtung der Unregelmäßigkeit an."
     },
     "recommendation": {
-      "normal": "Fahren Sie mit regelmäßigen jährlichen Augenuntersuchungen fort",
-      "detected": "Empfehlung: Vereinbaren Sie einen Termin bei einem Augenarzt für eine umfassende Untersuchung"
+      "normal": "✓ Fahren Sie mit regelmäßigen jährlichen Augenuntersuchungen fort",
+      "detected": "⚠️ Empfehlung: Vereinbaren Sie einen Termin bei einem Augenarzt für eine umfassende Untersuchung"
+    }
+  },
+  "peripheralVision": {
+    "title": "Peripherer Sehtest",
+    "subtitle": "Test Ihres {{eye}} Auges",
+    "instructions": {
+      "title": "Anleitung:",
+      "step1": "Bedecken Sie Ihr {{otherEye}} Auge mit der Hand",
+      "step2": "Fokussieren Sie auf den roten Punkt in der Mitte des Bildschirms",
+      "step3": "Weiße Punkte erscheinen in Ihrem peripheren Sichtfeld",
+      "step4": "Tippen Sie auf den Bildschirm, wenn Sie einen Punkt sehen",
+      "note": "Schauen Sie weiter auf den mittleren Punkt - nutzen Sie Ihr seitliches Sehen, um die Punkte zu erkennen"
+    },
+    "focusPrompt": "Halten Sie Ihren Fokus auf dem roten Punkt",
+    "tapInstruction": "Tippen Sie, wenn ein weißer Punkt erscheint",
+    "tapPrompt": "Zum Antworten tippen",
+    "results": {
+      "title": "Test abgeschlossen!",
+      "detectionRate": "Erkennungsrate",
+      "dotsDetected": "Erkannte Punkte",
+      "avgReactionTime": "Durchschn. Reaktionszeit",
+      "severity": {
+        "excellent": "Ausgezeichnetes peripheres Sehen",
+        "normal": "Normales peripheres Sehen",
+        "mild": "Leicht reduziertes peripheres Sehen",
+        "moderate": "Mäßig reduziertes peripheres Sehen",
+        "significant": "Deutlich reduziertes peripheres Sehen"
+      }
+    },
+    "explanation": {
+      "normal": "Ihre Ergebnisse des peripheren Sehtests liegen im Normalbereich. Sie konnten die meisten Punkte in Ihrem seitlichen Sichtfeld mit guten Reaktionszeiten erkennen.",
+      "concerns": "Ihre Ergebnisse deuten auf Schwierigkeiten bei der Erkennung von Objekten im peripheren Sichtfeld hin. Dies könnte auf frühe Anzeichen von Erkrankungen wie Glaukom hinweisen. Viele Faktoren können diesen Test jedoch beeinflussen, einschließlich Müdigkeit oder Ablenkung."
+    },
+    "recommendation": {
+      "normal": "✓ Fahren Sie mit regelmäßigen jährlichen Augenuntersuchungen fort",
+      "concerns": "⚠️ Empfehlung: Vereinbaren Sie einen Termin bei einem Augenarzt für einen umfassenden Gesichtsfeldtest"
     }
   },
   "eyePhoto": {

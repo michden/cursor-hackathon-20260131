@@ -1,6 +1,13 @@
 {
   "title": "Your Eye Health Snapshot",
   "subtitle": "Summary of your screening results",
+  "header": {
+    "status": "Status",
+    "date": "Date",
+    "noTests": "No tests completed",
+    "allTests": "All tests complete",
+    "someTests": "{{count}}/6 tests complete"
+  },
   "noResults": {
     "title": "No Results Yet",
     "description": "Complete at least one test to see your results here.",
@@ -12,7 +19,33 @@
     "contrastSensitivity": "Contrast Sensitivity",
     "amslerGrid": "Amsler Grid",
     "astigmatism": "Astigmatism",
+    "peripheralVision": "Peripheral Vision",
     "eyePhoto": "Eye Photo Analysis"
+  },
+  "astigmatism": {
+    "noAstigmatism": "No astigmatism detected",
+    "possibleAstigmatism": "Possible astigmatism",
+    "axis": "Axis: {{degrees}}°",
+    "allLinesEqual": "All lines equal",
+    "severity": {
+      "none": "None",
+      "mild": "Mild",
+      "moderate": "Moderate",
+      "significant": "Significant"
+    }
+  },
+  "peripheralVision": {
+    "normal": "Normal",
+    "concerns": "Concerns noted",
+    "detectionRate": "{{rate}}% detected",
+    "reactionTime": "{{time}}ms avg",
+    "severity": {
+      "excellent": "Excellent",
+      "normal": "Normal",
+      "mild": "Mild reduction",
+      "moderate": "Moderate reduction",
+      "significant": "Significant reduction"
+    }
   },
   "eyeLabels": {
     "leftEye": "Left Eye",
@@ -43,7 +76,12 @@
     "title": "Test History",
     "noHistory": "No previous test sessions saved.",
     "session": "Session",
-    "clearHistory": "Clear History"
+    "clearHistory": "Clear History",
+    "progress": "Your Progress",
+    "acuityOverTime": "Visual acuity over time (best eye)",
+    "improved": "Your visual acuity improved from {{from}} to {{to}}",
+    "stable": "Your visual acuity has remained stable at {{value}}",
+    "changed": "Your visual acuity changed from {{from}} to {{to}}"
   },
   "achievements": {
     "title": "Your Achievements",
@@ -74,10 +112,15 @@
     "declined": "Your {{test}} may have changed - consider retesting"
   },
   "findDoctor": {
-    "title": "Find an Eye Doctor",
+    "title": "Find Eye Doctors Near You",
+    "description": "We'll use your location to show nearby eye care professionals on Google Maps.",
     "searching": "Finding nearby doctors...",
     "permissionNeeded": "Location permission needed",
     "openMaps": "Open in Maps",
-    "searchQuery": "eye doctor optometrist near me"
+    "searchQuery": "eye doctor optometrist near me",
+    "privacyTitle": "Your privacy is protected",
+    "privacyText": "Your location is used once to open Google Maps and is never stored or sent to our servers.",
+    "allowLocation": "Allow Location",
+    "searchWithout": "Search Without Location"
   }
 }

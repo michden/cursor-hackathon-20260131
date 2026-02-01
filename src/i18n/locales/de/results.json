@@ -1,6 +1,13 @@
 {
   "title": "Ihre Augengesundheits-Übersicht",
   "subtitle": "Zusammenfassung Ihrer Vorsorge-Ergebnisse",
+  "header": {
+    "status": "Status",
+    "date": "Datum",
+    "noTests": "Keine Tests abgeschlossen",
+    "allTests": "Alle Tests abgeschlossen",
+    "someTests": "{{count}}/6 Tests abgeschlossen"
+  },
   "noResults": {
     "title": "Noch keine Ergebnisse",
     "description": "Führen Sie mindestens einen Test durch, um Ihre Ergebnisse hier zu sehen.",
@@ -12,7 +19,33 @@
     "contrastSensitivity": "Kontrastempfindlichkeit",
     "amslerGrid": "Amsler-Gitter",
     "astigmatism": "Astigmatismus",
+    "peripheralVision": "Peripheres Sehen",
     "eyePhoto": "Augenfoto-Analyse"
+  },
+  "astigmatism": {
+    "noAstigmatism": "Kein Astigmatismus festgestellt",
+    "possibleAstigmatism": "Möglicher Astigmatismus",
+    "axis": "Achse: {{degrees}}°",
+    "allLinesEqual": "Alle Linien gleich",
+    "severity": {
+      "none": "Keine",
+      "mild": "Leicht",
+      "moderate": "Mäßig",
+      "significant": "Deutlich"
+    }
+  },
+  "peripheralVision": {
+    "normal": "Normal",
+    "concerns": "Auffälligkeiten bemerkt",
+    "detectionRate": "{{rate}}% erkannt",
+    "reactionTime": "{{time}}ms durchschn.",
+    "severity": {
+      "excellent": "Ausgezeichnet",
+      "normal": "Normal",
+      "mild": "Leichte Einschränkung",
+      "moderate": "Mäßige Einschränkung",
+      "significant": "Deutliche Einschränkung"
+    }
   },
   "eyeLabels": {
     "leftEye": "Linkes Auge",
@@ -43,7 +76,12 @@
     "title": "Testverlauf",
     "noHistory": "Keine vorherigen Testsitzungen gespeichert.",
     "session": "Sitzung",
-    "clearHistory": "Verlauf löschen"
+    "clearHistory": "Verlauf löschen",
+    "progress": "Ihr Fortschritt",
+    "acuityOverTime": "Sehschärfe im Zeitverlauf (bestes Auge)",
+    "improved": "Ihre Sehschärfe hat sich von {{from}} auf {{to}} verbessert",
+    "stable": "Ihre Sehschärfe ist stabil bei {{value}} geblieben",
+    "changed": "Ihre Sehschärfe hat sich von {{from}} auf {{to}} verändert"
   },
   "achievements": {
     "title": "Ihre Erfolge",
@@ -74,10 +112,15 @@
     "declined": "Ihre {{test}} könnte sich verändert haben - erwägen Sie einen erneuten Test"
   },
   "findDoctor": {
-    "title": "Augenarzt finden",
+    "title": "Augenärzte in Ihrer Nähe finden",
+    "description": "Wir verwenden Ihren Standort, um Augenärzte in Ihrer Nähe auf Google Maps anzuzeigen.",
     "searching": "Suche nach Ärzten in der Nähe...",
     "permissionNeeded": "Standortberechtigung erforderlich",
     "openMaps": "In Karten öffnen",
-    "searchQuery": "Augenarzt Optiker in meiner Nähe"
+    "searchQuery": "Augenarzt Optiker in meiner Nähe",
+    "privacyTitle": "Ihre Privatsphäre ist geschützt",
+    "privacyText": "Ihr Standort wird einmalig verwendet, um Google Maps zu öffnen, und wird niemals gespeichert oder an unsere Server gesendet.",
+    "allowLocation": "Standort erlauben",
+    "searchWithout": "Ohne Standort suchen"
   }
 }

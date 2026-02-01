@@ -1,34 +1,37 @@
+import { useTranslation } from 'react-i18next'
+
 const ACHIEVEMENTS = {
   'first-test': {
     icon: '🎯',
-    title: 'First Steps',
-    description: 'Completed your first eye test'
+    titleKey: 'results:achievements.firstTest.title',
+    descriptionKey: 'results:achievements.firstTest.description'
   },
   'perfect-acuity': {
     icon: '🦅',
-    title: 'Eagle Eye',
-    description: 'Achieved 20/20 vision or better'
+    titleKey: 'results:achievements.perfectAcuity.title',
+    descriptionKey: 'results:achievements.perfectAcuity.description'
   },
   'all-tests': {
     icon: '🏆',
-    title: 'Complete Checkup',
-    description: 'Completed all four tests'
+    titleKey: 'results:achievements.allTests.title',
+    descriptionKey: 'results:achievements.allTests.description'
   },
   'color-perfect': {
     icon: '🌈',
-    title: 'Color Master',
-    description: 'Perfect score on color vision test'
+    titleKey: 'results:achievements.colorPerfect.title',
+    descriptionKey: 'results:achievements.colorPerfect.description'
   },
   'streak-3': {
     icon: '🔥',
-    title: 'On a Roll',
-    description: 'Tested 3 days in a row'
+    titleKey: 'results:achievements.streak3.title',
+    descriptionKey: 'results:achievements.streak3.description'
   }
 }
 
 export { ACHIEVEMENTS }
 
 export default function AchievementBadge({ achievementId, isNew = false }) {
+  const { t } = useTranslation(['results', 'common'])
   const achievement = ACHIEVEMENTS[achievementId]
   if (!achievement) return null
 
@@ -41,12 +44,12 @@ export default function AchievementBadge({ achievementId, isNew = false }) {
     `}>
       <div className="text-3xl">{achievement.icon}</div>
       <div>
-        <div className="font-semibold text-slate-800 dark:text-slate-100">{achievement.title}</div>
-        <div className="text-sm text-slate-500 dark:text-slate-400">{achievement.description}</div>
+        <div className="font-semibold text-slate-800 dark:text-slate-100">{t(achievement.titleKey)}</div>
+        <div className="text-sm text-slate-500 dark:text-slate-400">{t(achievement.descriptionKey)}</div>
       </div>
       {isNew && (
         <div className="ml-auto text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/50 px-2 py-1 rounded-full">
-          NEW
+          {t('common:status.new')}
         </div>
       )}
     </div>
