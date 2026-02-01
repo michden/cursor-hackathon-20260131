@@ -187,6 +187,52 @@ describe('PeripheralVisionTest', () => {
       
       expect(screen.getByText(/Tap when you see a white dot/)).toBeInTheDocument()
     })
+
+    it('advances to next dot when a dot is missed (timeout fires)', async () => {
+      await goToTestingPhase()
+      
+      // Initial counter
+      expect(screen.getByText('0/12')).toBeInTheDocument()
+      
+      // Advance past initial delay (1500ms) to show first dot
+      await vi.advanceTimersByTimeAsync(1500)
+      
+      // Counter should still be 0/12 (first dot is now visible)
+      expect(screen.getByText('0/12')).toBeInTheDocument()
+      
+      // Advance past response window (2500ms) without clicking - dot should be missed
+      await vi.advanceTimersByTimeAsync(2500)
+      
+      // Counter should advance to 1/12 after the dot times out
+      await waitFor(() => {
+        expect(screen.getByText('1/12')).toBeInTheDocument()
+      })
+    })
+
+    it('correctly tracks detected dots when user clicks', async () => {
+      await goToTestingPhase()
+      
+      // Initial counter
+      expect(screen.getByText('0/12')).toBeInTheDocument()
+      
+      // Advance past initial delay to show first dot
+      await vi.advanceTimersByTimeAsync(1500)
+      
+      // Wait for the dot to be visible (React needs to re-render with the new state)
+      await waitFor(() => {
+        const dot = document.querySelector('.animate-pulse')
+        expect(dot).toBeInTheDocument()
+      })
+      
+      // Click the test area to detect the dot
+      const testArea = document.querySelector('[role="button"]')
+      fireEvent.click(testArea)
+      
+      // Counter should advance to 1/12
+      await waitFor(() => {
+        expect(screen.getByText('1/12')).toBeInTheDocument()
+      })
+    })
   })
 
   describe('navigation', () => {
