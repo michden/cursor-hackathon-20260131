@@ -6,7 +6,7 @@
     "date": "Datum",
     "noTests": "Keine Tests abgeschlossen",
     "allTests": "Alle Tests abgeschlossen",
-    "someTests": "{{count}}/6 Tests abgeschlossen"
+    "someTests": "{{count}}/7 Tests abgeschlossen"
   },
   "noResults": {
     "title": "Noch keine Ergebnisse",

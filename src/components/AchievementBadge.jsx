@@ -12,7 +12,7 @@ const ACHIEVEMENTS = {
   'all-tests': {
     icon: '🏆',
     title: 'Complete Checkup',
-    description: 'Completed all four tests'
+    description: 'Completed all six screening tests'
   },
   'color-perfect': {
     icon: '🌈',
