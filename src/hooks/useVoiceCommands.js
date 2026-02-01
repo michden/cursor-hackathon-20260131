@@ -57,7 +57,10 @@ export function useVoiceCommands({ onCommand, enabled = true, language = 'en-US'
         const text = last[0].transcript.toLowerCase().trim()
         setTranscript(text)
 
-        for (const [phrase, command] of Object.entries(COMMANDS)) {
+        // Sort by phrase length (longest first) to match specific phrases before substrings
+        // e.g., "cannot see" should match before "no" (which is a substring of "cannot")
+        const sortedEntries = Object.entries(COMMANDS).sort((a, b) => b[0].length - a[0].length)
+        for (const [phrase, command] of sortedEntries) {
           if (text.includes(phrase)) {
             onCommandRef.current?.(command)
             break

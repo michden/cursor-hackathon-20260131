@@ -242,6 +242,84 @@ describe('useVoiceCommands', () => {
 
       expect(result.current.transcript).toBe('up')
     })
+
+    it('should match longer phrases before shorter substrings (cannot see vs no)', () => {
+      window.SpeechRecognition = MockSpeechRecognition
+      const onCommand = vi.fn()
+
+      renderHook(() =>
+        useVoiceCommands({ onCommand, enabled: true })
+      )
+
+      const instance = mockInstances[0]
+
+      act(() => {
+        instance.onresult({
+          results: [
+            {
+              isFinal: true,
+              0: { transcript: 'cannot see' },
+              length: 1,
+            },
+          ],
+        })
+      })
+
+      // Should match "cannot see" -> cantSee, NOT "no" (which is a substring of "cannot")
+      expect(onCommand).toHaveBeenCalledWith('cantSee')
+      expect(onCommand).not.toHaveBeenCalledWith('no')
+    })
+
+    it('should match longer phrases before shorter substrings (can\'t see vs no)', () => {
+      window.SpeechRecognition = MockSpeechRecognition
+      const onCommand = vi.fn()
+
+      renderHook(() =>
+        useVoiceCommands({ onCommand, enabled: true })
+      )
+
+      const instance = mockInstances[0]
+
+      act(() => {
+        instance.onresult({
+          results: [
+            {
+              isFinal: true,
+              0: { transcript: "I can't see it" },
+              length: 1,
+            },
+          ],
+        })
+      })
+
+      // Should match "can't see" -> cantSee
+      expect(onCommand).toHaveBeenCalledWith('cantSee')
+    })
+
+    it('should still match "no" when said alone', () => {
+      window.SpeechRecognition = MockSpeechRecognition
+      const onCommand = vi.fn()
+
+      renderHook(() =>
+        useVoiceCommands({ onCommand, enabled: true })
+      )
+
+      const instance = mockInstances[0]
+
+      act(() => {
+        instance.onresult({
+          results: [
+            {
+              isFinal: true,
+              0: { transcript: 'no' },
+              length: 1,
+            },
+          ],
+        })
+      })
+
+      expect(onCommand).toHaveBeenCalledWith('no')
+    })
   })
 
   describe('error handling', () => {
