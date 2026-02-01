@@ -95,6 +95,7 @@ export function useVoiceCommands({ onCommand, enabled = true, language = 'en-US'
       if (recognitionRef.current === recognition && shouldListenRef.current) {
         try {
           recognition.start()
+          setIsListening(true)
         } catch {
           // Ignore errors from trying to restart
         }

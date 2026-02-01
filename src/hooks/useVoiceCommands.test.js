@@ -472,5 +472,73 @@ describe('useVoiceCommands', () => {
       expect(startSpy).not.toHaveBeenCalled()
       consoleSpy.mockRestore()
     })
+
+    it('should restore isListening to true after auto-restart from recoverable error', () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const onCommand = vi.fn()
+
+      const { result } = renderHook(() =>
+        useVoiceCommands({ onCommand, enabled: true })
+      )
+
+      const instance = mockInstances[0]
+
+      act(() => {
+        result.current.startListening()
+      })
+
+      expect(result.current.isListening).toBe(true)
+
+      // Simulate recoverable network error
+      act(() => {
+        instance.onerror({ error: 'network' })
+      })
+
+      // isListening should be false after error
+      expect(result.current.isListening).toBe(false)
+
+      // Simulate onend being called after error (triggers auto-restart)
+      act(() => {
+        instance.onend()
+      })
+
+      // isListening should be restored to true after auto-restart
+      expect(result.current.isListening).toBe(true)
+      consoleSpy.mockRestore()
+    })
+
+    it('should restore isListening to true after auto-restart from aborted error', () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const onCommand = vi.fn()
+
+      const { result } = renderHook(() =>
+        useVoiceCommands({ onCommand, enabled: true })
+      )
+
+      const instance = mockInstances[0]
+
+      act(() => {
+        result.current.startListening()
+      })
+
+      expect(result.current.isListening).toBe(true)
+
+      // Simulate recoverable aborted error
+      act(() => {
+        instance.onerror({ error: 'aborted' })
+      })
+
+      // isListening should be false after error
+      expect(result.current.isListening).toBe(false)
+
+      // Simulate onend being called after error (triggers auto-restart)
+      act(() => {
+        instance.onend()
+      })
+
+      // isListening should be restored to true after auto-restart
+      expect(result.current.isListening).toBe(true)
+      consoleSpy.mockRestore()
+    })
   })
 })
