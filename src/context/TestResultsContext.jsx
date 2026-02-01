@@ -483,6 +483,12 @@ export function TestResultsProvider({ children }) {
   )
 }
 
+/**
+ * Retrieve the current TestResults context value.
+ *
+ * @throws {Error} If called outside a TestResultsProvider.
+ * @returns {*} The TestResultsContext value provided by the nearest TestResultsProvider.
+ */
 export function useTestResults() {
   const context = useContext(TestResultsContext)
   if (!context) {

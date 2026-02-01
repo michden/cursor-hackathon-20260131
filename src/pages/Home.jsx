@@ -8,14 +8,9 @@ import { useTestResults } from '../context/TestResultsContext'
 import { useLanguage } from '../context/LanguageContext'
 
 /**
- * Render the application's Home page with navigation to available eye health tests.
+ * Render the Home page with app title, language/theme controls, audio instructions, a medical disclaimer, navigational test option cards, and footer.
  *
- * Displays app title and subtitle, language and theme controls, audio instructions,
- * a medical disclaimer, a list of test option links (including visual acuity, color vision,
- * contrast sensitivity, Amsler grid, astigmatism, peripheral vision, eye photo, and results),
- * and footer/version information. If test results include a completion timestamp, a localized
- * "last tested" timestamp is shown.
- *
+ * Shows a localized "last tested" timestamp when test results include a completion time.
  * @returns {JSX.Element} The Home page React element.
  */
 export default function Home() {

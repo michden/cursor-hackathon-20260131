@@ -173,7 +173,13 @@ function ColorVisionResult({ data, t }) {
   )
 }
 
-// Helper to strip markdown formatting for plain text display
+/**
+ * Convert a Markdown string to plain text by removing common formatting and collapsing whitespace.
+ *
+ * Removes bold and italic markers, header hashes, list markers, and collapses multiple newlines into single spaces.
+ * @param {string} text - The Markdown input.
+ * @returns {string} Plain-text string with Markdown formatting removed.
+ */
 function stripMarkdown(text) {
   if (!text) return ''
   return text
@@ -777,9 +783,9 @@ function HistoryChart({ history, t, i18n }) {
 }
 
 /**
- * Render the HealthSnapshot page showing a complete eye health results summary, history, achievements, recommendations, and actions.
+ * Display an aggregated eye health report comprising test results, history, achievements, recommendations, and actions.
  *
- * Renders a header, a timeline chart (when available), per-test result cards (visual acuity, color vision, contrast sensitivity, Amsler grid, astigmatism, peripheral vision, eye photo), unlocked achievements, a recommendations panel, optional Find Doctor call-to-action, disclaimer, and action buttons for sharing, PDF export, and saving/clearing results. Handles achievement unlocking/marking, share and PDF generation, and localized strings via i18n.
+ * Renders a localized results page that presents per-test summary cards, a history chart (when available), unlocked achievements, a recommendations panel, and action controls for sharing, PDF export, saving, and clearing results. Handles achievement unlocking/marking and constructs share/export content.
  *
  * @returns {JSX.Element} The React element for the HealthSnapshot results page.
  */
