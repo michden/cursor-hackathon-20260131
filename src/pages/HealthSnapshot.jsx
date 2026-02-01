@@ -834,11 +834,13 @@ export default function HealthSnapshot() {
     const hasAstigmatism = results.astigmatism?.left || results.astigmatism?.right
     const hasPeripheralVision = results.peripheralVision?.left || results.peripheralVision?.right
     
-    const tests = [hasVisualAcuity, results.colorVision, hasContrastSensitivity, hasAmslerGrid, hasAstigmatism, hasPeripheralVision, results.eyePhoto]
+    // Count only the 6 core screening tests (eye photo is optional/supplementary)
+    // This aligns with the achievement logic for "all-tests" achievement
+    const tests = [hasVisualAcuity, results.colorVision, hasContrastSensitivity, hasAmslerGrid, hasAstigmatism, hasPeripheralVision]
     const completed = tests.filter(Boolean).length
     
     if (completed === 0) return { status: 'none', message: t('results:header.noTests') }
-    if (completed === 7) return { status: 'complete', message: t('results:header.allTests') }
+    if (completed === 6) return { status: 'complete', message: t('results:header.allTests') }
     return { status: 'partial', message: t('results:header.someTests', { count: completed }) }
   }, [results, t])
 
