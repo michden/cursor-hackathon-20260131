@@ -18,11 +18,11 @@ vi.mock('react-router-dom', async () => {
   }
 })
 
-// Mock HTMLMediaElement methods
+// Mock HTMLMediaElement methods using spyOn so vi.restoreAllMocks() can restore them
 beforeEach(() => {
-  window.HTMLMediaElement.prototype.play = vi.fn().mockResolvedValue(undefined)
-  window.HTMLMediaElement.prototype.pause = vi.fn()
-  window.HTMLMediaElement.prototype.load = vi.fn()
+  vi.spyOn(window.HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined)
+  vi.spyOn(window.HTMLMediaElement.prototype, 'pause').mockImplementation(() => {})
+  vi.spyOn(window.HTMLMediaElement.prototype, 'load').mockImplementation(() => {})
   
   localStorage.clear()
   mockNavigate.mockClear()
