@@ -33,6 +33,7 @@ export function useVoiceCommands({ onCommand, enabled = true, language = 'en-US'
   const [transcript, setTranscript] = useState('')
   const recognitionRef = useRef(null)
   const onCommandRef = useRef(onCommand)
+  const shouldListenRef = useRef(false)
 
   // Keep onCommand ref updated
   useEffect(() => {
@@ -76,9 +77,10 @@ export function useVoiceCommands({ onCommand, enabled = true, language = 'en-US'
     }
 
     recognition.onend = () => {
-      // If we're still supposed to be listening, restart
-      // This handles the case where recognition stops automatically
-      if (recognitionRef.current && enabled) {
+      // Only restart if this recognition instance is still the current one
+      // This prevents zombie listeners when the effect re-runs and creates
+      // a new recognition instance before the old one's onend fires
+      if (recognitionRef.current === recognition && shouldListenRef.current) {
         try {
           recognition.start()
         } catch {
@@ -90,6 +92,7 @@ export function useVoiceCommands({ onCommand, enabled = true, language = 'en-US'
     recognitionRef.current = recognition
 
     return () => {
+      shouldListenRef.current = false
       recognition.stop()
       recognitionRef.current = null
     }
@@ -98,6 +101,7 @@ export function useVoiceCommands({ onCommand, enabled = true, language = 'en-US'
   const startListening = useCallback(() => {
     if (recognitionRef.current && enabled) {
       try {
+        shouldListenRef.current = true
         recognitionRef.current.start()
         setIsListening(true)
       } catch {
@@ -108,8 +112,9 @@ export function useVoiceCommands({ onCommand, enabled = true, language = 'en-US'
 
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
-      recognitionRef.current.stop()
+      shouldListenRef.current = false
       setIsListening(false)
+      recognitionRef.current.stop()
     }
   }, [])
 
