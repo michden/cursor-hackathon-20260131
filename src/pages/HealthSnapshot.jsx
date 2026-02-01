@@ -1229,7 +1229,9 @@ export default function HealthSnapshot() {
                 ${stripMarkdown(typeof results.eyePhoto.analysis === 'string' 
                   ? results.eyePhoto.analysis 
                   : (results.eyePhoto.analysis?.[i18n.language] || results.eyePhoto.analysis?.en || '')
-                ).substring(0, 500)}${stripMarkdown(typeof results.eyePhoto.analysis === 'string' ? results.eyePhoto.analysis : '').length > 500 ? '...' : ''}
+                ).substring(0, 500)}${stripMarkdown(typeof results.eyePhoto.analysis === 'string' 
+                  ? results.eyePhoto.analysis 
+                  : (results.eyePhoto.analysis?.[i18n.language] || results.eyePhoto.analysis?.en || '')).length > 500 ? '...' : ''}
               </p>
             </div>
           </div>
