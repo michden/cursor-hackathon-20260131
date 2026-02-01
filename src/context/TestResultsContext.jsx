@@ -286,7 +286,9 @@ export function TestResultsProvider({ children }) {
     const hasAstigmatism = results.astigmatism?.left || results.astigmatism?.right
     const hasPeripheralVision = results.peripheralVision?.left || results.peripheralVision?.right
     
-    if (!hasVisualAcuity && !results.colorVision && !hasContrastSensitivity && !hasAmslerGrid && !hasAstigmatism && !hasPeripheralVision) return
+    const hasEyePhoto = results.eyePhoto
+    
+    if (!hasVisualAcuity && !results.colorVision && !hasContrastSensitivity && !hasAmslerGrid && !hasAstigmatism && !hasPeripheralVision && !hasEyePhoto) return
 
     // Helper to get summary for an eye
     const getEyeSummary = (eyeData, fields) => {
@@ -325,6 +327,12 @@ export function TestResultsProvider({ children }) {
       peripheralVision: hasPeripheralVision ? {
         left: getEyeSummary(results.peripheralVision.left, ['detectionRate', 'avgReactionTime', 'severity']),
         right: getEyeSummary(results.peripheralVision.right, ['detectionRate', 'avgReactionTime', 'severity'])
+      } : null,
+      eyePhoto: hasEyePhoto ? {
+        status: results.eyePhoto.status,
+        findings: results.eyePhoto.findings,
+        confidence: results.eyePhoto.confidence
+        // imageData is intentionally excluded to reduce storage size
       } : null
     }
 

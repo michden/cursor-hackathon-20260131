@@ -382,4 +382,68 @@ describe('TestResultsContext', () => {
     expect(contextRef.results.visualAcuity.left.snellen).toBe('20/20')
     expect(contextRef.results.visualAcuity.right.snellen).toBe('20/40')
   })
+
+  it('saves eye-photo-only session to history', () => {
+    let contextRef
+    
+    render(
+      <TestResultsProvider>
+        <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
+      </TestResultsProvider>
+    )
+
+    // Only set eye photo (no other test results)
+    act(() => {
+      contextRef.updateEyePhoto({ 
+        status: 'analyzed', 
+        findings: ['mild redness'],
+        confidence: 0.85,
+        imageData: 'base64-image-data-should-be-excluded'
+      })
+    })
+
+    act(() => {
+      contextRef.saveToHistory()
+    })
+
+    expect(screen.getByTestId('history-count')).toHaveTextContent('1')
+    expect(contextRef.history[0].eyePhoto).toEqual({
+      status: 'analyzed',
+      findings: ['mild redness'],
+      confidence: 0.85
+    })
+    // Verify imageData is excluded
+    expect(contextRef.history[0].eyePhoto.imageData).toBeUndefined()
+  })
+
+  it('includes eye photo data in history session with other tests', () => {
+    let contextRef
+    
+    render(
+      <TestResultsProvider>
+        <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
+      </TestResultsProvider>
+    )
+
+    act(() => {
+      contextRef.updateVisualAcuity('left', { snellen: '20/20', level: 8 })
+      contextRef.updateEyePhoto({ 
+        status: 'analyzed', 
+        findings: [],
+        confidence: 0.92
+      })
+    })
+
+    act(() => {
+      contextRef.saveToHistory()
+    })
+
+    expect(screen.getByTestId('history-count')).toHaveTextContent('1')
+    expect(contextRef.history[0].visualAcuity.left).toBeDefined()
+    expect(contextRef.history[0].eyePhoto).toEqual({
+      status: 'analyzed',
+      findings: [],
+      confidence: 0.92
+    })
+  })
 })
