@@ -19,6 +19,7 @@
     "contrastSensitivity": "Kontrastempfindlichkeit",
     "amslerGrid": "Amsler-Gitter",
     "astigmatism": "Astigmatismus",
+    "peripheralVision": "Peripheres Sehen",
     "eyePhoto": "Augenfoto-Analyse"
   },
   "astigmatism": {
@@ -31,6 +32,19 @@
       "mild": "Leicht",
       "moderate": "Mäßig",
       "significant": "Deutlich"
+    }
+  },
+  "peripheralVision": {
+    "normal": "Normal",
+    "concerns": "Auffälligkeiten bemerkt",
+    "detectionRate": "{{rate}}% erkannt",
+    "reactionTime": "{{time}}ms durchschn.",
+    "severity": {
+      "excellent": "Ausgezeichnet",
+      "normal": "Normal",
+      "mild": "Leichte Einschränkung",
+      "moderate": "Mäßige Einschränkung",
+      "significant": "Deutliche Einschränkung"
     }
   },
   "eyeLabels": {

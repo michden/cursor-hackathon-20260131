@@ -155,6 +155,42 @@
       "detected": "⚠️ Recommendation: Schedule an appointment with an eye care professional for a comprehensive evaluation"
     }
   },
+  "peripheralVision": {
+    "title": "Peripheral Vision Test",
+    "subtitle": "Testing your {{eye}} eye",
+    "instructions": {
+      "title": "Instructions:",
+      "step1": "Cover your {{otherEye}} eye with your hand",
+      "step2": "Focus on the red dot in the center of the screen",
+      "step3": "White dots will appear in your peripheral vision",
+      "step4": "Tap anywhere on the screen when you see a dot",
+      "note": "Keep looking at the center dot - use your side vision to detect the dots"
+    },
+    "focusPrompt": "Keep your focus on the red dot",
+    "tapInstruction": "Tap when you see a white dot appear",
+    "tapPrompt": "Tap to respond",
+    "results": {
+      "title": "Test Complete!",
+      "detectionRate": "Detection Rate",
+      "dotsDetected": "Dots Detected",
+      "avgReactionTime": "Avg. Reaction Time",
+      "severity": {
+        "excellent": "Excellent peripheral vision",
+        "normal": "Normal peripheral vision",
+        "mild": "Mildly reduced peripheral vision",
+        "moderate": "Moderately reduced peripheral vision",
+        "significant": "Significantly reduced peripheral vision"
+      }
+    },
+    "explanation": {
+      "normal": "Your peripheral vision test results are within normal range. You were able to detect most dots appearing in your side vision with good reaction times.",
+      "concerns": "Your results suggest some difficulty detecting objects in your peripheral vision. This could indicate early signs of conditions like glaucoma. However, many factors can affect this test, including fatigue or distraction."
+    },
+    "recommendation": {
+      "normal": "✓ Continue with regular annual eye exams",
+      "concerns": "⚠️ Recommendation: Schedule an appointment with an eye care professional for a comprehensive visual field test"
+    }
+  },
   "eyePhoto": {
     "title": "Eye Photo Analysis",
     "subtitle": "Analyze your eye photo with AI",

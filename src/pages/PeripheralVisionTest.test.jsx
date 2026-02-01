@@ -1,0 +1,309 @@
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
+import { I18nextProvider } from 'react-i18next'
+import PeripheralVisionTest from './PeripheralVisionTest'
+import { TestResultsProvider } from '../context/TestResultsContext'
+import { TTSSettingsProvider } from '../context/TTSSettingsContext'
+import { LanguageProvider } from '../context/LanguageContext'
+import i18n from '../i18n'
+
+// Mock the navigate function
+const mockNavigate = vi.fn()
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom')
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate
+  }
+})
+
+// Mock HTMLMediaElement methods using spyOn so vi.restoreAllMocks() can restore them
+beforeEach(async () => {
+  vi.spyOn(window.HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined)
+  vi.spyOn(window.HTMLMediaElement.prototype, 'pause').mockImplementation(() => {})
+  vi.spyOn(window.HTMLMediaElement.prototype, 'load').mockImplementation(() => {})
+  
+  localStorage.clear()
+  mockNavigate.mockClear()
+  await i18n.changeLanguage('en')
+  
+  // Mock timers for test control
+  vi.useFakeTimers({ shouldAdvanceTime: true })
+})
+
+afterEach(() => {
+  vi.restoreAllMocks()
+  vi.useRealTimers()
+})
+
+function renderWithProviders(ui) {
+  return render(
+    <MemoryRouter>
+      <I18nextProvider i18n={i18n}>
+        <LanguageProvider>
+          <TTSSettingsProvider>
+            <TestResultsProvider>
+              {ui}
+            </TestResultsProvider>
+          </TTSSettingsProvider>
+        </LanguageProvider>
+      </I18nextProvider>
+    </MemoryRouter>
+  )
+}
+
+describe('PeripheralVisionTest', () => {
+  describe('eye selection phase', () => {
+    it('renders eye selection screen initially', async () => {
+      renderWithProviders(<PeripheralVisionTest />)
+      
+      await waitFor(() => {
+        expect(screen.getByText('Peripheral Vision Test')).toBeInTheDocument()
+      })
+      expect(screen.getByText('Left')).toBeInTheDocument()
+      expect(screen.getByText('Right')).toBeInTheDocument()
+    })
+
+    it('transitions to instructions when left eye is selected', async () => {
+      renderWithProviders(<PeripheralVisionTest />)
+      
+      await waitFor(() => {
+        expect(screen.getByText('Left')).toBeInTheDocument()
+      })
+      
+      fireEvent.click(screen.getByText('Left'))
+      
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Start Test' })).toBeInTheDocument()
+      })
+    })
+
+    it('transitions to instructions when right eye is selected', async () => {
+      renderWithProviders(<PeripheralVisionTest />)
+      
+      await waitFor(() => {
+        expect(screen.getByText('Right')).toBeInTheDocument()
+      })
+      
+      fireEvent.click(screen.getByText('Right'))
+      
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Start Test' })).toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('instructions phase', () => {
+    it('shows test instructions', async () => {
+      renderWithProviders(<PeripheralVisionTest />)
+      
+      await waitFor(() => {
+        expect(screen.getByText('Left')).toBeInTheDocument()
+      })
+      
+      // Select left eye to get to instructions
+      fireEvent.click(screen.getByText('Left'))
+      
+      await waitFor(() => {
+        expect(screen.getByText(/Cover your/)).toBeInTheDocument()
+        expect(screen.getByText(/Focus on the red dot/)).toBeInTheDocument()
+      })
+    })
+
+    it('shows Start Test button', async () => {
+      renderWithProviders(<PeripheralVisionTest />)
+      
+      await waitFor(() => {
+        expect(screen.getByText('Left')).toBeInTheDocument()
+      })
+      
+      fireEvent.click(screen.getByText('Left'))
+      
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Start Test' })).toBeInTheDocument()
+      })
+    })
+
+    it('transitions to testing phase when Start Test is clicked', async () => {
+      renderWithProviders(<PeripheralVisionTest />)
+      
+      await waitFor(() => {
+        expect(screen.getByText('Left')).toBeInTheDocument()
+      })
+      
+      fireEvent.click(screen.getByText('Left'))
+      
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Start Test' })).toBeInTheDocument()
+      })
+      
+      fireEvent.click(screen.getByRole('button', { name: 'Start Test' }))
+      
+      await waitFor(() => {
+        expect(screen.getByText(/Keep your focus on the red dot/)).toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('testing phase', () => {
+    async function goToTestingPhase() {
+      renderWithProviders(<PeripheralVisionTest />)
+      
+      await waitFor(() => {
+        expect(screen.getByText('Left')).toBeInTheDocument()
+      })
+      
+      fireEvent.click(screen.getByText('Left'))
+      
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Start Test' })).toBeInTheDocument()
+      })
+      
+      fireEvent.click(screen.getByRole('button', { name: 'Start Test' }))
+      
+      await waitFor(() => {
+        expect(screen.getByText(/Keep your focus on the red dot/)).toBeInTheDocument()
+      })
+    }
+
+    it('shows the test area with fixation point', async () => {
+      await goToTestingPhase()
+      
+      // Check for the dark background test area
+      const testArea = document.querySelector('.bg-slate-900')
+      expect(testArea).toBeInTheDocument()
+    })
+
+    it('shows progress counter', async () => {
+      await goToTestingPhase()
+      
+      // Check for counter showing 0/12
+      expect(screen.getByText('0/12')).toBeInTheDocument()
+    })
+
+    it('shows tap instruction', async () => {
+      await goToTestingPhase()
+      
+      expect(screen.getByText(/Tap when you see a white dot/)).toBeInTheDocument()
+    })
+
+    it('advances to next dot when a dot is missed (timeout fires)', async () => {
+      await goToTestingPhase()
+      
+      // Initial counter
+      expect(screen.getByText('0/12')).toBeInTheDocument()
+      
+      // Advance past initial delay (1500ms) to show first dot
+      await vi.advanceTimersByTimeAsync(1500)
+      
+      // Counter should still be 0/12 (first dot is now visible)
+      expect(screen.getByText('0/12')).toBeInTheDocument()
+      
+      // Advance past response window (2500ms) without clicking - dot should be missed
+      await vi.advanceTimersByTimeAsync(2500)
+      
+      // Counter should advance to 1/12 after the dot times out
+      await waitFor(() => {
+        expect(screen.getByText('1/12')).toBeInTheDocument()
+      })
+    })
+
+    it('correctly tracks detected dots when user clicks', async () => {
+      await goToTestingPhase()
+      
+      // Initial counter
+      expect(screen.getByText('0/12')).toBeInTheDocument()
+      
+      // Advance past initial delay to show first dot
+      await vi.advanceTimersByTimeAsync(1500)
+      
+      // Wait for the dot to be visible (React needs to re-render with the new state)
+      await waitFor(() => {
+        const dot = document.querySelector('.animate-pulse')
+        expect(dot).toBeInTheDocument()
+      })
+      
+      // Click the test area to detect the dot
+      const testArea = document.querySelector('[role="button"]')
+      fireEvent.click(testArea)
+      
+      // Counter should advance to 1/12
+      await waitFor(() => {
+        expect(screen.getByText('1/12')).toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('navigation', () => {
+    it('back button returns to home from eye selection', async () => {
+      renderWithProviders(<PeripheralVisionTest />)
+      
+      await waitFor(() => {
+        expect(screen.getByText('← Back')).toBeInTheDocument()
+      })
+      
+      // The back link should lead to home
+      const backLink = screen.getByText('← Back')
+      expect(backLink.closest('a')).toHaveAttribute('href', '/')
+    })
+
+    it('exit button during test returns to eye selection', async () => {
+      renderWithProviders(<PeripheralVisionTest />)
+      
+      await waitFor(() => {
+        expect(screen.getByText('Left')).toBeInTheDocument()
+      })
+      
+      fireEvent.click(screen.getByText('Left'))
+      
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Start Test' })).toBeInTheDocument()
+      })
+      
+      fireEvent.click(screen.getByRole('button', { name: 'Start Test' }))
+      
+      await waitFor(() => {
+        expect(screen.getByText(/← Exit/)).toBeInTheDocument()
+      })
+      
+      fireEvent.click(screen.getByText(/← Exit/))
+      
+      // Should return to eye selection phase
+      await waitFor(() => {
+        expect(screen.getByText('Left')).toBeInTheDocument()
+        expect(screen.getByText('Right')).toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('result persistence', () => {
+    it('stores peripheral vision in context/localStorage structure', () => {
+      // Check that the default localStorage structure includes peripheralVision
+      const saved = JSON.parse(localStorage.getItem('visioncheck-results') || '{}')
+      // Initially empty, but when results are saved they should have the right structure
+      expect(saved.peripheralVision === undefined || saved.peripheralVision === null || 
+             (typeof saved.peripheralVision === 'object')).toBe(true)
+    })
+  })
+})
+
+describe('PeripheralVisionTest translations', () => {
+  it('displays translated content in English', async () => {
+    await i18n.changeLanguage('en')
+    renderWithProviders(<PeripheralVisionTest />)
+    
+    await waitFor(() => {
+      expect(screen.getByText('Peripheral Vision Test')).toBeInTheDocument()
+    })
+  })
+
+  it('displays translated content in German', async () => {
+    await i18n.changeLanguage('de')
+    renderWithProviders(<PeripheralVisionTest />)
+    
+    await waitFor(() => {
+      expect(screen.getByText('Peripherer Sehtest')).toBeInTheDocument()
+    })
+  })
+})

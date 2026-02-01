@@ -25,6 +25,10 @@ const getDefaultResults = () => ({
     left: null,
     right: null
   },
+  peripheralVision: {
+    left: null,
+    right: null
+  },
   eyePhoto: null,
   completedAt: null
 })
@@ -78,6 +82,11 @@ const migrateResults = (saved) => {
   // If astigmatism doesn't exist, add it
   if (!saved.astigmatism) {
     saved.astigmatism = defaults.astigmatism
+  }
+  
+  // If peripheralVision doesn't exist, add it
+  if (!saved.peripheralVision) {
+    saved.peripheralVision = defaults.peripheralVision
   }
   
   return saved
@@ -151,6 +160,16 @@ const hasThreeDayStreak = (historyData) => {
   return false
 }
 
+/**
+ * Provides test results state, persistence, history, and achievement management to descendant components via TestResultsContext.
+ *
+ * The provider persists results, history, and achievements to localStorage, exposes update handlers for per-eye and binocular tests
+ * (visual acuity, color vision, contrast sensitivity, Amsler grid, astigmatism, peripheral vision, and eye photo), and offers
+ * history management and achievement utilities.
+ *
+ * @param {{ children: import('react').ReactNode }} props - The provider children.
+ * @returns {JSX.Element} A context provider element that supplies results, update handlers, history, and achievement utilities to descendants.
+ */
 export function TestResultsProvider({ children }) {
   const [results, setResults] = useState(loadPersistedResults)
   const [history, setHistory] = useState(loadPersistedHistory)
@@ -229,6 +248,18 @@ export function TestResultsProvider({ children }) {
     }))
   }
 
+  // Update peripheral vision for a specific eye
+  const updatePeripheralVision = (eye, data) => {
+    setResults(prev => ({
+      ...prev,
+      peripheralVision: {
+        ...prev.peripheralVision,
+        [eye]: data
+      },
+      completedAt: new Date().toISOString()
+    }))
+  }
+
   const clearResults = () => {
     setResults(getDefaultResults())
     try {
@@ -243,7 +274,8 @@ export function TestResultsProvider({ children }) {
     const hasContrastSensitivity = results.contrastSensitivity?.left || results.contrastSensitivity?.right
     const hasAmslerGrid = results.amslerGrid?.left || results.amslerGrid?.right
     const hasAstigmatism = results.astigmatism?.left || results.astigmatism?.right
-    return hasVisualAcuity || results.colorVision || hasContrastSensitivity || hasAmslerGrid || hasAstigmatism || results.eyePhoto
+    const hasPeripheralVision = results.peripheralVision?.left || results.peripheralVision?.right
+    return hasVisualAcuity || results.colorVision || hasContrastSensitivity || hasAmslerGrid || hasAstigmatism || hasPeripheralVision || results.eyePhoto
   }
 
   // Save current session to history
@@ -252,8 +284,11 @@ export function TestResultsProvider({ children }) {
     const hasContrastSensitivity = results.contrastSensitivity?.left || results.contrastSensitivity?.right
     const hasAmslerGrid = results.amslerGrid?.left || results.amslerGrid?.right
     const hasAstigmatism = results.astigmatism?.left || results.astigmatism?.right
+    const hasPeripheralVision = results.peripheralVision?.left || results.peripheralVision?.right
     
-    if (!hasVisualAcuity && !results.colorVision && !hasContrastSensitivity && !hasAmslerGrid && !hasAstigmatism) return
+    const hasEyePhoto = results.eyePhoto
+    
+    if (!hasVisualAcuity && !results.colorVision && !hasContrastSensitivity && !hasAmslerGrid && !hasAstigmatism && !hasPeripheralVision && !hasEyePhoto) return
 
     // Helper to get summary for an eye
     const getEyeSummary = (eyeData, fields) => {
@@ -288,6 +323,16 @@ export function TestResultsProvider({ children }) {
       astigmatism: hasAstigmatism ? {
         left: getEyeSummary(results.astigmatism.left, ['allLinesEqual', 'severity', 'estimatedAxis']),
         right: getEyeSummary(results.astigmatism.right, ['allLinesEqual', 'severity', 'estimatedAxis'])
+      } : null,
+      peripheralVision: hasPeripheralVision ? {
+        left: getEyeSummary(results.peripheralVision.left, ['detectionRate', 'avgReactionTime', 'severity']),
+        right: getEyeSummary(results.peripheralVision.right, ['detectionRate', 'avgReactionTime', 'severity'])
+      } : null,
+      eyePhoto: hasEyePhoto ? {
+        status: results.eyePhoto.status,
+        analysis: results.eyePhoto.analysis,
+        analyzedAt: results.eyePhoto.analyzedAt
+        // imageData is intentionally excluded to reduce storage size
       } : null
     }
 
@@ -358,10 +403,11 @@ export function TestResultsProvider({ children }) {
     const hasContrastSensitivity = currentResults.contrastSensitivity?.left || currentResults.contrastSensitivity?.right
     const hasAmslerGrid = currentResults.amslerGrid?.left || currentResults.amslerGrid?.right
     const hasAstigmatism = currentResults.astigmatism?.left || currentResults.astigmatism?.right
+    const hasPeripheralVision = currentResults.peripheralVision?.left || currentResults.peripheralVision?.right
     const hasColorVision = currentResults.colorVision
     
     // First test achievement
-    if (!achievements['first-test'] && (hasVisualAcuity || hasColorVision || hasContrastSensitivity || hasAmslerGrid || hasAstigmatism)) {
+    if (!achievements['first-test'] && (hasVisualAcuity || hasColorVision || hasContrastSensitivity || hasAmslerGrid || hasAstigmatism || hasPeripheralVision)) {
       if (unlockAchievement('first-test')) {
         newlyUnlocked.push('first-test')
       }
@@ -385,8 +431,8 @@ export function TestResultsProvider({ children }) {
       }
     }
     
-    // All tests completed (now includes astigmatism - 5 tests total)
-    if (!achievements['all-tests'] && hasVisualAcuity && hasColorVision && hasContrastSensitivity && hasAmslerGrid && hasAstigmatism) {
+    // All core vision tests completed (now includes astigmatism and peripheral vision - 6 tests total; eyePhoto is not required)
+    if (!achievements['all-tests'] && hasVisualAcuity && hasColorVision && hasContrastSensitivity && hasAmslerGrid && hasAstigmatism && hasPeripheralVision) {
       if (unlockAchievement('all-tests')) {
         newlyUnlocked.push('all-tests')
       }
@@ -425,6 +471,7 @@ export function TestResultsProvider({ children }) {
       updateContrastSensitivity,
       updateAmslerGrid,
       updateAstigmatism,
+      updatePeripheralVision,
       updateEyePhoto,
       clearResults,
       hasAnyResults,
@@ -444,6 +491,12 @@ export function TestResultsProvider({ children }) {
   )
 }
 
+/**
+ * Retrieve the current TestResults context value.
+ *
+ * @throws {Error} If called outside a TestResultsProvider.
+ * @returns {*} The TestResultsContext value provided by the nearest TestResultsProvider.
+ */
 export function useTestResults() {
   const context = useContext(TestResultsContext)
   if (!context) {

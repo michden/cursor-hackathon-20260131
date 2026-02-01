@@ -108,7 +108,7 @@ describe('TestResultsContext', () => {
     )
 
     act(() => {
-      contextRef.updateEyePhoto({ status: 'analyzed', findings: [] })
+      contextRef.updateEyePhoto({ status: 'analyzed', analysis: 'Test analysis', analyzedAt: '2024-01-01T00:00:00.000Z' })
     })
 
     expect(screen.getByTestId('has-results')).toHaveTextContent('yes')
@@ -381,5 +381,69 @@ describe('TestResultsContext', () => {
 
     expect(contextRef.results.visualAcuity.left.snellen).toBe('20/20')
     expect(contextRef.results.visualAcuity.right.snellen).toBe('20/40')
+  })
+
+  it('saves eye-photo-only session to history', () => {
+    let contextRef
+    
+    render(
+      <TestResultsProvider>
+        <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
+      </TestResultsProvider>
+    )
+
+    // Only set eye photo (no other test results)
+    act(() => {
+      contextRef.updateEyePhoto({ 
+        status: 'analyzed', 
+        analysis: 'The eye appears healthy with no visible abnormalities.',
+        analyzedAt: '2024-01-15T10:30:00.000Z',
+        imageData: 'base64-image-data-should-be-excluded'
+      })
+    })
+
+    act(() => {
+      contextRef.saveToHistory()
+    })
+
+    expect(screen.getByTestId('history-count')).toHaveTextContent('1')
+    expect(contextRef.history[0].eyePhoto).toEqual({
+      status: 'analyzed',
+      analysis: 'The eye appears healthy with no visible abnormalities.',
+      analyzedAt: '2024-01-15T10:30:00.000Z'
+    })
+    // Verify imageData is excluded
+    expect(contextRef.history[0].eyePhoto.imageData).toBeUndefined()
+  })
+
+  it('includes eye photo data in history session with other tests', () => {
+    let contextRef
+    
+    render(
+      <TestResultsProvider>
+        <TestConsumer onMount={(ctx) => { contextRef = ctx }} />
+      </TestResultsProvider>
+    )
+
+    act(() => {
+      contextRef.updateVisualAcuity('left', { snellen: '20/20', level: 8 })
+      contextRef.updateEyePhoto({ 
+        status: 'analyzed', 
+        analysis: 'No significant findings.',
+        analyzedAt: '2024-01-15T11:00:00.000Z'
+      })
+    })
+
+    act(() => {
+      contextRef.saveToHistory()
+    })
+
+    expect(screen.getByTestId('history-count')).toHaveTextContent('1')
+    expect(contextRef.history[0].visualAcuity.left).toBeDefined()
+    expect(contextRef.history[0].eyePhoto).toEqual({
+      status: 'analyzed',
+      analysis: 'No significant findings.',
+      analyzedAt: '2024-01-15T11:00:00.000Z'
+    })
   })
 })
