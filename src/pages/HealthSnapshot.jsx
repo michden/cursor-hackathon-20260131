@@ -655,7 +655,7 @@ function PeripheralVisionResult({ data, t }) {
           </div>
           {hasLeft && (
             <div className="text-xs text-slate-500 mt-1">
-              {data.left.avgReactionTime}ms
+              {data.left.avgReactionTime != null ? `${data.left.avgReactionTime}ms` : '—'}
             </div>
           )}
           {hasLeft && data.left.severity && (
@@ -673,7 +673,7 @@ function PeripheralVisionResult({ data, t }) {
           </div>
           {hasRight && (
             <div className="text-xs text-slate-500 mt-1">
-              {data.right.avgReactionTime}ms
+              {data.right.avgReactionTime != null ? `${data.right.avgReactionTime}ms` : '—'}
             </div>
           )}
           {hasRight && data.right.severity && (
