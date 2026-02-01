@@ -122,7 +122,7 @@ function PeripheralTestArea({ onDotDetected, isActive, onTestComplete }) {
 
   // Schedule next dot after current one is processed
   useEffect(() => {
-    if (isActive && !dotVisible && currentDotIndex > 0 && currentDotIndex < TEST_CONFIG.totalDots) {
+    if (isActive && !dotVisible && currentDotIndex > 0 && currentDotIndex <= TEST_CONFIG.totalDots) {
       const delay = TEST_CONFIG.minDelay + Math.random() * (TEST_CONFIG.maxDelay - TEST_CONFIG.minDelay)
       nextDotTimeoutRef.current = setTimeout(showNextDot, delay)
     }
