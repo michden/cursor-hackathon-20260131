@@ -1,8 +1,24 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { I18nextProvider } from 'react-i18next'
 import AchievementBadge, { ACHIEVEMENTS } from './AchievementBadge'
+import i18n from '../i18n'
+
+// Wrapper to provide i18n context
+const renderWithProvider = (ui) => {
+  i18n.changeLanguage('en')
+  return render(
+    <I18nextProvider i18n={i18n}>
+      {ui}
+    </I18nextProvider>
+  )
+}
 
 describe('AchievementBadge', () => {
+  beforeEach(() => {
+    i18n.changeLanguage('en')
+  })
+
   describe('ACHIEVEMENTS constant', () => {
     it('exports all achievement definitions', () => {
       expect(ACHIEVEMENTS).toHaveProperty('first-test')
@@ -12,32 +28,32 @@ describe('AchievementBadge', () => {
       expect(ACHIEVEMENTS).toHaveProperty('streak-3')
     })
 
-    it('each achievement has icon, title, and description', () => {
+    it('each achievement has icon, titleKey, and descriptionKey', () => {
       Object.values(ACHIEVEMENTS).forEach(achievement => {
         expect(achievement).toHaveProperty('icon')
-        expect(achievement).toHaveProperty('title')
-        expect(achievement).toHaveProperty('description')
+        expect(achievement).toHaveProperty('titleKey')
+        expect(achievement).toHaveProperty('descriptionKey')
       })
     })
   })
 
   describe('AchievementBadge component', () => {
     it('renders nothing for invalid achievement id', () => {
-      const { container } = render(<AchievementBadge achievementId="invalid" />)
+      const { container } = renderWithProvider(<AchievementBadge achievementId="invalid" />)
       
       expect(container.firstChild).toBeNull()
     })
 
     it('renders first-test achievement', () => {
-      render(<AchievementBadge achievementId="first-test" />)
+      renderWithProvider(<AchievementBadge achievementId="first-test" />)
       
-      expect(screen.getByText('First Steps')).toBeInTheDocument()
+      expect(screen.getByText('First Test')).toBeInTheDocument()
       expect(screen.getByText('Completed your first eye test')).toBeInTheDocument()
       expect(screen.getByText('🎯')).toBeInTheDocument()
     })
 
     it('renders perfect-acuity achievement (Eagle Eye)', () => {
-      render(<AchievementBadge achievementId="perfect-acuity" />)
+      renderWithProvider(<AchievementBadge achievementId="perfect-acuity" />)
       
       expect(screen.getByText('Eagle Eye')).toBeInTheDocument()
       expect(screen.getByText('Achieved 20/20 vision or better')).toBeInTheDocument()
@@ -45,15 +61,15 @@ describe('AchievementBadge', () => {
     })
 
     it('renders all-tests achievement', () => {
-      render(<AchievementBadge achievementId="all-tests" />)
+      renderWithProvider(<AchievementBadge achievementId="all-tests" />)
       
-      expect(screen.getByText('Complete Checkup')).toBeInTheDocument()
-      expect(screen.getByText('Completed all six screening tests')).toBeInTheDocument()
+      expect(screen.getByText('Thorough Checker')).toBeInTheDocument()
+      expect(screen.getByText('Completed all available tests')).toBeInTheDocument()
       expect(screen.getByText('🏆')).toBeInTheDocument()
     })
 
     it('renders color-perfect achievement', () => {
-      render(<AchievementBadge achievementId="color-perfect" />)
+      renderWithProvider(<AchievementBadge achievementId="color-perfect" />)
       
       expect(screen.getByText('Color Master')).toBeInTheDocument()
       expect(screen.getByText('Perfect score on color vision test')).toBeInTheDocument()
@@ -61,27 +77,27 @@ describe('AchievementBadge', () => {
     })
 
     it('renders streak-3 achievement', () => {
-      render(<AchievementBadge achievementId="streak-3" />)
+      renderWithProvider(<AchievementBadge achievementId="streak-3" />)
       
-      expect(screen.getByText('On a Roll')).toBeInTheDocument()
+      expect(screen.getByText('Consistent')).toBeInTheDocument()
       expect(screen.getByText('Tested 3 days in a row')).toBeInTheDocument()
       expect(screen.getByText('🔥')).toBeInTheDocument()
     })
 
     it('shows NEW indicator when isNew is true', () => {
-      render(<AchievementBadge achievementId="first-test" isNew />)
+      renderWithProvider(<AchievementBadge achievementId="first-test" isNew />)
       
       expect(screen.getByText('NEW')).toBeInTheDocument()
     })
 
     it('does not show NEW indicator when isNew is false', () => {
-      render(<AchievementBadge achievementId="first-test" isNew={false} />)
+      renderWithProvider(<AchievementBadge achievementId="first-test" isNew={false} />)
       
       expect(screen.queryByText('NEW')).not.toBeInTheDocument()
     })
 
     it('applies amber styling when isNew is true', () => {
-      const { container } = render(<AchievementBadge achievementId="first-test" isNew />)
+      const { container } = renderWithProvider(<AchievementBadge achievementId="first-test" isNew />)
       
       const badge = container.firstChild
       expect(badge.className).toContain('bg-amber-50')
@@ -89,7 +105,7 @@ describe('AchievementBadge', () => {
     })
 
     it('applies default styling when isNew is false', () => {
-      const { container } = render(<AchievementBadge achievementId="first-test" isNew={false} />)
+      const { container } = renderWithProvider(<AchievementBadge achievementId="first-test" isNew={false} />)
       
       const badge = container.firstChild
       expect(badge.className).toContain('bg-slate-50')

@@ -1,7 +1,19 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { I18nextProvider } from 'react-i18next'
 import FindDoctorButton from './FindDoctorButton'
+import i18n from '../i18n'
+
+// Wrapper to provide i18n context
+const renderWithProvider = (ui) => {
+  i18n.changeLanguage('en')
+  return render(
+    <I18nextProvider i18n={i18n}>
+      {ui}
+    </I18nextProvider>
+  )
+}
 
 // Mock window.open
 const mockOpen = vi.fn()
@@ -10,6 +22,7 @@ beforeEach(() => {
   localStorage.clear()
   vi.stubGlobal('open', mockOpen)
   mockOpen.mockClear()
+  i18n.changeLanguage('en')
 })
 
 afterEach(() => {
@@ -18,14 +31,14 @@ afterEach(() => {
 
 describe('FindDoctorButton', () => {
   it('should render button with correct text', () => {
-    render(<FindDoctorButton />)
+    renderWithProvider(<FindDoctorButton />)
     
     expect(screen.getByRole('button', { name: /find eye doctors near me/i })).toBeInTheDocument()
   })
 
   it('should show consent dialog on first click', async () => {
     const user = userEvent.setup()
-    render(<FindDoctorButton />)
+    renderWithProvider(<FindDoctorButton />)
     
     await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
     
@@ -36,7 +49,7 @@ describe('FindDoctorButton', () => {
 
   it('should show privacy notice in consent dialog', async () => {
     const user = userEvent.setup()
-    render(<FindDoctorButton />)
+    renderWithProvider(<FindDoctorButton />)
     
     await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
     
@@ -46,7 +59,7 @@ describe('FindDoctorButton', () => {
 
   it('should close consent dialog when cancel is clicked', async () => {
     const user = userEvent.setup()
-    render(<FindDoctorButton />)
+    renderWithProvider(<FindDoctorButton />)
     
     await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
     expect(screen.getByRole('dialog')).toBeInTheDocument()
@@ -58,7 +71,7 @@ describe('FindDoctorButton', () => {
 
   it('should open Google search when "Search Without Location" is clicked', async () => {
     const user = userEvent.setup()
-    render(<FindDoctorButton />)
+    renderWithProvider(<FindDoctorButton />)
     
     await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
     await user.click(screen.getByRole('button', { name: /search without location/i }))
@@ -75,7 +88,7 @@ describe('FindDoctorButton', () => {
 
   it('should save consent as denied when "Search Without Location" is clicked', async () => {
     const user = userEvent.setup()
-    render(<FindDoctorButton />)
+    renderWithProvider(<FindDoctorButton />)
     
     await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
     await user.click(screen.getByRole('button', { name: /search without location/i }))
@@ -92,7 +105,7 @@ describe('FindDoctorButton', () => {
       geolocation: { getCurrentPosition: mockGetCurrentPosition }
     })
     
-    render(<FindDoctorButton />)
+    renderWithProvider(<FindDoctorButton />)
     
     await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
     await user.click(screen.getByRole('button', { name: /allow location/i }))
@@ -109,7 +122,7 @@ describe('FindDoctorButton', () => {
       geolocation: { getCurrentPosition: mockGetCurrentPosition }
     })
     
-    render(<FindDoctorButton />)
+    renderWithProvider(<FindDoctorButton />)
     
     await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
     await user.click(screen.getByRole('button', { name: /allow location/i }))
@@ -139,7 +152,7 @@ describe('FindDoctorButton', () => {
       geolocation: { getCurrentPosition: mockGetCurrentPosition }
     })
     
-    render(<FindDoctorButton />)
+    renderWithProvider(<FindDoctorButton />)
     
     await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
     await user.click(screen.getByRole('button', { name: /allow location/i }))
@@ -159,7 +172,7 @@ describe('FindDoctorButton', () => {
       geolocation: { getCurrentPosition: mockGetCurrentPosition }
     })
     
-    render(<FindDoctorButton />)
+    renderWithProvider(<FindDoctorButton />)
     
     await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
     
@@ -177,7 +190,7 @@ describe('FindDoctorButton', () => {
       geolocation: { getCurrentPosition: mockGetCurrentPosition }
     })
     
-    render(<FindDoctorButton />)
+    renderWithProvider(<FindDoctorButton />)
     
     await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
     await user.click(screen.getByRole('button', { name: /allow location/i }))
@@ -199,7 +212,7 @@ describe('FindDoctorButton', () => {
       geolocation: { getCurrentPosition: mockGetCurrentPosition }
     })
     
-    render(<FindDoctorButton />)
+    renderWithProvider(<FindDoctorButton />)
     
     await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
     await user.click(screen.getByRole('button', { name: /allow location/i }))
@@ -221,7 +234,7 @@ describe('FindDoctorButton', () => {
       geolocation: { getCurrentPosition: mockGetCurrentPosition }
     })
     
-    render(<FindDoctorButton />)
+    renderWithProvider(<FindDoctorButton />)
     
     // First attempt - user clicks allow but browser denies
     await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
@@ -250,7 +263,7 @@ describe('FindDoctorButton', () => {
       geolocation: { getCurrentPosition: mockGetCurrentPosition }
     })
     
-    render(<FindDoctorButton />)
+    renderWithProvider(<FindDoctorButton />)
     
     await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
     await user.click(screen.getByRole('button', { name: /allow location/i }))
@@ -268,7 +281,7 @@ describe('FindDoctorButton', () => {
       geolocation: { getCurrentPosition: mockGetCurrentPosition }
     })
     
-    render(<FindDoctorButton />)
+    renderWithProvider(<FindDoctorButton />)
     
     await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
     await user.click(screen.getByRole('button', { name: /allow location/i }))
@@ -280,7 +293,7 @@ describe('FindDoctorButton', () => {
     const user = userEvent.setup()
     vi.stubGlobal('navigator', {})
     
-    render(<FindDoctorButton />)
+    renderWithProvider(<FindDoctorButton />)
     
     await user.click(screen.getByRole('button', { name: /find eye doctors near me/i }))
     await user.click(screen.getByRole('button', { name: /allow location/i }))

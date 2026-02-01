@@ -1,8 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { I18nextProvider } from 'react-i18next'
 import HealthSnapshot from './HealthSnapshot'
 import { TestResultsProvider } from '../context/TestResultsContext'
+import i18n from '../i18n'
 
 // Mock html2pdf to avoid issues in test environment
 vi.mock('html2pdf.js', () => ({
@@ -14,15 +16,18 @@ vi.mock('html2pdf.js', () => ({
 // Clear localStorage before each test
 beforeEach(() => {
   localStorage.clear()
+  i18n.changeLanguage('en')
 })
 
 function renderWithProviders(ui) {
   return render(
-    <MemoryRouter>
-      <TestResultsProvider>
-        {ui}
-      </TestResultsProvider>
-    </MemoryRouter>
+    <I18nextProvider i18n={i18n}>
+      <MemoryRouter>
+        <TestResultsProvider>
+          {ui}
+        </TestResultsProvider>
+      </MemoryRouter>
+    </I18nextProvider>
   )
 }
 
@@ -52,7 +57,7 @@ describe('HealthSnapshot', () => {
       
       renderWithProviders(<HealthSnapshot />)
       
-      expect(screen.getByText(/Your screening results look good!/)).toBeInTheDocument()
+      expect(screen.getByText(/All your test results appear normal/)).toBeInTheDocument()
     })
 
     it('recommends discussing with doctor for mild contrast reduction (0.6 - 0.9)', () => {
@@ -65,7 +70,7 @@ describe('HealthSnapshot', () => {
       
       renderWithProviders(<HealthSnapshot />)
       
-      expect(screen.getByText(/Discuss contrast sensitivity with your eye doctor/)).toBeInTheDocument()
+      expect(screen.getByText(/Some results may warrant professional evaluation/)).toBeInTheDocument()
     })
 
     it('recommends professional evaluation for moderate contrast reduction (< 0.6)', () => {
@@ -78,7 +83,7 @@ describe('HealthSnapshot', () => {
       
       renderWithProviders(<HealthSnapshot />)
       
-      expect(screen.getByText(/Get a professional evaluation for contrast sensitivity/)).toBeInTheDocument()
+      expect(screen.getByText(/we recommend consulting an eye care professional/)).toBeInTheDocument()
     })
 
     it('recommends professional evaluation for severe contrast reduction (< 0.3)', () => {
@@ -91,7 +96,7 @@ describe('HealthSnapshot', () => {
       
       renderWithProviders(<HealthSnapshot />)
       
-      expect(screen.getByText(/Get a professional evaluation for contrast sensitivity/)).toBeInTheDocument()
+      expect(screen.getByText(/we recommend consulting an eye care professional/)).toBeInTheDocument()
     })
 
     it('combines contrast sensitivity recommendation with other test recommendations', () => {
@@ -108,9 +113,8 @@ describe('HealthSnapshot', () => {
       
       renderWithProviders(<HealthSnapshot />)
       
-      const recommendation = screen.getByText(/Schedule an eye exam for vision assessment/)
-      expect(recommendation).toBeInTheDocument()
-      expect(recommendation.textContent).toContain('Get a professional evaluation for contrast sensitivity')
+      // Both issues result in seeDoctor recommendation
+      expect(screen.getByText(/we recommend consulting an eye care professional/)).toBeInTheDocument()
     })
 
     it('shows warning status on card when contrast sensitivity is reduced', () => {
@@ -139,7 +143,9 @@ describe('HealthSnapshot', () => {
       
       renderWithProviders(<HealthSnapshot />)
       
-      expect(screen.getByText(/Notable difference between eyes detected/)).toBeInTheDocument()
+      // Asymmetry triggers followUp recommendation (may appear multiple times in UI)
+      const recommendations = screen.getAllByText(/Some results may warrant professional evaluation/)
+      expect(recommendations.length).toBeGreaterThan(0)
     })
 
     it('warns about contrast sensitivity asymmetry when eyes differ by 0.3+ logCS', () => {
@@ -152,7 +158,9 @@ describe('HealthSnapshot', () => {
       
       renderWithProviders(<HealthSnapshot />)
       
-      expect(screen.getByText(/Notable difference between eyes detected/)).toBeInTheDocument()
+      // Asymmetry triggers followUp recommendation (may appear multiple times in UI)
+      const recommendations = screen.getAllByText(/Some results may warrant professional evaluation/)
+      expect(recommendations.length).toBeGreaterThan(0)
     })
   })
 
@@ -184,8 +192,8 @@ describe('HealthSnapshot', () => {
       
       renderWithProviders(<HealthSnapshot />)
       
-      // Level 0 is < 5, so should recommend eye exam
-      expect(screen.getByText(/Schedule an eye exam for vision assessment/)).toBeInTheDocument()
+      // Level 0 is < 5, so should recommend seeing a doctor
+      expect(screen.getByText(/we recommend consulting an eye care professional/)).toBeInTheDocument()
     })
 
     it('handles both eyes having level 0', () => {

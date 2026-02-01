@@ -96,7 +96,7 @@ describe('EyeSelector', () => {
     
     renderWithProviders(<EyeSelector onSelect={onSelect} completedEyes={completedEyes} />)
     
-    expect(screen.getByText(/View Results/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /View.*Results/i })).toBeInTheDocument()
   })
 
   it('does not show View Results button when only one eye is complete', () => {
@@ -120,7 +120,7 @@ describe('EyeSelector', () => {
     
     renderWithProviders(<EyeSelector onSelect={onSelect} completedEyes={completedEyes} />)
     
-    fireEvent.click(screen.getByText(/View Results/))
+    fireEvent.click(screen.getByRole('button', { name: /View.*Results/i }))
     
     expect(mockNavigate).toHaveBeenCalledWith('/results')
   })
