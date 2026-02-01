@@ -1,5 +1,13 @@
 {
   "lastTested": "Last tested: {{date}}",
+  "sections": {
+    "screeningTests": "Vision Screening Tests",
+    "screeningTestsDescription": "Complete these tests to check your eye health",
+    "aiAnalysis": "AI Analysis",
+    "aiAnalysisDescription": "Get AI-powered insights about your eyes",
+    "yourResults": "Your Results",
+    "yourResultsDescription": "View your complete health snapshot"
+  },
   "tests": {
     "visualAcuity": {
       "title": "Visual Acuity Test",

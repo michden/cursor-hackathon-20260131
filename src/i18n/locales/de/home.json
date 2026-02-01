@@ -1,5 +1,13 @@
 {
   "lastTested": "Zuletzt getestet: {{date}}",
+  "sections": {
+    "screeningTests": "Seh-Screening-Tests",
+    "screeningTestsDescription": "Führen Sie diese Tests durch, um Ihre Augengesundheit zu überprüfen",
+    "aiAnalysis": "KI-Analyse",
+    "aiAnalysisDescription": "Erhalten Sie KI-gestützte Einblicke in Ihre Augen",
+    "yourResults": "Ihre Ergebnisse",
+    "yourResultsDescription": "Sehen Sie Ihre vollständige Gesundheitsübersicht"
+  },
   "tests": {
     "visualAcuity": {
       "title": "Sehschärfetest",
