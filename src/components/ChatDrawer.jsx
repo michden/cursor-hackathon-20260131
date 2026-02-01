@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import ReactMarkdown from 'react-markdown'
+import { useTranslation } from 'react-i18next'
 import { useChat } from '../context/ChatContext'
 
 function ApiKeyInput() {
+  const { t } = useTranslation('common')
   const { apiKey, setApiKey } = useChat()
   const [showKey, setShowKey] = useState(false)
   const [localKey, setLocalKey] = useState(apiKey)
@@ -15,7 +17,7 @@ function ApiKeyInput() {
   return (
     <form onSubmit={handleSubmit} className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-        OpenAI API Key
+        {t('chat.apiKeyLabel')}
       </label>
       <div className="flex gap-2">
         <div className="relative flex-1">
@@ -31,7 +33,7 @@ function ApiKeyInput() {
             onClick={() => setShowKey(!showKey)}
             className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
           >
-            {showKey ? 'Hide' : 'Show'}
+            {showKey ? t('chat.hide') : t('chat.show')}
           </button>
         </div>
         <button
@@ -39,11 +41,11 @@ function ApiKeyInput() {
           disabled={!localKey.trim()}
           className="px-4 py-2 bg-sky-500 text-white text-sm font-medium rounded-lg hover:bg-sky-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
         >
-          Save
+          {t('chat.save')}
         </button>
       </div>
       <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-        Your key is only used locally and never stored on any server.
+        {t('chat.apiKeyHint')}
       </p>
     </form>
   )
@@ -76,6 +78,7 @@ function ChatMessage({ message }) {
 }
 
 function MessageList() {
+  const { t } = useTranslation('common')
   const { messages, isLoading } = useChat()
   const messagesEndRef = useRef(null)
 
@@ -88,9 +91,9 @@ function MessageList() {
       <div className="flex-1 flex items-center justify-center p-6 text-center">
         <div>
           <div className="text-4xl mb-3">👁️</div>
-          <h3 className="font-medium text-slate-700 dark:text-slate-300 mb-1">VisionCheck AI Assistant</h3>
+          <h3 className="font-medium text-slate-700 dark:text-slate-300 mb-1">{t('chat.welcomeTitle')}</h3>
           <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs">
-            Ask me about your test results, eye health, or general vision questions.
+            {t('chat.welcomeMessage')}
           </p>
         </div>
       </div>
@@ -119,6 +122,7 @@ function MessageList() {
 }
 
 function ChatInput() {
+  const { t } = useTranslation('common')
   const { sendMessage, isLoading, apiKey } = useChat()
   const [input, setInput] = useState('')
   const inputRef = useRef(null)
@@ -145,7 +149,7 @@ function ChatInput() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={apiKey ? "Ask about your eye health..." : "Enter API key above to chat"}
+          placeholder={apiKey ? t('chat.placeholder') : t('chat.placeholderNoKey')}
           disabled={!apiKey || isLoading}
           rows={1}
           className="flex-1 px-4 py-2 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:cursor-not-allowed"
@@ -154,7 +158,7 @@ function ChatInput() {
           type="submit"
           disabled={!input.trim() || isLoading || !apiKey}
           className="px-4 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
-          aria-label="Send message"
+          aria-label={t('chat.sendMessage')}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -166,6 +170,7 @@ function ChatInput() {
 }
 
 export default function ChatDrawer() {
+  const { t, i18n } = useTranslation(['common', 'results'])
   const { isOpen, closeChat, error, clearError, clearMessages, apiKey } = useChat()
 
   // Close on escape key
@@ -209,14 +214,14 @@ export default function ChatDrawer() {
         <header className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
           <div className="flex items-center gap-2">
             <span className="text-xl">🤖</span>
-            <h2 className="font-semibold text-slate-800 dark:text-slate-100">AI Assistant</h2>
+            <h2 className="font-semibold text-slate-800 dark:text-slate-100">{t('chat.title')}</h2>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={clearMessages}
               className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-              aria-label="Clear chat"
-              title="Clear chat"
+              aria-label={t('chat.clearChat')}
+              title={t('chat.clearChat')}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -225,7 +230,7 @@ export default function ChatDrawer() {
             <button
               onClick={closeChat}
               className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-              aria-label="Close chat"
+              aria-label={t('chat.closeChat')}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -262,7 +267,7 @@ export default function ChatDrawer() {
         {/* Disclaimer */}
         <div className="px-4 py-2 bg-amber-50 dark:bg-amber-950/50 border-t border-amber-200 dark:border-amber-800">
           <p className="text-xs text-amber-700 dark:text-amber-300 text-center">
-            AI responses are for educational purposes only, not medical advice.
+            {t('chat.disclaimer')}
           </p>
         </div>
       </div>
