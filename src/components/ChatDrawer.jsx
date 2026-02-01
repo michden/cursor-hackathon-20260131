@@ -3,51 +3,18 @@ import ReactMarkdown from 'react-markdown'
 import { useTranslation } from 'react-i18next'
 import { useChat } from '../context/ChatContext'
 
-function ApiKeyInput() {
+function ApiUnavailableNotice() {
   const { t } = useTranslation('common')
-  const { apiKey, setApiKey } = useChat()
-  const [showKey, setShowKey] = useState(false)
-  const [localKey, setLocalKey] = useState(apiKey)
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setApiKey(localKey)
-  }
-
+  
   return (
-    <form onSubmit={handleSubmit} className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
-      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-        {t('chat.apiKeyLabel')}
-      </label>
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <input
-            type={showKey ? 'text' : 'password'}
-            value={localKey}
-            onChange={(e) => setLocalKey(e.target.value)}
-            placeholder="sk-..."
-            className="w-full px-3 py-2 pr-16 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-          />
-          <button
-            type="button"
-            onClick={() => setShowKey(!showKey)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-          >
-            {showKey ? t('chat.hide') : t('chat.show')}
-          </button>
-        </div>
-        <button
-          type="submit"
-          disabled={!localKey.trim()}
-          className="px-4 py-2 bg-sky-500 text-white text-sm font-medium rounded-lg hover:bg-sky-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
-        >
-          {t('chat.save')}
-        </button>
-      </div>
-      <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-        {t('chat.apiKeyHint')}
+    <div className="p-4 border-b border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/50">
+      <p className="text-sm text-amber-700 dark:text-amber-300 mb-2">
+        {t('chat.apiUnavailable')}
       </p>
-    </form>
+      <p className="text-xs text-amber-600 dark:text-amber-400">
+        {t('chat.apiUnavailableHint')}
+      </p>
+    </div>
   )
 }
 
@@ -123,16 +90,18 @@ function MessageList() {
 
 function ChatInput() {
   const { t } = useTranslation('common')
-  const { sendMessage, isLoading, apiKey } = useChat()
+  const { sendMessage, isLoading, apiAvailable } = useChat()
   const [input, setInput] = useState('')
   const inputRef = useRef(null)
 
+  const isDisabled = apiAvailable === false
+
   const handleSubmit = useCallback((e) => {
     e.preventDefault()
-    if (!input.trim() || isLoading) return
+    if (!input.trim() || isLoading || isDisabled) return
     sendMessage(input)
     setInput('')
-  }, [input, isLoading, sendMessage])
+  }, [input, isLoading, isDisabled, sendMessage])
 
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -149,14 +118,14 @@ function ChatInput() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={apiKey ? t('chat.placeholder') : t('chat.placeholderNoKey')}
-          disabled={!apiKey || isLoading}
+          placeholder={isDisabled ? t('chat.placeholderNoKey') : t('chat.placeholder')}
+          disabled={isDisabled || isLoading}
           rows={1}
           className="flex-1 px-4 py-2 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:bg-slate-50 dark:disabled:bg-slate-800 disabled:cursor-not-allowed"
         />
         <button
           type="submit"
-          disabled={!input.trim() || isLoading || !apiKey}
+          disabled={!input.trim() || isLoading || isDisabled}
           className="px-4 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
           aria-label={t('chat.sendMessage')}
         >
@@ -170,8 +139,8 @@ function ChatInput() {
 }
 
 export default function ChatDrawer() {
-  const { t, i18n } = useTranslation(['common', 'results'])
-  const { isOpen, closeChat, error, clearError, clearMessages, apiKey } = useChat()
+  const { t } = useTranslation(['common', 'results'])
+  const { isOpen, closeChat, error, clearError, clearMessages, apiAvailable } = useChat()
 
   // Close on escape key
   useEffect(() => {
@@ -239,8 +208,8 @@ export default function ChatDrawer() {
           </div>
         </header>
 
-        {/* API Key Input - only show if no key set */}
-        {!apiKey && <ApiKeyInput />}
+        {/* API unavailable notice */}
+        {apiAvailable === false && <ApiUnavailableNotice />}
 
         {/* Error banner */}
         {error && (

@@ -1,5 +1,3 @@
-const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
-
 const CHAT_SYSTEM_PROMPT = `You are a helpful assistant for VisionCheck AI, an eye health screening app.
 
 IMPORTANT GUIDELINES:
@@ -70,18 +68,13 @@ function formatTestResultsSummary(testResults) {
 }
 
 /**
- * Send a chat message to the OpenAI API
+ * Send a chat message via the API proxy
  * @param {Array} messages - Conversation history [{role: 'user'|'assistant', content: string}]
  * @param {Object} testResults - User's test results from TestResultsContext
- * @param {string} apiKey - OpenAI API key
  * @param {string} language - Current UI language code (e.g., 'en', 'de')
  * @returns {Promise<string>} - Assistant's response
  */
-export async function sendChatMessage(messages, testResults, apiKey, language = 'en') {
-  if (!apiKey) {
-    throw new Error('OpenAI API key is required')
-  }
-
+export async function sendChatMessage(messages, testResults, language = 'en') {
   if (!messages || messages.length === 0) {
     throw new Error('At least one message is required')
   }
@@ -94,29 +87,25 @@ export async function sendChatMessage(messages, testResults, apiKey, language = 
   // Build system prompt with optional test results context
   const systemPrompt = CHAT_SYSTEM_PROMPT + languageInstruction + formatTestResultsSummary(testResults)
 
-  const response = await fetch(OPENAI_API_URL, {
+  const response = await fetch('/api/chat', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-5.2',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        ...messages
-      ],
-      max_completion_tokens: 500,
+      messages,
+      systemPrompt,
+      maxTokens: 500,
     }),
   })
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}))
-    throw new Error(error.error?.message || `API error: ${response.status}`)
+    throw new Error(error.error || `API error: ${response.status}`)
   }
 
   const data = await response.json()
-  return data.choices[0]?.message?.content || 'Sorry, I could not generate a response.'
+  return data.content || 'Sorry, I could not generate a response.'
 }
 
 const EYE_ANALYSIS_PROMPT = `You are an AI assistant helping with a preliminary eye health screening app. Analyze this eye photo for visible health indicators.
@@ -148,17 +137,12 @@ Please analyze the image and provide:
 Format your response in a clear, easy-to-read way. Be reassuring but honest. If you cannot properly analyze the image (too blurry, not an eye, etc.), say so clearly.`
 
 /**
- * Analyze an eye photo using OpenAI's vision API
+ * Analyze an eye photo using the API proxy
  * @param {string} imageBase64 - Base64-encoded image data
- * @param {string} apiKey - OpenAI API key
  * @param {string} language - Language code for the response (e.g., 'en', 'de')
  * @returns {Promise<string>} - Analysis response
  */
-export async function analyzeEyePhoto(imageBase64, apiKey, language = 'en') {
-  if (!apiKey) {
-    throw new Error('OpenAI API key is required')
-  }
-
+export async function analyzeEyePhoto(imageBase64, language = 'en') {
   // Build language instruction
   const languageInstruction = language === 'de' 
     ? '\n\nIMPORTANT: Please respond entirely in German (Deutsch).'
@@ -166,60 +150,52 @@ export async function analyzeEyePhoto(imageBase64, apiKey, language = 'en') {
 
   const prompt = EYE_ANALYSIS_PROMPT + languageInstruction
 
-  // Remove data URL prefix if present
-  const base64Data = imageBase64.includes('base64,') 
-    ? imageBase64.split('base64,')[1] 
-    : imageBase64
-
-  const response = await fetch(OPENAI_API_URL, {
+  const response = await fetch('/api/analyze', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-5.2',
-      messages: [
-        {
-          role: 'user',
-          content: [
-            { 
-              type: 'text', 
-              text: prompt 
-            },
-            { 
-              type: 'image_url', 
-              image_url: { 
-                url: `data:image/jpeg;base64,${base64Data}`,
-                detail: 'high'
-              } 
-            }
-          ]
-        }
-      ],
-      max_completion_tokens: 1000,
+      imageBase64,
+      prompt,
+      maxTokens: 1000,
     }),
   })
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}))
-    throw new Error(error.error?.message || `API error: ${response.status}`)
+    throw new Error(error.error || `API error: ${response.status}`)
   }
 
   const data = await response.json()
-  return data.choices[0]?.message?.content || 'No analysis available'
+  return data.content || 'No analysis available'
 }
 
 /**
  * Analyze an eye photo in all supported languages (en, de) in parallel
  * @param {string} imageBase64 - Base64-encoded image data
- * @param {string} apiKey - OpenAI API key
  * @returns {Promise<{en: string, de: string}>} - Analysis responses in both languages
  */
-export async function analyzeEyePhotoAllLanguages(imageBase64, apiKey) {
+export async function analyzeEyePhotoAllLanguages(imageBase64) {
   const [en, de] = await Promise.all([
-    analyzeEyePhoto(imageBase64, apiKey, 'en'),
-    analyzeEyePhoto(imageBase64, apiKey, 'de')
+    analyzeEyePhoto(imageBase64, 'en'),
+    analyzeEyePhoto(imageBase64, 'de')
   ])
   return { en, de }
+}
+
+/**
+ * Check if the API server is available
+ * @returns {Promise<{status: string, apiKeyConfigured: boolean}>}
+ */
+export async function checkApiHealth() {
+  try {
+    const response = await fetch('/api/health')
+    if (!response.ok) {
+      return { status: 'error', apiKeyConfigured: false }
+    }
+    return await response.json()
+  } catch {
+    return { status: 'unavailable', apiKeyConfigured: false }
+  }
 }

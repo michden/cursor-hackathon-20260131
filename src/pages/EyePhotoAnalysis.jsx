@@ -1,9 +1,9 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import { useTranslation } from 'react-i18next'
 import { useTestResults } from '../context/TestResultsContext'
-import { analyzeEyePhotoAllLanguages } from '../api/openai'
+import { analyzeEyePhotoAllLanguages, checkApiHealth } from '../api/openai'
 import AudioInstructions from '../components/AudioInstructions'
 
 // Camera states
@@ -38,32 +38,14 @@ function CameraGuideOverlay() {
   )
 }
 
-function ApiKeyInput({ apiKey, setApiKey }) {
-  const [showKey, setShowKey] = useState(false)
-  
+function ApiUnavailableNotice({ t }) {
   return (
-    <div className="bg-slate-50 rounded-xl p-4 mb-6">
-      <label className="block text-sm font-medium text-slate-700 mb-2">
-        OpenAI API Key
-      </label>
-      <div className="relative">
-        <input
-          type={showKey ? 'text' : 'password'}
-          value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
-          placeholder="sk-..."
-          className="w-full px-4 py-3 pr-20 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
-        />
-        <button
-          type="button"
-          onClick={() => setShowKey(!showKey)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 text-sm"
-        >
-          {showKey ? 'Hide' : 'Show'}
-        </button>
-      </div>
-      <p className="text-xs text-slate-500 mt-2">
-        Your API key is only used locally and never stored on any server.
+    <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+      <p className="text-sm text-amber-800 font-medium mb-1">
+        {t('common:chat.apiUnavailable')}
+      </p>
+      <p className="text-xs text-amber-700">
+        {t('common:chat.apiUnavailableHint')}
       </p>
     </div>
   )
@@ -71,7 +53,7 @@ function ApiKeyInput({ apiKey, setApiKey }) {
 
 export default function EyePhotoAnalysis() {
   const navigate = useNavigate()
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation(['common', 'tests'])
   const { updateEyePhoto } = useTestResults()
   
   const [phase, setPhase] = useState('instructions') // instructions, capture, analyzing, results
@@ -79,11 +61,18 @@ export default function EyePhotoAnalysis() {
   const [capturedImage, setCapturedImage] = useState(null)
   const [analysis, setAnalysis] = useState(null)
   const [error, setError] = useState(null)
-  const [apiKey, setApiKey] = useState('')
+  const [apiAvailable, setApiAvailable] = useState(null) // null = checking, true = available, false = unavailable
   
   const videoRef = useRef(null)
   const streamRef = useRef(null)
   const canvasRef = useRef(null)
+
+  // Check API health on mount
+  useEffect(() => {
+    checkApiHealth().then(health => {
+      setApiAvailable(health.status === 'ok' && health.apiKeyConfigured)
+    })
+  }, [])
 
   const startCamera = useCallback(async () => {
     setCameraState(CAMERA_STATES.REQUESTING)
@@ -156,14 +145,14 @@ export default function EyePhotoAnalysis() {
   }, [])
 
   const analyzeImage = useCallback(async () => {
-    if (!capturedImage || !apiKey) return
+    if (!capturedImage) return
     
     setPhase('analyzing')
     setError(null)
     
     try {
       // Analyze in both languages in parallel
-      const result = await analyzeEyePhotoAllLanguages(capturedImage, apiKey)
+      const result = await analyzeEyePhotoAllLanguages(capturedImage)
       setAnalysis(result) // Stores { en: "...", de: "..." }
       
       // Save to context with both language versions
@@ -175,12 +164,16 @@ export default function EyePhotoAnalysis() {
       })
       
       setPhase('results')
+      setApiAvailable(true)
     } catch (err) {
       console.error('Analysis error:', err)
       setError(err.message || 'Failed to analyze image')
       setPhase('capture')
+      if (err.message?.includes('API key not configured') || err.message?.includes('unavailable')) {
+        setApiAvailable(false)
+      }
     }
-  }, [capturedImage, apiKey, updateEyePhoto])
+  }, [capturedImage, updateEyePhoto])
 
   const retakePhoto = useCallback(() => {
     setCapturedImage(null)
@@ -192,6 +185,8 @@ export default function EyePhotoAnalysis() {
   const goToResults = () => {
     navigate('/results')
   }
+
+  const isDisabled = apiAvailable === false
 
   // Instructions phase
   if (phase === 'instructions') {
@@ -207,8 +202,8 @@ export default function EyePhotoAnalysis() {
         <div className="p-6 max-w-md mx-auto">
           <div className="text-center mb-8">
             <div className="text-6xl mb-4">📸</div>
-            <h2 className="text-2xl font-bold text-slate-800 mb-2">AI Eye Analysis</h2>
-            <p className="text-slate-600">Analyze your eye photo with AI</p>
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">AI Eye Analysis</h2>
+            <p className="text-slate-600 dark:text-slate-400">Analyze your eye photo with AI</p>
           </div>
 
           <AudioInstructions 
@@ -216,32 +211,32 @@ export default function EyePhotoAnalysis() {
             label="Instructions" 
           />
 
-          <div className="bg-slate-50 rounded-xl p-6 mb-6">
-            <h3 className="font-semibold text-slate-800 mb-4">For best results:</h3>
-            <ol className="space-y-3 text-slate-600">
+          <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-6 mb-6">
+            <h3 className="font-semibold text-slate-800 dark:text-slate-100 mb-4">For best results:</h3>
+            <ol className="space-y-3 text-slate-600 dark:text-slate-300">
               <li className="flex gap-3">
-                <span className="shrink-0 w-6 h-6 bg-violet-100 text-violet-600 rounded-full flex items-center justify-center text-sm font-medium">1</span>
+                <span className="shrink-0 w-6 h-6 bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 rounded-full flex items-center justify-center text-sm font-medium">1</span>
                 <span>Find good lighting (natural light is best)</span>
               </li>
               <li className="flex gap-3">
-                <span className="shrink-0 w-6 h-6 bg-violet-100 text-violet-600 rounded-full flex items-center justify-center text-sm font-medium">2</span>
+                <span className="shrink-0 w-6 h-6 bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 rounded-full flex items-center justify-center text-sm font-medium">2</span>
                 <span>Hold phone steady at arm's length</span>
               </li>
               <li className="flex gap-3">
-                <span className="shrink-0 w-6 h-6 bg-violet-100 text-violet-600 rounded-full flex items-center justify-center text-sm font-medium">3</span>
+                <span className="shrink-0 w-6 h-6 bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 rounded-full flex items-center justify-center text-sm font-medium">3</span>
                 <span>Open your eye wide and look at the camera</span>
               </li>
               <li className="flex gap-3">
-                <span className="shrink-0 w-6 h-6 bg-violet-100 text-violet-600 rounded-full flex items-center justify-center text-sm font-medium">4</span>
+                <span className="shrink-0 w-6 h-6 bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 rounded-full flex items-center justify-center text-sm font-medium">4</span>
                 <span>Center your eye in the guide circle</span>
               </li>
             </ol>
           </div>
 
-          <ApiKeyInput apiKey={apiKey} setApiKey={setApiKey} />
+          {isDisabled && <ApiUnavailableNotice t={t} />}
 
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
-            <p className="text-sm text-amber-800">
+          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-6">
+            <p className="text-sm text-amber-800 dark:text-amber-200">
               <strong>Important:</strong> This AI analysis is for educational purposes only 
               and is NOT a medical diagnosis. Always consult an eye care professional for 
               health concerns.
@@ -251,26 +246,26 @@ export default function EyePhotoAnalysis() {
           <div className="space-y-3">
             <button
               onClick={startCamera}
-              disabled={!apiKey}
-              className="w-full py-4 bg-violet-500 text-white font-semibold rounded-xl hover:bg-violet-600 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+              disabled={isDisabled}
+              className="w-full py-4 bg-violet-500 text-white font-semibold rounded-xl hover:bg-violet-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
             >
               <span>📷</span> Take Photo
             </button>
             
-            <label className="block w-full py-4 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors text-center cursor-pointer">
+            <label className={`block w-full py-4 ${isDisabled ? 'bg-slate-200 dark:bg-slate-700 cursor-not-allowed' : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer'} text-slate-700 dark:text-slate-200 font-semibold rounded-xl transition-colors text-center`}>
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleFileUpload}
                 className="hidden"
-                disabled={!apiKey}
+                disabled={isDisabled}
               />
               📁 Upload Photo
             </label>
           </div>
 
           {error && (
-            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+            <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-300 text-sm">
               {error}
             </div>
           )}
@@ -376,10 +371,10 @@ export default function EyePhotoAnalysis() {
       <div className="min-h-screen bg-white dark:bg-slate-900 flex flex-col items-center justify-center p-6">
         <div className="text-center">
           <div className="animate-pulse text-6xl mb-6">🔍</div>
-          <h2 className="text-xl font-semibold text-slate-800 mb-2">Analyzing your eye photo...</h2>
-          <p className="text-slate-500">This may take a few seconds</p>
+          <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-2">Analyzing your eye photo...</h2>
+          <p className="text-slate-500 dark:text-slate-400">This may take a few seconds</p>
           
-          <div className="mt-8 w-48 h-1 bg-slate-200 rounded-full overflow-hidden mx-auto">
+          <div className="mt-8 w-48 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden mx-auto">
             <div className="h-full bg-violet-500 rounded-full animate-[loading_1.5s_ease-in-out_infinite]" 
                  style={{ width: '30%', animation: 'loading 1.5s ease-in-out infinite' }} />
           </div>
@@ -414,19 +409,19 @@ export default function EyePhotoAnalysis() {
               <img
                 src={capturedImage}
                 alt="Analyzed eye"
-                className="w-32 h-32 object-cover rounded-full border-4 border-violet-100"
+                className="w-32 h-32 object-cover rounded-full border-4 border-violet-100 dark:border-violet-900"
               />
             </div>
           )}
 
           <div className="text-center mb-6">
             <div className="text-4xl mb-2">✅</div>
-            <h2 className="text-xl font-bold text-slate-800">Analysis Complete</h2>
+            <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Analysis Complete</h2>
           </div>
 
           {/* Analysis results */}
-          <div className="bg-slate-50 rounded-xl p-6 mb-6">
-            <div className="text-slate-700 text-sm leading-relaxed space-y-3 [&>h2]:text-base [&>h2]:font-semibold [&>h2]:mt-4 [&>h2]:mb-2 [&>h3]:text-sm [&>h3]:font-semibold [&>h3]:mt-3 [&>h3]:mb-1 [&>p]:mb-2 [&>ul]:list-disc [&>ul]:pl-4 [&>ul]:space-y-1 [&>ol]:list-decimal [&>ol]:pl-4 [&>ol]:space-y-1 [&>hr]:my-3 [&>hr]:border-slate-200">
+          <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-6 mb-6">
+            <div className="text-slate-700 dark:text-slate-200 text-sm leading-relaxed space-y-3 [&>h2]:text-base [&>h2]:font-semibold [&>h2]:mt-4 [&>h2]:mb-2 [&>h3]:text-sm [&>h3]:font-semibold [&>h3]:mt-3 [&>h3]:mb-1 [&>p]:mb-2 [&>ul]:list-disc [&>ul]:pl-4 [&>ul]:space-y-1 [&>ol]:list-decimal [&>ol]:pl-4 [&>ol]:space-y-1 [&>hr]:my-3 [&>hr]:border-slate-200 dark:[&>hr]:border-slate-700">
               <ReactMarkdown>
                 {typeof analysis === 'string' 
                   ? analysis 
@@ -436,8 +431,8 @@ export default function EyePhotoAnalysis() {
           </div>
 
           {/* Disclaimer */}
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
-            <p className="text-sm text-amber-800">
+          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-6">
+            <p className="text-sm text-amber-800 dark:text-amber-200">
               <strong>Reminder:</strong> This AI analysis is for educational purposes only 
               and is NOT a medical diagnosis. Please consult an eye care professional for 
               any health concerns or for a proper eye examination.
@@ -453,13 +448,13 @@ export default function EyePhotoAnalysis() {
             </button>
             <button
               onClick={retakePhoto}
-              className="w-full py-4 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors"
+              className="w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
             >
               Analyze Another Photo
             </button>
             <Link
               to="/"
-              className="block w-full py-4 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors text-center"
+              className="block w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-center"
             >
               Back to Home
             </Link>
