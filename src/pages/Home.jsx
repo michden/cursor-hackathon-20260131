@@ -15,7 +15,7 @@ import { useLanguage } from '../context/LanguageContext'
  * @returns {JSX.Element} The Home page React element.
  */
 export default function Home() {
-  const { t } = useTranslation(['common', 'home'])
+  const { t } = useTranslation(['common', 'home', 'legal'])
   const { language } = useLanguage()
   const { results } = useTestResults()
 
@@ -261,9 +261,20 @@ export default function Home() {
           <p className="text-sm text-slate-400 dark:text-slate-500 mb-2">
             {t('home:footer.builtFor')}
           </p>
-          <p className="text-xs text-slate-300 dark:text-slate-600">
+          <p className="text-xs text-slate-300 dark:text-slate-600 mb-4">
             {t('home:footer.version')}
           </p>
+          <div className="flex justify-center gap-4 text-xs">
+            <Link to="/privacy" className="text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300">
+              {t('legal:footer.privacy')}
+            </Link>
+            <Link to="/terms" className="text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300">
+              {t('legal:footer.terms')}
+            </Link>
+            <Link to="/settings/data" className="text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300">
+              {t('legal:footer.data')}
+            </Link>
+          </div>
         </div>
       </footer>
     </div>

@@ -824,7 +824,7 @@ function HistoryChart({ history, t, i18n }) {
  * @returns {JSX.Element} The React element for the HealthSnapshot results page.
  */
 export default function HealthSnapshot() {
-  const { t, i18n } = useTranslation(['common', 'results', 'tests'])
+  const { t, i18n } = useTranslation(['common', 'results', 'tests', 'legal'])
   const { 
     results, 
     hasAnyResults, 
@@ -1655,6 +1655,13 @@ export default function HealthSnapshot() {
           
           {showManageData && (
             <div id="manage-data-panel" className="mt-2 space-y-2 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+              <Link
+                to="/settings/data"
+                className="block w-full py-2 text-sky-500 dark:text-sky-400 text-sm font-medium hover:text-sky-600 dark:hover:text-sky-300 transition-colors text-center"
+              >
+                {t('legal:privacy.dataSettingsLink')}
+              </Link>
+              
               <button
                 onClick={() => {
                   if (confirm(t('results:actions.clearResults') + '?')) {
