@@ -1,0 +1,130 @@
+{
+  "consent": {
+    "title": "Your Privacy Matters",
+    "description": "VisionCheck AI stores data locally on your device to save your test results and preferences. No data is sent to our servers.",
+    "dataStored": {
+      "results": "Test results and history",
+      "preferences": "Theme, language, and accessibility preferences",
+      "history": "Achievement progress"
+    },
+    "note": "You can use the app without saving data. Your results will only be available during this session.",
+    "privacyLink": "Read our Privacy Policy",
+    "accept": "Accept & Save Data",
+    "decline": "Continue Without Saving"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: {{date}}",
+    "intro": "VisionCheck AI is committed to protecting your privacy. This policy explains what data we collect and how we use it.",
+    "sections": {
+      "dataCollection": {
+        "title": "What Data We Collect",
+        "description": "All data is stored locally on your device using your browser's localStorage. We do not have access to your data.",
+        "items": {
+          "results": "Test results (visual acuity, color vision, contrast sensitivity, etc.)",
+          "history": "Test history (last 20 sessions)",
+          "achievements": "Achievement badges you've earned",
+          "preferences": "Your preferences (theme, language, text-to-speech settings)",
+          "consent": "Your consent choice"
+        }
+      },
+      "dataStorage": {
+        "title": "How Data is Stored",
+        "description": "Your data is stored exclusively in your browser's localStorage on your device. We do not operate servers that store your personal data. Your data never leaves your device unless you choose to export or share it."
+      },
+      "thirdParty": {
+        "title": "Third-Party Services",
+        "description": "If you use the AI Chat or Eye Photo Analysis features, your messages and photos are sent to OpenAI's API for processing. This requires an API key that you provide. We do not store or have access to your API key or the data sent to OpenAI.",
+        "openaiLink": "View OpenAI's Privacy Policy"
+      },
+      "rights": {
+        "title": "Your Rights",
+        "description": "You have full control over your data:",
+        "access": "Access: View all stored data in the Data Settings page",
+        "export": "Export: Download all your data as a JSON file",
+        "delete": "Delete: Remove all stored data at any time",
+        "withdraw": "Withdraw Consent: Revoke consent and switch to session-only mode"
+      },
+      "contact": {
+        "title": "Contact",
+        "description": "For privacy-related questions, please contact us at:"
+      }
+    },
+    "dataSettingsLink": "Manage Your Data"
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: {{date}}",
+    "intro": "By using VisionCheck AI, you agree to these terms.",
+    "sections": {
+      "service": {
+        "title": "Service Description",
+        "description": "VisionCheck AI is an educational eye health screening tool. It provides informal assessments to help you monitor your vision and decide when to consult an eye care professional."
+      },
+      "disclaimer": {
+        "title": "Medical Disclaimer",
+        "important": "Important",
+        "description": "VisionCheck AI is NOT a medical device and does NOT provide medical diagnoses. The results are for educational and informational purposes only. They are not a substitute for professional eye examinations by a qualified optometrist or ophthalmologist.",
+        "warning": "If you experience sudden vision changes, eye pain, flashes of light, or other concerning symptoms, seek immediate medical attention."
+      },
+      "responsibilities": {
+        "title": "User Responsibilities",
+        "items": {
+          "accuracy": "Provide accurate information when using the tests",
+          "environment": "Use the app in appropriate lighting and viewing conditions",
+          "professional": "Consult an eye care professional for medical advice",
+          "apiKey": "Keep your OpenAI API key confidential if using AI features"
+        }
+      },
+      "liability": {
+        "title": "Limitation of Liability",
+        "description": "VisionCheck AI is provided \"as is\" without warranties of any kind. We are not liable for any decisions you make based on the screening results. Always consult a healthcare professional for medical concerns."
+      },
+      "changes": {
+        "title": "Changes to Terms",
+        "description": "We may update these terms from time to time. Continued use of the app after changes constitutes acceptance of the new terms."
+      }
+    }
+  },
+  "dataSettings": {
+    "title": "Data & Privacy Settings",
+    "description": "View, export, or delete your data stored in VisionCheck AI.",
+    "sections": {
+      "consent": {
+        "title": "Data Storage Consent",
+        "granted": "You have consented to data storage",
+        "denied": "You are using session-only mode (data not saved)",
+        "grantButton": "Enable Data Storage",
+        "revokeButton": "Revoke Consent & Delete Data"
+      },
+      "viewData": {
+        "title": "Your Stored Data",
+        "noData": "No data stored",
+        "categories": {
+          "results": "Current Test Results",
+          "history": "Test History",
+          "achievements": "Achievements",
+          "preferences": "Preferences"
+        }
+      },
+      "exportData": {
+        "title": "Export Your Data",
+        "description": "Download all your data as a JSON file",
+        "button": "Export Data (JSON)"
+      },
+      "deleteData": {
+        "title": "Delete All Data",
+        "description": "Permanently delete all your stored data",
+        "button": "Delete All Data",
+        "confirm": "Are you sure you want to delete all your data? This cannot be undone.",
+        "success": "All data has been deleted"
+      }
+    },
+    "backHome": "Back to Home"
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "data": "Data Settings"
+  }
+}

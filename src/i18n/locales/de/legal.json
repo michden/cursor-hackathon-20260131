@@ -1,0 +1,130 @@
+{
+  "consent": {
+    "title": "Ihre Privatsphäre ist wichtig",
+    "description": "VisionCheck AI speichert Daten lokal auf Ihrem Gerät, um Ihre Testergebnisse und Einstellungen zu sichern. Es werden keine Daten an unsere Server gesendet.",
+    "dataStored": {
+      "results": "Testergebnisse und Verlauf",
+      "preferences": "Design, Sprache und Barrierefreiheits-Einstellungen",
+      "history": "Erfolge und Fortschritt"
+    },
+    "note": "Sie können die App auch ohne Datenspeicherung nutzen. Ihre Ergebnisse sind dann nur während dieser Sitzung verfügbar.",
+    "privacyLink": "Datenschutzerklärung lesen",
+    "accept": "Akzeptieren & Daten speichern",
+    "decline": "Ohne Speichern fortfahren"
+  },
+  "privacy": {
+    "title": "Datenschutzerklärung",
+    "lastUpdated": "Zuletzt aktualisiert: {{date}}",
+    "intro": "VisionCheck AI verpflichtet sich zum Schutz Ihrer Privatsphäre. Diese Richtlinie erklärt, welche Daten wir erheben und wie wir sie verwenden.",
+    "sections": {
+      "dataCollection": {
+        "title": "Welche Daten wir erheben",
+        "description": "Alle Daten werden lokal auf Ihrem Gerät im localStorage Ihres Browsers gespeichert. Wir haben keinen Zugriff auf Ihre Daten.",
+        "items": {
+          "results": "Testergebnisse (Sehschärfe, Farbsehen, Kontrastempfindlichkeit usw.)",
+          "history": "Testverlauf (letzte 20 Sitzungen)",
+          "achievements": "Verdiente Erfolge",
+          "preferences": "Ihre Einstellungen (Design, Sprache, Sprachausgabe)",
+          "consent": "Ihre Einwilligungsentscheidung"
+        }
+      },
+      "dataStorage": {
+        "title": "Wie Daten gespeichert werden",
+        "description": "Ihre Daten werden ausschließlich im localStorage Ihres Browsers auf Ihrem Gerät gespeichert. Wir betreiben keine Server, die Ihre persönlichen Daten speichern. Ihre Daten verlassen Ihr Gerät nur, wenn Sie sie exportieren oder teilen."
+      },
+      "thirdParty": {
+        "title": "Drittanbieter-Dienste",
+        "description": "Wenn Sie die KI-Chat- oder Augenbildanalyse-Funktionen nutzen, werden Ihre Nachrichten und Fotos zur Verarbeitung an die OpenAI-API gesendet. Dies erfordert einen API-Schlüssel, den Sie bereitstellen. Wir speichern weder Ihren API-Schlüssel noch die an OpenAI gesendeten Daten.",
+        "openaiLink": "OpenAI-Datenschutzerklärung ansehen"
+      },
+      "rights": {
+        "title": "Ihre Rechte",
+        "description": "Sie haben volle Kontrolle über Ihre Daten:",
+        "access": "Zugriff: Alle gespeicherten Daten auf der Dateneinstellungsseite einsehen",
+        "export": "Export: Alle Ihre Daten als JSON-Datei herunterladen",
+        "delete": "Löschen: Alle gespeicherten Daten jederzeit entfernen",
+        "withdraw": "Einwilligung widerrufen: In den Sitzungsmodus wechseln"
+      },
+      "contact": {
+        "title": "Kontakt",
+        "description": "Bei datenschutzbezogenen Fragen kontaktieren Sie uns unter:"
+      }
+    },
+    "dataSettingsLink": "Ihre Daten verwalten"
+  },
+  "terms": {
+    "title": "Nutzungsbedingungen",
+    "lastUpdated": "Zuletzt aktualisiert: {{date}}",
+    "intro": "Durch die Nutzung von VisionCheck AI stimmen Sie diesen Bedingungen zu.",
+    "sections": {
+      "service": {
+        "title": "Dienstbeschreibung",
+        "description": "VisionCheck AI ist ein pädagogisches Augengesundheits-Screening-Tool. Es bietet informelle Bewertungen, um Ihnen zu helfen, Ihre Sehkraft zu überwachen und zu entscheiden, wann Sie einen Augenarzt konsultieren sollten."
+      },
+      "disclaimer": {
+        "title": "Medizinischer Haftungsausschluss",
+        "important": "Wichtig",
+        "description": "VisionCheck AI ist KEIN medizinisches Gerät und stellt KEINE medizinischen Diagnosen. Die Ergebnisse dienen nur zu Bildungs- und Informationszwecken. Sie sind kein Ersatz für professionelle Augenuntersuchungen durch einen qualifizierten Optiker oder Augenarzt.",
+        "warning": "Bei plötzlichen Sehveränderungen, Augenschmerzen, Lichtblitzen oder anderen besorgniserregenden Symptomen suchen Sie sofort einen Arzt auf."
+      },
+      "responsibilities": {
+        "title": "Benutzerverantwortlichkeiten",
+        "items": {
+          "accuracy": "Genaue Informationen bei der Nutzung der Tests angeben",
+          "environment": "Die App bei angemessener Beleuchtung und Betrachtungsbedingungen verwenden",
+          "professional": "Einen Augenarzt für medizinische Beratung konsultieren",
+          "apiKey": "Ihren OpenAI-API-Schlüssel vertraulich behandeln, wenn Sie KI-Funktionen nutzen"
+        }
+      },
+      "liability": {
+        "title": "Haftungsbeschränkung",
+        "description": "VisionCheck AI wird 'wie besehen' ohne jegliche Garantien bereitgestellt. Wir haften nicht für Entscheidungen, die Sie auf Basis der Screening-Ergebnisse treffen. Konsultieren Sie bei medizinischen Bedenken immer einen Arzt."
+      },
+      "changes": {
+        "title": "Änderungen der Bedingungen",
+        "description": "Wir können diese Bedingungen von Zeit zu Zeit aktualisieren. Die fortgesetzte Nutzung der App nach Änderungen gilt als Zustimmung zu den neuen Bedingungen."
+      }
+    }
+  },
+  "dataSettings": {
+    "title": "Daten- & Datenschutzeinstellungen",
+    "description": "Ihre in VisionCheck AI gespeicherten Daten anzeigen, exportieren oder löschen.",
+    "sections": {
+      "consent": {
+        "title": "Einwilligung zur Datenspeicherung",
+        "granted": "Sie haben der Datenspeicherung zugestimmt",
+        "denied": "Sie nutzen den Sitzungsmodus (Daten werden nicht gespeichert)",
+        "grantButton": "Datenspeicherung aktivieren",
+        "revokeButton": "Einwilligung widerrufen & Daten löschen"
+      },
+      "viewData": {
+        "title": "Ihre gespeicherten Daten",
+        "noData": "Keine Daten gespeichert",
+        "categories": {
+          "results": "Aktuelle Testergebnisse",
+          "history": "Testverlauf",
+          "achievements": "Erfolge",
+          "preferences": "Einstellungen"
+        }
+      },
+      "exportData": {
+        "title": "Ihre Daten exportieren",
+        "description": "Alle Ihre Daten als JSON-Datei herunterladen",
+        "button": "Daten exportieren (JSON)"
+      },
+      "deleteData": {
+        "title": "Alle Daten löschen",
+        "description": "Alle Ihre gespeicherten Daten dauerhaft löschen",
+        "button": "Alle Daten löschen",
+        "confirm": "Sind Sie sicher, dass Sie alle Ihre Daten löschen möchten? Dies kann nicht rückgängig gemacht werden.",
+        "success": "Alle Daten wurden gelöscht"
+      }
+    },
+    "backHome": "Zurück zur Startseite"
+  },
+  "footer": {
+    "privacy": "Datenschutz",
+    "terms": "Nutzungsbedingungen",
+    "data": "Dateneinstellungen"
+  }
+}
