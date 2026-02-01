@@ -1402,7 +1402,10 @@ export default function HealthSnapshot() {
             disabled={!(results.visualAcuity?.left || results.visualAcuity?.right) && 
                       !results.colorVision && 
                       !(results.contrastSensitivity?.left || results.contrastSensitivity?.right) && 
-                      !(results.amslerGrid?.left || results.amslerGrid?.right)}
+                      !(results.amslerGrid?.left || results.amslerGrid?.right) &&
+                      !(results.astigmatism?.left || results.astigmatism?.right) &&
+                      !(results.peripheralVision?.left || results.peripheralVision?.right) &&
+                      !results.eyePhoto}
             className="w-full py-4 bg-emerald-500 text-white font-semibold rounded-xl hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span>📊</span> {t('results:actions.saveToHistory')}
