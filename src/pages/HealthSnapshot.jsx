@@ -553,7 +553,7 @@ function AstigmatismResult({ data, t }) {
             <div className="text-xs text-slate-600 mt-1">
               {data.left.allLinesEqual 
                 ? t('results:astigmatism.allLinesEqual')
-                : t(`results:astigmatism.severity.${data.left.severity}`)}
+                : t(`results:astigmatism.severity.${data.left.severity ?? 'none'}`)}
             </div>
           )}
           {hasLeft && !data.left.allLinesEqual && data.left.estimatedAxis !== null && (
@@ -573,7 +573,7 @@ function AstigmatismResult({ data, t }) {
             <div className="text-xs text-slate-600 mt-1">
               {data.right.allLinesEqual 
                 ? t('results:astigmatism.allLinesEqual')
-                : t(`results:astigmatism.severity.${data.right.severity}`)}
+                : t(`results:astigmatism.severity.${data.right.severity ?? 'none'}`)}
             </div>
           )}
           {hasRight && !data.right.allLinesEqual && data.right.estimatedAxis !== null && (
@@ -652,7 +652,7 @@ function PeripheralVisionResult({ data, t }) {
               {data.left.avgReactionTime}ms
             </div>
           )}
-          {hasLeft && (
+          {hasLeft && data.left.severity && (
             <div className={`text-xs mt-1 text-${getEyeColor(data.left)}-600`}>
               {t(`results:peripheralVision.severity.${data.left.severity}`)}
             </div>
@@ -670,7 +670,7 @@ function PeripheralVisionResult({ data, t }) {
               {data.right.avgReactionTime}ms
             </div>
           )}
-          {hasRight && (
+          {hasRight && data.right.severity && (
             <div className={`text-xs mt-1 text-${getEyeColor(data.right)}-600`}>
               {t(`results:peripheralVision.severity.${data.right.severity}`)}
             </div>
