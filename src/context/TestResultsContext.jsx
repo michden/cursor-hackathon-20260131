@@ -160,6 +160,16 @@ const hasThreeDayStreak = (historyData) => {
   return false
 }
 
+/**
+ * Provides test results state, persistence, history, and achievement management to descendant components via TestResultsContext.
+ *
+ * The provider persists results, history, and achievements to localStorage, exposes update handlers for per-eye and binocular tests
+ * (visual acuity, color vision, contrast sensitivity, Amsler grid, astigmatism, peripheral vision, and eye photo), and offers
+ * history management and achievement utilities.
+ *
+ * @param {{ children: import('react').ReactNode }} props - The provider children.
+ * @returns {JSX.Element} A context provider element that supplies results, update handlers, history, and achievement utilities to descendants.
+ */
 export function TestResultsProvider({ children }) {
   const [results, setResults] = useState(loadPersistedResults)
   const [history, setHistory] = useState(loadPersistedHistory)

@@ -8,6 +8,18 @@ import AchievementBadge, { ACHIEVEMENTS } from '../components/AchievementBadge'
 import Celebration from '../components/Celebration'
 import FindDoctorButton from '../components/FindDoctorButton'
 
+/**
+ * Render a styled result card containing an icon, title, status pill, and arbitrary content.
+ *
+ * @param {{title: string, icon: import('react').ReactNode, status: 'complete'|'pending'|'warning', children?: import('react').ReactNode, color?: 'sky'|'emerald'|'violet'|'amber'|'purple'|'teal'|'fuchsia', t: (key: string) => string}} props - Component props.
+ * @param {string} props.title - Visible card title.
+ * @param {React.ReactNode} props.icon - Icon displayed to the left of the title.
+ * @param {'complete'|'pending'|'warning'} props.status - Status key used to derive the status label and its styling.
+ * @param {React.ReactNode} [props.children] - Card body content.
+ * @param {'sky'|'emerald'|'violet'|'amber'|'purple'|'teal'|'fuchsia'} [props.color='sky'] - Color theme for the card background/border.
+ * @param {(key: string) => string} props.t - Translation function used to localize the status text.
+ * @returns {JSX.Element} The rendered result card element.
+ */
 function ResultCard({ title, icon, status, children, color = 'sky', t }) {
   const colorClasses = {
     sky: 'bg-sky-50 border-sky-200',
@@ -47,6 +59,21 @@ function ResultCard({ title, icon, status, children, color = 'sky', t }) {
   )
 }
 
+/**
+ * Render visual acuity results for left and right eyes, showing Snellen values, level info, and an asymmetry warning when applicable.
+ *
+ * @param {Object} data - Results container for visual acuity.
+ * @param {Object} [data.left] - Left eye result, if available.
+ * @param {string} data.left.snellen - Snellen notation for the left eye (e.g., "20/20").
+ * @param {number} data.left.level - Numeric acuity level for the left eye.
+ * @param {number} data.left.maxLevel - Maximum possible level for the left eye test.
+ * @param {Object} [data.right] - Right eye result, if available.
+ * @param {string} data.right.snellen - Snellen notation for the right eye.
+ * @param {number} data.right.level - Numeric acuity level for the right eye.
+ * @param {number} data.right.maxLevel - Maximum possible level for the right eye test.
+ *
+ * @returns {JSX.Element} A React element that displays per-eye Snellen and level information when present; if neither eye has results, renders a localized no-results message. If both eyes are present and their level difference is 2 or greater, includes a follow-up/asymmetry warning.
+ */
 function VisualAcuityResult({ data, t }) {
   const hasLeft = data?.left
   const hasRight = data?.right
@@ -110,6 +137,12 @@ function VisualAcuityResult({ data, t }) {
   )
 }
 
+/**
+ * Render color vision test results including the score and a localized status line.
+ *
+ * @param {{correctCount: number, totalPlates: number, status: 'normal' | 'mild_difficulty' | 'possible_deficiency'} | null | undefined} data - The color vision result data; when falsy a localized "no results" description is displayed.
+ * @returns {JSX.Element} A React element showing the correct/total plate score and a colored status message reflecting the test outcome.
+ */
 function ColorVisionResult({ data, t }) {
   if (!data) {
     return (
@@ -153,7 +186,14 @@ function stripMarkdown(text) {
     .trim()
 }
 
-// Extract summary or recommendations from AI analysis, skipping disclaimers
+/**
+ * Extract a concise human-readable summary or recommendation from an AI analysis text while ignoring boilerplate disclaimers.
+ *
+ * Attempts to locate a "Summary" or "Recommendation(s)" section, then common reassuring recommendation phrases, and finally falls back to the first meaningful non-disclaimer line. Result is stripped of simple Markdown and truncated to 150 characters when applicable.
+ *
+ * @param {string} analysis - AI-generated analysis text to extract a summary from.
+ * @returns {string|null} The extracted summary or recommendation (trimmed and up to 150 characters), or `null` if no suitable content is found.
+ */
 function extractSummary(analysis) {
   if (!analysis) return null
   
@@ -187,6 +227,12 @@ function extractSummary(analysis) {
   return null
 }
 
+/**
+ * Show a compact eye-photo result card with a brief extracted summary and an accessible modal displaying the full analysis and image.
+ * @param {{analysis?: string, imageData?: string}|null} data - Eye photo result data; null renders a "no results" description.
+ * @param {function} t - Translation function for localized strings.
+ * @returns {JSX.Element} A React element containing the eye photo card and, when opened, a modal with the full analysis and image.
+ */
 function EyePhotoResult({ data, t }) {
   const [showFullAnalysis, setShowFullAnalysis] = useState(false)
 
@@ -307,6 +353,18 @@ function EyePhotoResult({ data, t }) {
   )
 }
 
+/**
+ * Render contrast sensitivity results for left and right eyes.
+ *
+ * Displays each eye's log contrast sensitivity (logCS) value and a localized interpretation
+ * label (excellent/normal/mild/moderate/significant). If both eyes are present and the
+ * logCS difference is 0.3 or greater, shows a follow-up/asymmetry warning.
+ *
+ * @param {Object} props
+ * @param {{left?: {logCS: number}, right?: {logCS: number}}} props.data - Result data with optional `left` and `right` objects containing `logCS` numeric values.
+ * @param {Function} props.t - Translation function for localized strings.
+ * @returns {JSX.Element} A rendered block showing per-eye logCS, interpretation text, and an optional asymmetry warning.
+ */
 function ContrastSensitivityResult({ data, t }) {
   const hasLeft = data?.left
   const hasRight = data?.right
@@ -371,6 +429,19 @@ function ContrastSensitivityResult({ data, t }) {
   )
 }
 
+/**
+ * Render Amsler Grid results for left and right eyes.
+ *
+ * Displays per-eye status ("Concerns" or "Normal") using localized labels and colors based on each eye's `hasIssues` flag.
+ * If any eye reports issues, a localized "see doctor" recommendation is shown; otherwise a localized normal confirmation is shown.
+ * If neither left nor right data is present, renders the translated no-results description.
+ *
+ * @param {Object} data - Result object containing optional `left` and `right` eye entries.
+ * @param {{ hasIssues?: boolean }} [data.left] - Left eye result (presence indicates a result).
+ * @param {{ hasIssues?: boolean }} [data.right] - Right eye result (presence indicates a result).
+ * @param {Function} t - Translation function used for localized strings.
+ * @returns {JSX.Element} A React element that displays the Amsler Grid per-eye statuses and a recommendation line.
+ */
 function AmslerGridResult({ data, t }) {
   const hasLeft = data?.left
   const hasRight = data?.right
@@ -425,6 +496,13 @@ function AmslerGridResult({ data, t }) {
   )
 }
 
+/**
+ * Render astigmatism results for left and right eyes, including status icons, severity/axis details, asymmetry warning, and recommendations.
+ *
+ * @param {{ left?: { allLinesEqual: boolean, severity?: string, estimatedAxis?: number | null }, right?: { allLinesEqual: boolean, severity?: string, estimatedAxis?: number | null }}} data - Astigmatism result data for each eye; missing eye keys indicate no result for that eye.
+ * @param {Function} t - Translation function (i18n) used to localize labels and messages.
+ * @returns {JSX.Element} A React element showing per-eye astigmatism summaries, any asymmetry warning, and a recommendation line (see doctor or no astigmatism).
+ */
 function AstigmatismResult({ data, t }) {
   const hasLeft = data?.left
   const hasRight = data?.right
@@ -514,6 +592,21 @@ function AstigmatismResult({ data, t }) {
   )
 }
 
+/**
+ * Render the peripheral vision result UI showing left and right eye summaries and an overall recommendation.
+ *
+ * Displays detection rate, average reaction time, and a localized severity label for each eye when present.
+ * If an eye is missing, a placeholder is shown. Eye colors and the final recommendation text reflect whether
+ * any measured severity indicates concern.
+ *
+ * @param {Object} props.data - Peripheral vision measurements.
+ * @param {Object} [props.data.left] - Left eye result (optional).
+ * @param {number} props.data.left.detectionRate - Detection rate as a percentage (e.g., 85).
+ * @param {number|string} [props.data.left.avgReactionTime] - Average reaction time in milliseconds.
+ * @param {string} props.data.left.severity - Severity key used for localization (e.g., 'excellent', 'normal', 'mild', 'significant').
+ * @param {Object} [props.data.right] - Right eye result (optional) with the same shape as `left`.
+ * @returns {JSX.Element} A React element presenting the peripheral vision results and a localized recommendation.
+ */
 function PeripheralVisionResult({ data, t }) {
   const hasLeft = data?.left
   const hasRight = data?.right
@@ -588,6 +681,19 @@ function PeripheralVisionResult({ data, t }) {
   )
 }
 
+/**
+ * Render a compact visual-acuity history chart for recent sessions.
+ *
+ * Displays up to five past sessions that include visual acuity data as a small
+ * bar-style chart with date labels and a localized trend message (improved/changed/stable).
+ *
+ * @param {Object[]} history - Array of session objects, each expected to include `id`, `date`, and `visualAcuity`.
+ *   visualAcuity may be in the old format (`{ level, snellen }`) or the new format
+ *   (`{ left: { level, snellen }, right: { level, snellen } }`).
+ * @param {Function} t - Translation function (i18n `t`) used to localize strings.
+ * @param {Object} i18n - i18n instance providing locale information (uses `i18n.language`).
+ * @returns {JSX.Element|null} A chart element when there are two or more visual-acuity sessions, otherwise `null`.
+ */
 function HistoryChart({ history, t, i18n }) {
   if (history.length < 2) return null
 
@@ -670,6 +776,13 @@ function HistoryChart({ history, t, i18n }) {
   )
 }
 
+/**
+ * Render the HealthSnapshot page showing a complete eye health results summary, history, achievements, recommendations, and actions.
+ *
+ * Renders a header, a timeline chart (when available), per-test result cards (visual acuity, color vision, contrast sensitivity, Amsler grid, astigmatism, peripheral vision, eye photo), unlocked achievements, a recommendations panel, optional Find Doctor call-to-action, disclaimer, and action buttons for sharing, PDF export, and saving/clearing results. Handles achievement unlocking/marking, share and PDF generation, and localized strings via i18n.
+ *
+ * @returns {JSX.Element} The React element for the HealthSnapshot results page.
+ */
 export default function HealthSnapshot() {
   const { t, i18n } = useTranslation(['common', 'results', 'tests'])
   const { 
