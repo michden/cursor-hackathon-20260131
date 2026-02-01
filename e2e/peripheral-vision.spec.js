@@ -178,3 +178,60 @@ test.describe('Peripheral Vision Test - Accessibility', () => {
     await expect(testArea).toHaveAttribute('tabindex', '0')
   })
 })
+
+test.describe('Peripheral Vision Test - Completion', () => {
+  test('completes test after all 12 dots are processed', async ({ page }) => {
+    // Set a longer timeout for this test since we need to wait for all dots
+    test.setTimeout(120000)
+    
+    await page.goto('/peripheral-vision')
+    await page.click('text=Left')
+    await page.click('text=Start Test')
+    
+    // Wait for testing to start
+    await expect(page.getByText('0/12')).toBeVisible()
+    
+    const testArea = page.locator('.bg-slate-900[role="button"]')
+    
+    // Click repeatedly to detect dots as they appear
+    // Each dot cycle: up to 3000ms delay + 2500ms response window
+    // We'll click every 500ms to ensure we catch dots when they appear
+    for (let i = 0; i < 12; i++) {
+      // Wait for dot to appear and counter to update, then click
+      const expectedCount = `${i}/12`
+      const nextCount = `${i + 1}/12`
+      
+      // Wait up to 6 seconds for the next dot to appear
+      await page.waitForTimeout(500)
+      
+      // Click to detect the dot
+      await testArea.click()
+      
+      // Small delay before next iteration
+      await page.waitForTimeout(100)
+      
+      // If we see the completion screen, we're done early
+      const eyeComplete = page.getByText(/Eye Complete/i)
+      if (await eyeComplete.isVisible().catch(() => false)) {
+        break
+      }
+    }
+    
+    // Keep clicking until we see completion or timeout
+    for (let attempt = 0; attempt < 60; attempt++) {
+      await page.waitForTimeout(500)
+      await testArea.click().catch(() => {})
+      
+      const eyeComplete = page.getByText(/Eye Complete/i)
+      if (await eyeComplete.isVisible().catch(() => false)) {
+        break
+      }
+    }
+    
+    // Should eventually show completion screen with results
+    await expect(page.getByText(/Eye Complete/i)).toBeVisible({ timeout: 30000 })
+    
+    // Verify we see results like detection rate
+    await expect(page.getByText(/Detection Rate/i)).toBeVisible()
+  })
+})
