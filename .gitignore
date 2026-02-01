@@ -30,3 +30,7 @@ test-results/
 
 # Cursor
 .cursor/mcp.json
+
+# Environment files
+.env
+server/.env
