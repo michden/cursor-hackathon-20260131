@@ -99,5 +99,11 @@
     "tryAgain": "Please try again",
     "cameraAccess": "Could not access camera",
     "locationAccess": "Could not get your location"
+  },
+  "voice": {
+    "enable": "Enable voice commands",
+    "disable": "Disable voice commands",
+    "listening": "Listening...",
+    "notSupported": "Voice commands not supported in this browser"
   }
 }

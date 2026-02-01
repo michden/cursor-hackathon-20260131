@@ -4,6 +4,7 @@ import SkipLink from '../components/SkipLink'
 import AudioInstructions from '../components/AudioInstructions'
 import ThemeToggle from '../components/ThemeToggle'
 import LanguageSelector from '../components/LanguageSelector'
+import VoiceToggle from '../components/VoiceToggle'
 import { useTestResults } from '../context/TestResultsContext'
 import { useLanguage } from '../context/LanguageContext'
 
@@ -29,6 +30,7 @@ export default function Home() {
       
       {/* Settings - Top Right */}
       <div className="absolute top-4 right-4 flex items-center gap-1">
+        <VoiceToggle />
         <LanguageSelector />
         <ThemeToggle />
       </div>

@@ -5,6 +5,7 @@ import { TTSSettingsProvider } from './context/TTSSettingsContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { ChatProvider } from './context/ChatContext'
 import { LanguageProvider } from './context/LanguageContext'
+import { VoiceCommandProvider } from './context/VoiceCommandContext'
 import ErrorBoundary from './components/ErrorBoundary'
 import Onboarding from './components/Onboarding'
 import ChatFAB from './components/ChatFAB'
@@ -33,7 +34,9 @@ function App() {
       <ThemeProvider>
         <LanguageProvider>
           <TTSSettingsProvider>
-            <Onboarding onComplete={() => setShowOnboarding(false)} />
+            <VoiceCommandProvider>
+              <Onboarding onComplete={() => setShowOnboarding(false)} />
+            </VoiceCommandProvider>
           </TTSSettingsProvider>
         </LanguageProvider>
       </ThemeProvider>
@@ -45,10 +48,11 @@ function App() {
       <ThemeProvider>
         <LanguageProvider>
           <TTSSettingsProvider>
-            <TestResultsProvider>
-              <BrowserRouter>
-                <ChatProvider>
-                  <Routes>
+            <VoiceCommandProvider>
+              <TestResultsProvider>
+                <BrowserRouter>
+                  <ChatProvider>
+                    <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/visual-acuity" element={<VisualAcuityTest />} />
                     <Route path="/color-vision" element={<ColorVisionTest />} />
@@ -59,10 +63,11 @@ function App() {
                     <Route path="/results" element={<HealthSnapshot />} />
                   </Routes>
                   <ChatFAB />
-                  <ChatDrawer />
-                </ChatProvider>
-              </BrowserRouter>
-            </TestResultsProvider>
+                    <ChatDrawer />
+                  </ChatProvider>
+                </BrowserRouter>
+              </TestResultsProvider>
+            </VoiceCommandProvider>
           </TTSSettingsProvider>
         </LanguageProvider>
       </ThemeProvider>
