@@ -59,6 +59,187 @@ export default function Home() {
         />
       </div>
 
+      {/* Test Options */}
+      <main id="test-options" className="px-6" role="main" aria-label="Eye health tests">
+        {/* Section: Vision Screening Tests */}
+        <section aria-labelledby="screening-tests-heading" className="mb-8">
+          <div className="mb-4">
+            <h2 id="screening-tests-heading" className="text-lg font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <span>🔬</span> {t('home:sections.screeningTests')}
+            </h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {t('home:sections.screeningTestsDescription')}
+            </p>
+          </div>
+          
+          <div className="space-y-4">
+            <Link
+              to="/visual-acuity"
+              className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+              aria-label={`${t('home:tests.visualAcuity.title')} - ${t('home:tests.visualAcuity.description')}`}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-sky-100 dark:bg-sky-900/50 rounded-xl flex items-center justify-center text-2xl">
+                  📖
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.visualAcuity.title')}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.visualAcuity.description')}</p>
+                </div>
+                <div className="text-slate-400 dark:text-slate-500">→</div>
+              </div>
+            </Link>
+
+            <Link
+              to="/color-vision"
+              className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+              aria-label={`${t('home:tests.colorVision.title')} - ${t('home:tests.colorVision.description')}`}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-emerald-100 dark:bg-emerald-900/50 rounded-xl flex items-center justify-center text-2xl">
+                  🎨
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.colorVision.title')}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.colorVision.description')}</p>
+                </div>
+                <div className="text-slate-400 dark:text-slate-500">→</div>
+              </div>
+            </Link>
+
+            <Link
+              to="/contrast-sensitivity"
+              className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+              aria-label={`${t('home:tests.contrastSensitivity.title')} - ${t('home:tests.contrastSensitivity.description')}`}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-amber-100 dark:bg-amber-900/50 rounded-xl flex items-center justify-center text-2xl">
+                  🔆
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.contrastSensitivity.title')}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.contrastSensitivity.description')}</p>
+                </div>
+                <div className="text-slate-400 dark:text-slate-500">→</div>
+              </div>
+            </Link>
+
+            <Link
+              to="/amsler-grid"
+              className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+              aria-label={`${t('home:tests.amslerGrid.title')} - ${t('home:tests.amslerGrid.description')}`}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-purple-100 dark:bg-purple-900/50 rounded-xl flex items-center justify-center text-2xl">
+                  #
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.amslerGrid.title')}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.amslerGrid.description')}</p>
+                </div>
+                <div className="text-slate-400 dark:text-slate-500">→</div>
+              </div>
+            </Link>
+
+            <Link
+              to="/astigmatism"
+              className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+              aria-label={`${t('home:tests.astigmatism.title')} - ${t('home:tests.astigmatism.description')}`}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-teal-100 dark:bg-teal-900/50 rounded-xl flex items-center justify-center text-2xl">
+                  ⊕
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.astigmatism.title')}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.astigmatism.description')}</p>
+                </div>
+                <div className="text-slate-400 dark:text-slate-500">→</div>
+              </div>
+            </Link>
+
+            <Link
+              to="/peripheral-vision"
+              className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+              aria-label={`${t('home:tests.peripheralVision.title')} - ${t('home:tests.peripheralVision.description')}`}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-fuchsia-100 dark:bg-fuchsia-900/50 rounded-xl flex items-center justify-center text-2xl">
+                  👁️‍🗨️
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.peripheralVision.title')}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.peripheralVision.description')}</p>
+                </div>
+                <div className="text-slate-400 dark:text-slate-500">→</div>
+              </div>
+            </Link>
+          </div>
+        </section>
+
+        {/* Section: AI Analysis */}
+        <section aria-labelledby="ai-analysis-heading" className="mb-8">
+          <div className="mb-4">
+            <h2 id="ai-analysis-heading" className="text-lg font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <span>🤖</span> {t('home:sections.aiAnalysis')}
+            </h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {t('home:sections.aiAnalysisDescription')}
+            </p>
+          </div>
+          
+          <div className="space-y-4">
+            <Link
+              to="/eye-photo"
+              className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+              aria-label={`${t('home:tests.eyePhoto.title')} - ${t('home:tests.eyePhoto.description')}`}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-violet-100 dark:bg-violet-900/50 rounded-xl flex items-center justify-center text-2xl">
+                  📸
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.eyePhoto.title')}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.eyePhoto.description')}</p>
+                </div>
+                <div className="text-slate-400 dark:text-slate-500">→</div>
+              </div>
+            </Link>
+          </div>
+        </section>
+
+        {/* Section: Your Results */}
+        <section aria-labelledby="your-results-heading" className="mb-8">
+          <div className="mb-4">
+            <h2 id="your-results-heading" className="text-lg font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <span>📊</span> {t('home:sections.yourResults')}
+            </h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {t('home:sections.yourResultsDescription')}
+            </p>
+          </div>
+          
+          <div className="space-y-4">
+            <Link
+              to="/results"
+              className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+              aria-label={`${t('home:tests.viewResults.title')} - ${t('home:tests.viewResults.description')}`}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-rose-100 dark:bg-rose-900/50 rounded-xl flex items-center justify-center text-2xl">
+                  📋
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.viewResults.title')}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.viewResults.description')}</p>
+                </div>
+                <div className="text-slate-400 dark:text-slate-500">→</div>
+              </div>
+            </Link>
+          </div>
+        </section>
+      </main>
+
       {/* Medical Disclaimer */}
       <div className="mx-6 mb-8 p-4 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 rounded-xl">
         <div className="flex gap-3">
@@ -71,145 +252,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
-      {/* Test Options */}
-      <main id="test-options" className="px-6 space-y-4" role="main" aria-label="Eye health tests">
-        <Link
-          to="/visual-acuity"
-          className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-          aria-label={`${t('home:tests.visualAcuity.title')} - ${t('home:tests.visualAcuity.description')}`}
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-sky-100 dark:bg-sky-900/50 rounded-xl flex items-center justify-center text-2xl">
-              📖
-            </div>
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.visualAcuity.title')}</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.visualAcuity.description')}</p>
-            </div>
-            <div className="text-slate-400 dark:text-slate-500">→</div>
-          </div>
-        </Link>
-
-        <Link
-          to="/color-vision"
-          className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-          aria-label={`${t('home:tests.colorVision.title')} - ${t('home:tests.colorVision.description')}`}
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-emerald-100 dark:bg-emerald-900/50 rounded-xl flex items-center justify-center text-2xl">
-              🎨
-            </div>
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.colorVision.title')}</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.colorVision.description')}</p>
-            </div>
-            <div className="text-slate-400 dark:text-slate-500">→</div>
-          </div>
-        </Link>
-
-        <Link
-          to="/contrast-sensitivity"
-          className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-          aria-label={`${t('home:tests.contrastSensitivity.title')} - ${t('home:tests.contrastSensitivity.description')}`}
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-amber-100 dark:bg-amber-900/50 rounded-xl flex items-center justify-center text-2xl">
-              🔆
-            </div>
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.contrastSensitivity.title')}</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.contrastSensitivity.description')}</p>
-            </div>
-            <div className="text-slate-400 dark:text-slate-500">→</div>
-          </div>
-        </Link>
-
-        <Link
-          to="/amsler-grid"
-          className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-          aria-label={`${t('home:tests.amslerGrid.title')} - ${t('home:tests.amslerGrid.description')}`}
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-purple-100 dark:bg-purple-900/50 rounded-xl flex items-center justify-center text-2xl">
-              #
-            </div>
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.amslerGrid.title')}</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.amslerGrid.description')}</p>
-            </div>
-            <div className="text-slate-400 dark:text-slate-500">→</div>
-          </div>
-        </Link>
-
-        <Link
-          to="/astigmatism"
-          className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-          aria-label={`${t('home:tests.astigmatism.title')} - ${t('home:tests.astigmatism.description')}`}
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-teal-100 dark:bg-teal-900/50 rounded-xl flex items-center justify-center text-2xl">
-              ⊕
-            </div>
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.astigmatism.title')}</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.astigmatism.description')}</p>
-            </div>
-            <div className="text-slate-400 dark:text-slate-500">→</div>
-          </div>
-        </Link>
-
-        <Link
-          to="/peripheral-vision"
-          className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-          aria-label={`${t('home:tests.peripheralVision.title')} - ${t('home:tests.peripheralVision.description')}`}
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-fuchsia-100 dark:bg-fuchsia-900/50 rounded-xl flex items-center justify-center text-2xl">
-              👁️‍🗨️
-            </div>
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.peripheralVision.title')}</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.peripheralVision.description')}</p>
-            </div>
-            <div className="text-slate-400 dark:text-slate-500">→</div>
-          </div>
-        </Link>
-
-        <Link
-          to="/eye-photo"
-          className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-          aria-label={`${t('home:tests.eyePhoto.title')} - ${t('home:tests.eyePhoto.description')}`}
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-violet-100 dark:bg-violet-900/50 rounded-xl flex items-center justify-center text-2xl">
-              📸
-            </div>
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.eyePhoto.title')}</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.eyePhoto.description')}</p>
-            </div>
-            <div className="text-slate-400 dark:text-slate-500">→</div>
-          </div>
-        </Link>
-
-        <Link
-          to="/results"
-          className="block p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-          aria-label={`${t('home:tests.viewResults.title')} - ${t('home:tests.viewResults.description')}`}
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-rose-100 dark:bg-rose-900/50 rounded-xl flex items-center justify-center text-2xl">
-              📋
-            </div>
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{t('home:tests.viewResults.title')}</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{t('home:tests.viewResults.description')}</p>
-            </div>
-            <div className="text-slate-400 dark:text-slate-500">→</div>
-          </div>
-        </Link>
-      </main>
 
       {/* Footer */}
       <footer className="mt-12 pb-8 px-6 text-center">
