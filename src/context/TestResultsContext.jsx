@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { useConsent } from './ConsentContext'
 
 const TestResultsContext = createContext(null)
 
@@ -171,18 +172,28 @@ const hasThreeDayStreak = (historyData) => {
  * @returns {JSX.Element} A context provider element that supplies results, update handlers, history, and achievement utilities to descendants.
  */
 export function TestResultsProvider({ children }) {
-  const [results, setResults] = useState(loadPersistedResults)
-  const [history, setHistory] = useState(loadPersistedHistory)
-  const [achievements, setAchievements] = useState(loadPersistedAchievements)
+  const { consentGiven } = useConsent()
+  
+  // Only load persisted data if consent was given
+  const [results, setResults] = useState(() => 
+    consentGiven ? loadPersistedResults() : getDefaultResults()
+  )
+  const [history, setHistory] = useState(() => 
+    consentGiven ? loadPersistedHistory() : []
+  )
+  const [achievements, setAchievements] = useState(() => 
+    consentGiven ? loadPersistedAchievements() : {}
+  )
 
-  // Persist to localStorage whenever results change
+  // Persist to localStorage whenever results change (only if consent given)
   useEffect(() => {
+    if (!consentGiven) return
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(prepareForStorage(results)))
     } catch (e) {
       console.warn('Failed to persist results:', e)
     }
-  }, [results])
+  }, [results, consentGiven])
 
   // Update visual acuity for a specific eye
   const updateVisualAcuity = (eye, data) => {
@@ -338,10 +349,12 @@ export function TestResultsProvider({ children }) {
 
     const newHistory = [session, ...history].slice(0, 20) // Keep last 20
     setHistory(newHistory)
-    try {
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(newHistory))
-    } catch (e) {
-      console.warn('Failed to persist history:', e)
+    if (consentGiven) {
+      try {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(newHistory))
+      } catch (e) {
+        console.warn('Failed to persist history:', e)
+      }
     }
   }
 
@@ -367,10 +380,12 @@ export function TestResultsProvider({ children }) {
       }
     }
     setAchievements(newAchievements)
-    try {
-      localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify(newAchievements))
-    } catch (e) {
-      console.warn('Failed to persist achievements:', e)
+    if (consentGiven) {
+      try {
+        localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify(newAchievements))
+      } catch (e) {
+        console.warn('Failed to persist achievements:', e)
+      }
     }
     return true
   }
@@ -387,10 +402,12 @@ export function TestResultsProvider({ children }) {
       }
     }
     setAchievements(newAchievements)
-    try {
-      localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify(newAchievements))
-    } catch (e) {
-      console.warn('Failed to persist achievements:', e)
+    if (consentGiven) {
+      try {
+        localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify(newAchievements))
+      } catch (e) {
+        console.warn('Failed to persist achievements:', e)
+      }
     }
   }
 
