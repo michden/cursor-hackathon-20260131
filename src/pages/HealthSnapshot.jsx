@@ -22,19 +22,19 @@ import FindDoctorButton from '../components/FindDoctorButton'
  */
 function ResultCard({ title, icon, status, children, color = 'sky', t }) {
   const colorClasses = {
-    sky: 'bg-sky-50 border-sky-200',
-    emerald: 'bg-emerald-50 border-emerald-200',
-    violet: 'bg-violet-50 border-violet-200',
-    amber: 'bg-amber-50 border-amber-200',
-    purple: 'bg-purple-50 border-purple-200',
-    teal: 'bg-teal-50 border-teal-200',
-    fuchsia: 'bg-fuchsia-50 border-fuchsia-200',
+    sky: 'bg-sky-50 dark:bg-sky-900/30 border-sky-200 dark:border-sky-800',
+    emerald: 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800',
+    violet: 'bg-violet-50 dark:bg-violet-900/30 border-violet-200 dark:border-violet-800',
+    amber: 'bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800',
+    purple: 'bg-purple-50 dark:bg-purple-900/30 border-purple-200 dark:border-purple-800',
+    teal: 'bg-teal-50 dark:bg-teal-900/30 border-teal-200 dark:border-teal-800',
+    fuchsia: 'bg-fuchsia-50 dark:bg-fuchsia-900/30 border-fuchsia-200 dark:border-fuchsia-800',
   }
 
   const statusColors = {
-    complete: 'text-emerald-600 bg-emerald-100',
-    pending: 'text-slate-500 bg-slate-100',
-    warning: 'text-amber-600 bg-amber-100',
+    complete: 'text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/50',
+    pending: 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700',
+    warning: 'text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/50',
   }
 
   const statusText = {
@@ -48,7 +48,7 @@ function ResultCard({ title, icon, status, children, color = 'sky', t }) {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="text-2xl">{icon}</span>
-          <h3 className="font-semibold text-slate-800">{title}</h3>
+          <h3 className="font-semibold text-slate-800 dark:text-slate-100">{title}</h3>
         </div>
         <span className={`text-xs font-medium px-2 py-1 rounded-full ${statusColors[status]}`}>
           {statusText[status]}
@@ -81,7 +81,7 @@ function VisualAcuityResult({ data, t }) {
 
   if (!hasAny) {
     return (
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         {t('results:noResults.description')}
       </p>
     )
@@ -101,26 +101,26 @@ function VisualAcuityResult({ data, t }) {
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-4">
         {/* Left Eye */}
-        <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.leftEye')}</div>
-          <div className="text-2xl font-bold text-sky-600">
+        <div className="text-center p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+          <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">{t('results:eyeLabels.leftEye')}</div>
+          <div className="text-2xl font-bold text-sky-600 dark:text-sky-400">
             {hasLeft ? data.left.snellen : '—'}
           </div>
           {hasLeft && (
-            <div className="text-xs text-slate-500 mt-1">
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Level {data.left.level}/{data.left.maxLevel}
             </div>
           )}
         </div>
         
         {/* Right Eye */}
-        <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.rightEye')}</div>
-          <div className="text-2xl font-bold text-sky-600">
+        <div className="text-center p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+          <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">{t('results:eyeLabels.rightEye')}</div>
+          <div className="text-2xl font-bold text-sky-600 dark:text-sky-400">
             {hasRight ? data.right.snellen : '—'}
           </div>
           {hasRight && (
-            <div className="text-xs text-slate-500 mt-1">
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Level {data.right.level}/{data.right.maxLevel}
             </div>
           )}
@@ -129,7 +129,7 @@ function VisualAcuityResult({ data, t }) {
 
       {/* Asymmetry warning */}
       {hasAsymmetry && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+        <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3 text-sm text-amber-800 dark:text-amber-200">
           ⚠️ {t('results:recommendations.followUp')}
         </div>
       )}
@@ -146,7 +146,7 @@ function VisualAcuityResult({ data, t }) {
 function ColorVisionResult({ data, t }) {
   if (!data) {
     return (
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         {t('results:noResults.description')}
       </p>
     )
@@ -155,19 +155,19 @@ function ColorVisionResult({ data, t }) {
   return (
     <div className="space-y-2">
       <div className="flex items-baseline gap-2">
-        <span className="text-3xl font-bold text-emerald-600">
+        <span className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
           {data.correctCount}/{data.totalPlates}
         </span>
-        <span className="text-sm text-slate-500">{t('tests:colorVision.results.score', { correct: '', total: '' }).replace('/', '').trim()}</span>
+        <span className="text-sm text-slate-500 dark:text-slate-400">{t('tests:colorVision.results.score', { correct: '', total: '' }).replace('/', '').trim()}</span>
       </div>
       {data.status === 'normal' && (
-        <p className="text-sm text-emerald-600">✓ {t('tests:colorVision.results.status.normal')}</p>
+        <p className="text-sm text-emerald-600 dark:text-emerald-400">✓ {t('tests:colorVision.results.status.normal')}</p>
       )}
       {data.status === 'mild_difficulty' && (
-        <p className="text-sm text-amber-600">{t('tests:colorVision.results.status.mild')}</p>
+        <p className="text-sm text-amber-600 dark:text-amber-400">{t('tests:colorVision.results.status.mild')}</p>
       )}
       {data.status === 'possible_deficiency' && (
-        <p className="text-sm text-red-600">{t('tests:colorVision.results.status.significant')}</p>
+        <p className="text-sm text-red-600 dark:text-red-400">{t('tests:colorVision.results.status.significant')}</p>
       )}
     </div>
   )
@@ -245,7 +245,7 @@ function EyePhotoResult({ data, t }) {
 
   if (!data) {
     return (
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         {t('results:noResults.description')}
       </p>
     )
@@ -265,7 +265,7 @@ function EyePhotoResult({ data, t }) {
   return (
     <>
       <div 
-        className="space-y-3 cursor-pointer hover:bg-violet-100/50 -m-2 p-2 rounded-lg transition-colors" 
+        className="space-y-3 cursor-pointer hover:bg-violet-100/50 dark:hover:bg-violet-900/30 -m-2 p-2 rounded-lg transition-colors" 
         onClick={handleCardClick}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCardClick(); } }}
         role="button"
@@ -277,7 +277,7 @@ function EyePhotoResult({ data, t }) {
             <img
               src={data.imageData}
               alt={t('results:cards.eyePhoto')}
-              className="w-16 h-16 object-cover rounded-full border-2 border-violet-200"
+              className="w-16 h-16 object-cover rounded-full border-2 border-violet-200 dark:border-violet-700"
             />
           </div>
         )}
@@ -285,18 +285,18 @@ function EyePhotoResult({ data, t }) {
         {/* Status indicator */}
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-          <span className="text-sm font-medium text-emerald-600">{t('tests:eyePhoto.status.complete')}</span>
+          <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">{t('tests:eyePhoto.status.complete')}</span>
         </div>
         
         {/* Summary text */}
         {summary && (
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-600 dark:text-slate-300">
             {summary}{summary.length >= 150 ? '...' : ''}
           </p>
         )}
         
         {/* View details hint */}
-        <p className="text-xs text-violet-600 flex items-center gap-1">
+        <p className="text-xs text-violet-600 dark:text-violet-400 flex items-center gap-1">
           <span>{t('actions.viewResults')}</span>
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -384,7 +384,7 @@ function ContrastSensitivityResult({ data, t }) {
 
   if (!hasAny) {
     return (
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         {t('results:noResults.description')}
       </p>
     )
@@ -405,26 +405,26 @@ function ContrastSensitivityResult({ data, t }) {
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-4">
         {/* Left Eye */}
-        <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.leftEye')}</div>
-          <div className="text-2xl font-bold text-amber-600">
+        <div className="text-center p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+          <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">{t('results:eyeLabels.leftEye')}</div>
+          <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">
             {hasLeft ? data.left.logCS.toFixed(2) : '—'}
           </div>
           {hasLeft && (
-            <div className={`text-xs mt-1 text-${getInterpretation(data.left.logCS).color}-600`}>
+            <div className={`text-xs mt-1 text-${getInterpretation(data.left.logCS).color}-600 dark:text-${getInterpretation(data.left.logCS).color}-400`}>
               {getInterpretation(data.left.logCS).text}
             </div>
           )}
         </div>
         
         {/* Right Eye */}
-        <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.rightEye')}</div>
-          <div className="text-2xl font-bold text-amber-600">
+        <div className="text-center p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+          <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">{t('results:eyeLabels.rightEye')}</div>
+          <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">
             {hasRight ? data.right.logCS.toFixed(2) : '—'}
           </div>
           {hasRight && (
-            <div className={`text-xs mt-1 text-${getInterpretation(data.right.logCS).color}-600`}>
+            <div className={`text-xs mt-1 text-${getInterpretation(data.right.logCS).color}-600 dark:text-${getInterpretation(data.right.logCS).color}-400`}>
               {getInterpretation(data.right.logCS).text}
             </div>
           )}
@@ -433,7 +433,7 @@ function ContrastSensitivityResult({ data, t }) {
 
       {/* Asymmetry warning */}
       {hasAsymmetry && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+        <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3 text-sm text-amber-800 dark:text-amber-200">
           ⚠️ {t('results:recommendations.followUp')}
         </div>
       )}
@@ -461,7 +461,7 @@ function AmslerGridResult({ data, t }) {
 
   if (!hasAny) {
     return (
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         {t('results:noResults.description')}
       </p>
     )
@@ -483,26 +483,26 @@ function AmslerGridResult({ data, t }) {
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-4">
         {/* Left Eye */}
-        <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.leftEye')}</div>
-          <div className={`text-xl font-bold text-${getEyeColor(data.left)}-600`}>
+        <div className="text-center p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+          <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">{t('results:eyeLabels.leftEye')}</div>
+          <div className={`text-xl font-bold text-${getEyeColor(data.left)}-600 dark:text-${getEyeColor(data.left)}-400`}>
             {hasLeft ? getEyeStatus(data.left) : '—'}
           </div>
         </div>
         
         {/* Right Eye */}
-        <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.rightEye')}</div>
-          <div className={`text-xl font-bold text-${getEyeColor(data.right)}-600`}>
+        <div className="text-center p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+          <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">{t('results:eyeLabels.rightEye')}</div>
+          <div className={`text-xl font-bold text-${getEyeColor(data.right)}-600 dark:text-${getEyeColor(data.right)}-400`}>
             {hasRight ? getEyeStatus(data.right) : '—'}
           </div>
         </div>
       </div>
 
       {anyIssues ? (
-        <p className="text-sm text-amber-600">⚠️ {t('results:recommendations.seeDoctor')}</p>
+        <p className="text-sm text-amber-600 dark:text-amber-400">⚠️ {t('results:recommendations.seeDoctor')}</p>
       ) : (
-        <p className="text-sm text-emerald-600">✓ {t('tests:amslerGrid.results.normal')}</p>
+        <p className="text-sm text-emerald-600 dark:text-emerald-400">✓ {t('tests:amslerGrid.results.normal')}</p>
       )}
     </div>
   )
@@ -522,7 +522,7 @@ function AstigmatismResult({ data, t }) {
 
   if (!hasAny) {
     return (
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         {t('results:noResults.description')}
       </p>
     )
@@ -550,40 +550,40 @@ function AstigmatismResult({ data, t }) {
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-4">
         {/* Left Eye */}
-        <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.leftEye')}</div>
-          <div className={`text-lg font-bold text-${getEyeColor(data.left)}-600`}>
+        <div className="text-center p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+          <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">{t('results:eyeLabels.leftEye')}</div>
+          <div className={`text-lg font-bold text-${getEyeColor(data.left)}-600 dark:text-${getEyeColor(data.left)}-400`}>
             {hasLeft ? (data.left.allLinesEqual ? '✓' : '⚠️') : '—'}
           </div>
           {hasLeft && (
-            <div className="text-xs text-slate-600 mt-1">
+            <div className="text-xs text-slate-600 dark:text-slate-300 mt-1">
               {data.left.allLinesEqual 
                 ? t('results:astigmatism.allLinesEqual')
                 : t(`results:astigmatism.severity.${data.left.severity ?? 'none'}`)}
             </div>
           )}
           {hasLeft && !data.left.allLinesEqual && data.left.estimatedAxis !== null && (
-            <div className="text-xs text-slate-500 mt-0.5">
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               {t('results:astigmatism.axis', { degrees: data.left.estimatedAxis })}
             </div>
           )}
         </div>
         
         {/* Right Eye */}
-        <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.rightEye')}</div>
-          <div className={`text-lg font-bold text-${getEyeColor(data.right)}-600`}>
+        <div className="text-center p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+          <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">{t('results:eyeLabels.rightEye')}</div>
+          <div className={`text-lg font-bold text-${getEyeColor(data.right)}-600 dark:text-${getEyeColor(data.right)}-400`}>
             {hasRight ? (data.right.allLinesEqual ? '✓' : '⚠️') : '—'}
           </div>
           {hasRight && (
-            <div className="text-xs text-slate-600 mt-1">
+            <div className="text-xs text-slate-600 dark:text-slate-300 mt-1">
               {data.right.allLinesEqual 
                 ? t('results:astigmatism.allLinesEqual')
                 : t(`results:astigmatism.severity.${data.right.severity ?? 'none'}`)}
             </div>
           )}
           {hasRight && !data.right.allLinesEqual && data.right.estimatedAxis !== null && (
-            <div className="text-xs text-slate-500 mt-0.5">
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               {t('results:astigmatism.axis', { degrees: data.right.estimatedAxis })}
             </div>
           )}
@@ -592,13 +592,13 @@ function AstigmatismResult({ data, t }) {
 
       {/* Asymmetry warning */}
       {hasAsymmetry && (
-        <p className="text-sm text-orange-600">⚠️ {t('results:recommendations.followUp')}</p>
+        <p className="text-sm text-orange-600 dark:text-orange-400">⚠️ {t('results:recommendations.followUp')}</p>
       )}
 
       {anyAstigmatism ? (
-        <p className="text-sm text-amber-600">⚠️ {t('results:recommendations.seeDoctor')}</p>
+        <p className="text-sm text-amber-600 dark:text-amber-400">⚠️ {t('results:recommendations.seeDoctor')}</p>
       ) : (
-        <p className="text-sm text-emerald-600">✓ {t('tests:astigmatism.results.noAstigmatism')}</p>
+        <p className="text-sm text-emerald-600 dark:text-emerald-400">✓ {t('tests:astigmatism.results.noAstigmatism')}</p>
       )}
     </div>
   )
@@ -626,7 +626,7 @@ function PeripheralVisionResult({ data, t }) {
 
   if (!hasAny) {
     return (
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-500 dark:text-slate-400">
         {t('results:noResults.description')}
       </p>
     )
@@ -648,36 +648,36 @@ function PeripheralVisionResult({ data, t }) {
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-4">
         {/* Left Eye */}
-        <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.leftEye')}</div>
-          <div className={`text-2xl font-bold text-${getEyeColor(data.left)}-600`}>
+        <div className="text-center p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+          <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">{t('results:eyeLabels.leftEye')}</div>
+          <div className={`text-2xl font-bold text-${getEyeColor(data.left)}-600 dark:text-${getEyeColor(data.left)}-400`}>
             {hasLeft ? `${data.left.detectionRate}%` : '—'}
           </div>
           {hasLeft && (
-            <div className="text-xs text-slate-500 mt-1">
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               {data.left.avgReactionTime != null ? `${data.left.avgReactionTime}ms` : '—'}
             </div>
           )}
           {hasLeft && data.left.severity && (
-            <div className={`text-xs mt-1 text-${getEyeColor(data.left)}-600`}>
+            <div className={`text-xs mt-1 text-${getEyeColor(data.left)}-600 dark:text-${getEyeColor(data.left)}-400`}>
               {t(`results:peripheralVision.severity.${data.left.severity}`)}
             </div>
           )}
         </div>
         
         {/* Right Eye */}
-        <div className="text-center p-3 bg-white rounded-lg border">
-          <div className="text-xs text-slate-500 mb-1">{t('results:eyeLabels.rightEye')}</div>
-          <div className={`text-2xl font-bold text-${getEyeColor(data.right)}-600`}>
+        <div className="text-center p-3 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+          <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">{t('results:eyeLabels.rightEye')}</div>
+          <div className={`text-2xl font-bold text-${getEyeColor(data.right)}-600 dark:text-${getEyeColor(data.right)}-400`}>
             {hasRight ? `${data.right.detectionRate}%` : '—'}
           </div>
           {hasRight && (
-            <div className="text-xs text-slate-500 mt-1">
+            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               {data.right.avgReactionTime != null ? `${data.right.avgReactionTime}ms` : '—'}
             </div>
           )}
           {hasRight && data.right.severity && (
-            <div className={`text-xs mt-1 text-${getEyeColor(data.right)}-600`}>
+            <div className={`text-xs mt-1 text-${getEyeColor(data.right)}-600 dark:text-${getEyeColor(data.right)}-400`}>
               {t(`results:peripheralVision.severity.${data.right.severity}`)}
             </div>
           )}
@@ -685,9 +685,9 @@ function PeripheralVisionResult({ data, t }) {
       </div>
 
       {anyConcerns ? (
-        <p className="text-sm text-amber-600">⚠️ {t('results:recommendations.seeDoctor')}</p>
+        <p className="text-sm text-amber-600 dark:text-amber-400">⚠️ {t('results:recommendations.seeDoctor')}</p>
       ) : (
-        <p className="text-sm text-emerald-600">✓ {t('results:peripheralVision.normal')}</p>
+        <p className="text-sm text-emerald-600 dark:text-emerald-400">✓ {t('results:peripheralVision.normal')}</p>
       )}
     </div>
   )
@@ -765,24 +765,24 @@ function HistoryChart({ history, t, i18n }) {
   const dateLocale = i18n.language === 'de' ? 'de-DE' : 'en-US'
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">
-      <h3 className="font-semibold text-slate-800 mb-3">{t('results:history.progress')}</h3>
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 mb-6">
+      <h3 className="font-semibold text-slate-800 dark:text-slate-100 mb-3">{t('results:history.progress')}</h3>
       <div className="flex items-end justify-between h-24 gap-2">
         {sessions.map((session) => (
           <div key={session.id} className="flex-1 flex flex-col items-center">
             <div
-              className="w-full bg-sky-400 rounded-t"
+              className="w-full bg-sky-400 dark:bg-sky-500 rounded-t"
               style={{ height: `${(getBestLevel(session.visualAcuity) / 10) * 100}%` }}
             />
-            <span className="text-xs text-slate-500 mt-1">
+            <span className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               {new Date(session.date).toLocaleDateString(dateLocale, { month: 'short', day: 'numeric' })}
             </span>
           </div>
         ))}
       </div>
-      <p className="text-xs text-slate-400 text-center mt-2">{t('results:history.acuityOverTime')}</p>
+      <p className="text-xs text-slate-400 dark:text-slate-500 text-center mt-2">{t('results:history.acuityOverTime')}</p>
       {trendText && (
-        <p className="text-sm text-sky-600 text-center mt-2 font-medium">{trendText}</p>
+        <p className="text-sm text-sky-600 dark:text-sky-400 text-center mt-2 font-medium">{trendText}</p>
       )}
     </div>
   )
@@ -1326,11 +1326,11 @@ export default function HealthSnapshot() {
 
         {/* Achievements Section */}
         {unlockedAchievementIds.length > 0 && (
-          <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">
-            <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 mb-6">
+            <h3 className="font-semibold text-slate-800 dark:text-slate-100 mb-3 flex items-center gap-2">
               <span>🏆</span> {t('results:achievements.title')}
               {hasNewAchievements && (
-                <span className="text-xs font-medium text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full animate-pulse">
+                <span className="text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/50 px-2 py-0.5 rounded-full animate-pulse">
                   {t('status.new')}
                 </span>
               )}
@@ -1348,9 +1348,9 @@ export default function HealthSnapshot() {
         )}
 
         {/* Recommendation */}
-        <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">
-          <h3 className="font-semibold text-slate-800 mb-2">📋 {t('results:recommendations.title')}</h3>
-          <p className="text-slate-600">{getRecommendation()}</p>
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 mb-6">
+          <h3 className="font-semibold text-slate-800 dark:text-slate-100 mb-2">📋 {t('results:recommendations.title')}</h3>
+          <p className="text-slate-600 dark:text-slate-300">{getRecommendation()}</p>
         </div>
 
         {/* Find Eye Doctor Button - shown when concerning results detected */}
@@ -1389,8 +1389,8 @@ export default function HealthSnapshot() {
         })()}
 
         {/* Disclaimer */}
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
-          <p className="text-sm text-amber-800">
+        <div className="bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-6">
+          <p className="text-sm text-amber-800 dark:text-amber-200">
             <strong>{t('disclaimer.title')}:</strong> {t('disclaimer.text')}
           </p>
         </div>
@@ -1406,7 +1406,7 @@ export default function HealthSnapshot() {
           
           <button
             onClick={handleDownloadPDF}
-            className="w-full py-4 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
+            className="w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2"
           >
             <span>📄</span> {t('results:actions.downloadPDF')}
           </button>
@@ -1430,7 +1430,7 @@ export default function HealthSnapshot() {
           
           <Link
             to="/"
-            className="block w-full py-4 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors text-center"
+            className="block w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-center"
           >
             {t('nav.backToHome')}
           </Link>
@@ -1441,7 +1441,7 @@ export default function HealthSnapshot() {
                 clearResults()
               }
             }}
-            className="w-full py-3 text-red-500 font-medium hover:text-red-600 transition-colors text-center"
+            className="w-full py-3 text-red-500 dark:text-red-400 font-medium hover:text-red-600 dark:hover:text-red-300 transition-colors text-center"
           >
             {t('results:actions.clearResults')}
           </button>
@@ -1453,7 +1453,7 @@ export default function HealthSnapshot() {
                   clearHistory()
                 }
               }}
-              className="w-full py-3 text-slate-400 font-medium hover:text-slate-500 transition-colors text-center"
+              className="w-full py-3 text-slate-400 dark:text-slate-500 font-medium hover:text-slate-500 dark:hover:text-slate-400 transition-colors text-center"
             >
               {t('results:history.clearHistory')} ({history.length})
             </button>
