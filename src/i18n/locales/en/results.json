@@ -123,7 +123,9 @@
     "summaryRecommendations": "Summary & Recommendations",
     "summaryRecommendationsDescription": "Overall assessment based on your test results",
     "yourActions": "Your Actions",
-    "yourActionsDescription": "Share, save, or manage your results"
+    "yourActionsDescription": "Share, save, or manage your results",
+    "achievements": "Your Achievements",
+    "achievementsDescription": "Badges earned during your eye health journey"
   },
   "findDoctor": {
     "title": "Find Eye Doctors Near You",

@@ -123,7 +123,9 @@
     "summaryRecommendations": "Zusammenfassung & Empfehlungen",
     "summaryRecommendationsDescription": "Gesamtbewertung basierend auf Ihren Testergebnissen",
     "yourActions": "Ihre Aktionen",
-    "yourActionsDescription": "Teilen, speichern oder verwalten Sie Ihre Ergebnisse"
+    "yourActionsDescription": "Teilen, speichern oder verwalten Sie Ihre Ergebnisse",
+    "achievements": "Ihre Erfolge",
+    "achievementsDescription": "Abzeichen, die Sie auf Ihrer Augengesundheitsreise verdient haben"
   },
   "findDoctor": {
     "title": "Augenärzte in Ihrer Nähe finden",

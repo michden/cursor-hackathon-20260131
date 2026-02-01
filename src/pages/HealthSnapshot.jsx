@@ -1536,7 +1536,7 @@ export default function HealthSnapshot() {
               )}
             </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
-              Badges earned during your eye health journey
+              {t('results:sections.achievementsDescription')}
             </p>
             <div className="space-y-2">
               {unlockedAchievementIds.map(id => (
