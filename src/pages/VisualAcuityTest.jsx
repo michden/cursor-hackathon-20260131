@@ -1,10 +1,13 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTestResults } from '../context/TestResultsContext'
+import { useVoiceCommandSettings } from '../context/VoiceCommandContext'
+import { useVoiceCommands } from '../hooks/useVoiceCommands'
 import EyeSelector from '../components/EyeSelector'
 import Celebration from '../components/Celebration'
 import AchievementBadge from '../components/AchievementBadge'
 import AudioInstructions from '../components/AudioInstructions'
+import VoiceCommandIndicator from '../components/VoiceCommandIndicator'
 
 // Tumbling E test - the E points in 4 directions
 const DIRECTIONS = ['right', 'down', 'left', 'up']
@@ -105,6 +108,7 @@ function DirectionButton({ direction, onClick, disabled }) {
 export default function VisualAcuityTest() {
   const navigate = useNavigate()
   const { results, updateVisualAcuity, checkAndUnlockAchievements, hasAchievement, isAchievementNew } = useTestResults()
+  const { voiceEnabled } = useVoiceCommandSettings()
   const [newAchievements, setNewAchievements] = useState([])
   
   const [phase, setPhase] = useState('eye-select') // eye-select, instructions, testing, complete
@@ -211,6 +215,32 @@ export default function VisualAcuityTest() {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [phase])
+
+  // Voice command handler
+  const handleVoiceCommand = useCallback((command) => {
+    // Only process direction commands during testing phase
+    if (phase !== 'testing' || feedbackRef.current !== null) return
+
+    const validDirections = ['up', 'down', 'left', 'right']
+    if (validDirections.includes(command)) {
+      handleAnswerRef.current(command)
+    }
+  }, [phase])
+
+  // Voice commands hook
+  const { isListening, transcript, startListening, stopListening } = useVoiceCommands({
+    onCommand: handleVoiceCommand,
+    enabled: voiceEnabled && phase === 'testing',
+  })
+
+  // Auto-start/stop listening based on phase and voice enabled state
+  useEffect(() => {
+    if (voiceEnabled && phase === 'testing') {
+      startListening()
+    } else {
+      stopListening()
+    }
+  }, [voiceEnabled, phase, startListening, stopListening])
 
   const resetTestState = () => {
     setCurrentLevel(0)
@@ -569,6 +599,11 @@ export default function VisualAcuityTest() {
           ))}
         </div>
       </div>
+
+      {/* Voice command indicator */}
+      {voiceEnabled && (
+        <VoiceCommandIndicator isListening={isListening} transcript={transcript} />
+      )}
     </div>
   )
 }
